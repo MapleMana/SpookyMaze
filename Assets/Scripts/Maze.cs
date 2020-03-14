@@ -19,7 +19,7 @@ class Direction
     }
 }
 
-private class Cell
+class MazeCell
 {
     private Vector2Int _pos;
     private Dictionary<Direction, bool> _canGoTo;
@@ -29,7 +29,7 @@ private class Cell
                                                                      Direction.bottom, 
                                                                      Direction.right };
 
-    public Cell(int r, int c, bool top, bool left, bool bottom, bool right)
+    public MazeCell(int r, int c, bool top, bool left, bool bottom, bool right)
     {
         _pos = new Vector2Int(r, c);
         _canGoTo[Direction.top] = top;
@@ -45,9 +45,9 @@ public class Maze : MonoBehaviour
 {
     public int width;
     public int height;
-    public GameObject wallObj;
+    public GameObject wallTemplate;
 
-    private Dictionary<Cell, Vector2> _grid;
+    private Dictionary<MazeCell, Vector2> _grid;
 
     private void OnEnable()
     {
@@ -61,7 +61,7 @@ public class Maze : MonoBehaviour
 
     public void Generate()
     {
-        GameObject wall = Instantiate(wallObj, new Vector3(0.5f, 0.5f, 0), Quaternion.identity);
+        GameObject wall = Instantiate(wallTemplate, new Vector3(0.5f, 0.5f, 0), Quaternion.identity);
         wall.transform.localScale = new Vector3(1.25f, 1, 0.25f);
     }
 }

@@ -7,6 +7,8 @@ public class GameManager : MonoBehaviour
 {
     private static GameManager _instance;
 
+    public GameObject mazeTemplate;
+
     public static GameManager Instance { get => _instance; }
 
     private void Awake()
@@ -36,7 +38,7 @@ public class GameManager : MonoBehaviour
     {
         if (scene.name == "Maze")
         {
-            GenerateMaze();
+            Instantiate(mazeTemplate, Vector3.zero, Quaternion.identity);
         }
     }
 
@@ -49,14 +51,6 @@ public class GameManager : MonoBehaviour
     public void LoadLevel()
     {
         SceneManager.LoadScene("Maze");
-    }
-
-    private void GenerateMaze()
-    {
-        GameObject wall = GameObject.CreatePrimitive(PrimitiveType.Cube);
-
-        wall.transform.position = new Vector3(0.5f, 0.5f, 0);
-        wall.transform.localScale = new Vector3(1.25f, 1, 0.25f);
     }
 
     void Update()
