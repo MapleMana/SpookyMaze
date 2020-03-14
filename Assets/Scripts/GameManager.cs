@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -21,16 +22,43 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    // Start is called before the first frame update
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnFullLoad;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnFullLoad;
+    }
+
+    private void OnFullLoad(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == "Maze")
+        {
+            GenerateMaze();
+        }
+    }
+
+
     void Start()
+    {
+        
+    }
+
+    public void LoadLevel()
+    {
+        SceneManager.LoadScene("Maze");
+    }
+
+    private void GenerateMaze()
     {
         GameObject wall = GameObject.CreatePrimitive(PrimitiveType.Cube);
 
-        wall.transform.position = new Vector3(0, 4, 0);
-        wall.transform.localScale = new Vector3(1, 8, 6);
+        wall.transform.position = new Vector3(0.5f, 0.5f, 0);
+        wall.transform.localScale = new Vector3(1.25f, 1, 0.25f);
     }
 
-    // Update is called once per frame
     void Update()
     {
         
