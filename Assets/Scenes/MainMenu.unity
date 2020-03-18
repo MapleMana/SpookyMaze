@@ -380,4 +380,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fd2e831d02dea64986b02415359c866, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mazeTemplate: {fileID: 0}
+  mazeTemplate: {fileID: 34652561918922420, guid: bb5f522fdb1710c4abbaee26a7c71e42,
+    type: 3}

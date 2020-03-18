@@ -6,8 +6,9 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     private static GameManager _instance;
+    private Maze _mazeObject;
 
-    public GameObject mazeTemplate;
+    public Maze mazeTemplate;
 
     public static GameManager Instance { get => _instance; }
 
@@ -38,7 +39,9 @@ public class GameManager : MonoBehaviour
     {
         if (scene.name == "Maze")
         {
-            Instantiate(mazeTemplate, Vector3.zero, Quaternion.identity);
+            _mazeObject = Instantiate(mazeTemplate, Vector3.zero, Quaternion.identity);
+            _mazeObject.Generate();
+            _mazeObject.Display();
         }
     }
 
