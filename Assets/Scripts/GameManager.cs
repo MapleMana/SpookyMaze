@@ -43,21 +43,12 @@ public class GameManager : MonoBehaviour
             _mazeObject.Initialize(10, 15);
             _mazeObject.Generate();
             _mazeObject.Display();
+            CameraManager.Instance.FocusOn(_mazeObject);
         }
-    }
-
-    void Start()
-    {
-        
     }
 
     public void LoadLevel()
     {
         SceneManager.LoadScene("Maze");
-    }
-
-    void Update()
-    {
-        
     }
 }

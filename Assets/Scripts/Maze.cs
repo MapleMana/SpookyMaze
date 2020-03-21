@@ -63,15 +63,18 @@ class MazeCell
 
 public class Maze : MonoBehaviour
 {
-    const float CELL_WIDTH = 10;
-    const float WALL_WIDTH = 2.5f;
+    public const float CELL_WIDTH = 10;
+    public const float WALL_WIDTH = 2.5f;
 
-    public int _width = 10;
-    public int _height = 10;
     public GameObject wallTemplate;
 
+    private int _width = 10;
+    private int _height = 10;
     private Dictionary<Vector2Int, MazeCell> _grid = new Dictionary<Vector2Int, MazeCell>();
     private static Random _generator = new Random();
+
+    public int Width { get => _width; }
+    public int Height { get => _height; }
 
     /// <summary>
     /// Specifies the initial maze state
