@@ -40,6 +40,7 @@ public class GameManager : MonoBehaviour
         if (scene.name == "Maze")
         {
             _mazeObject = Instantiate(mazeTemplate, Vector3.zero, Quaternion.identity);
+            _mazeObject.Initialize(10, 15);
             _mazeObject.Generate();
             _mazeObject.Display();
         }
