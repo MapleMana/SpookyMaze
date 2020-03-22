@@ -4,7 +4,23 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    void Start()
+    private static Player _instance;
+
+    public static Player Instance { get => _instance; set => _instance = value; }
+
+    void Awake()
+    {
+        if (_instance == null)
+        {
+            _instance = this;
+        }
+        else if (_instance != this)
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    private void Start()
     {
         
     }
