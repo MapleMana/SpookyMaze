@@ -22,7 +22,8 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
-        
+        Vector2 mazeStartCenter = Maze.Instance.start.CellCenter();
+        transform.position = new Vector3(mazeStartCenter.x, 0, mazeStartCenter.y);
     }
 
     private Vector2Int? GetInput()
