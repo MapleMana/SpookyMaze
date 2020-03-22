@@ -6,6 +6,8 @@ public class Player : MonoBehaviour
 {
     private static Player _instance;
 
+    private Vector2Int? _movement;
+
     public static Player Instance { get => _instance; set => _instance = value; }
 
     void Awake()
@@ -49,7 +51,11 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        Vector2Int? movement = GetInput();
-        transform.position += new Vector3(movement?.x ?? 0, 0, movement?.y ?? 0);
+        if (_movement == null)
+        {
+            _movement = GetInput();
+            transform.position += new Vector3((_movement?.x ?? 0) * MazeCell.CELL_WIDTH, 0, (_movement?.y ?? 0) * MazeCell.CELL_WIDTH);
+        }
+        _movement = GetInput();
     }
 }
