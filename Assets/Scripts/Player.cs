@@ -6,7 +6,8 @@ public class Player : MonoBehaviour
 {
     private static Player _instance;
 
-    private Vector2Int? _movement;
+    private Vector2Int _mazePosition;
+    private Vector2Int _movement;
 
     public static Player Instance { get => _instance; set => _instance = value; }
 
@@ -22,13 +23,12 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void Start()
+    public void PlaceOnMaze()
     {
-        Vector2 mazeStartCenter = Maze.Instance.start.CellCenter();
-        transform.position = new Vector3(mazeStartCenter.x, 0, mazeStartCenter.y);
+        _mazePosition = Maze.Instance.start;
     }
 
-    private Vector2Int? GetInput()
+    private Vector2Int GetInput()
     {
         if (Input.GetAxis("Horizontal") > Mathf.Epsilon)
         {
@@ -46,16 +46,26 @@ public class Player : MonoBehaviour
         {
             return Vector2Int.down;
         }
-        return null;
+        return Vector2Int.zero;
     }
 
     void Update()
     {
-        if (_movement == null)
+        if (_movement == Vector2Int.zero)
         {
             _movement = GetInput();
-            transform.position += new Vector3((_movement?.x ?? 0) * MazeCell.CELL_WIDTH, 0, (_movement?.y ?? 0) * MazeCell.CELL_WIDTH);
+            if (_movement != Vector2Int.zero)
+            {
+                if (!Maze.Instance.Grid[_mazePosition].WallExists(_movement))
+                {
+                    _mazePosition += _movement;
+                }
+            }
         }
+
+        MazeCell currentCell = Maze.Instance.Grid[_mazePosition];
+        transform.position = new Vector3(currentCell.cellCenter.x, transform.position.y, currentCell.cellCenter.y);
+
         _movement = GetInput();
     }
 }

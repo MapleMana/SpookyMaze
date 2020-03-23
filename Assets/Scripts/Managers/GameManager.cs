@@ -39,7 +39,10 @@ public class GameManager : MonoBehaviour
             Maze.Instance.Initialize(10, 15);
             Maze.Instance.Generate();
             Maze.Instance.Display();
+
             CameraManager.Instance.FocusOn(Maze.Instance);
+
+            Player.Instance.PlaceOnMaze();
         }
     }
 

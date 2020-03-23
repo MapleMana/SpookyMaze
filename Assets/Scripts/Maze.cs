@@ -27,6 +27,7 @@ public class MazeCell
 {
     private Dictionary<Vector2Int, WallState> _wallState = new Dictionary<Vector2Int, WallState>();
     private Vector2Int _position;
+    public readonly Vector2 cellCenter;
 
     public const float CELL_WIDTH = 10;
 
@@ -42,6 +43,7 @@ public class MazeCell
         _wallState[Vector2Int.left] = left;
         _wallState[Vector2Int.down] = down;
         _wallState[Vector2Int.right] = right;
+        cellCenter = new Vector2(CELL_WIDTH * (_position.x + 0.5f), CELL_WIDTH * (_position.y + 0.5f));
     }
 
     /// <summary>
@@ -62,11 +64,6 @@ public class MazeCell
     public bool WallExists(Vector2Int direction) {
         return _wallState[direction] == WallState.Exists;
     }
-
-    public Vector2 CellCenter()
-    {
-        return new Vector2(CELL_WIDTH * (_position.x + 0.5f), CELL_WIDTH * (_position.y + 0.5f));
-    }
 }
 
 public class Maze : MonoBehaviour
@@ -82,12 +79,13 @@ public class Maze : MonoBehaviour
 
     public GameObject wallTemplate;
 
-    public MazeCell start;
-    public MazeCell finish;
+    public Vector2Int start;
+    public Vector2Int finish;
 
     public int Width { get => _width; }
     public int Height { get => _height; }
     public static Maze Instance { get => _instance; set => _instance = value; }
+    public Dictionary<Vector2Int, MazeCell> Grid { get => _grid; }
 
     private void Awake()
     {
@@ -113,8 +111,8 @@ public class Maze : MonoBehaviour
 
         Fill();
 
-        start = _grid[new Vector2Int(0, height - 1)];
-        finish = _grid[new Vector2Int(width - 1, 0)];
+        start = new Vector2Int(0, height - 1);
+        finish = new Vector2Int(width - 1, 0);
     }
 
     /// <summary>
