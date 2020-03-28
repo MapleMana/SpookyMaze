@@ -9,6 +9,8 @@ public class GameManager : MonoBehaviour
 
     public static GameManager Instance { get => _instance; }
 
+    private GameManager() { }
+
     private void Awake()
     {
         if (_instance == null)
@@ -46,8 +48,8 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void LoadLevel()
+    public void LoadLevel(string sceneName)
     {
-        SceneManager.LoadScene("Maze");
+        SceneManager.LoadScene(sceneName);
     }
 }

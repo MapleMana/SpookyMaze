@@ -28,7 +28,7 @@ public class Player : MonoBehaviour
         _mazePosition = Maze.Instance.start;
     }
 
-    private Vector2Int GetInput()
+    static private Vector2Int GetInput()
     {
         if (Input.GetAxis("Horizontal") > Mathf.Epsilon)
         {

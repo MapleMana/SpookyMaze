@@ -32,7 +32,7 @@ public class UIManager : MonoBehaviour
     /// </summary>
     void StartGame()
     {
-        GameManager.Instance.LoadLevel();
+        GameManager.Instance.LoadLevel("Maze");
     }
     
     void Update()

@@ -68,14 +68,13 @@ public class MazeCell
 
 public class Maze : MonoBehaviour
 {
+    const float WALL_WIDTH = 2.5f;
     private static Maze _instance;
 
     private int _width = 10;
     private int _height = 10;
     private Dictionary<Vector2Int, MazeCell> _grid = new Dictionary<Vector2Int, MazeCell>();
     private static Random _generator = new Random();
-
-    public const float WALL_WIDTH = 2.5f;
 
     public GameObject wallTemplate;
 
@@ -166,8 +165,8 @@ public class Maze : MonoBehaviour
         {
             visited[kvPair.Key] = false;
         }
-        Vector2Int start = new Vector2Int(0, 0);
         path.Push(start);
+        visited[start] = true;
         while (path.Count != 0)
         {
             Vector2Int curPos = path.Pop();
@@ -219,14 +218,13 @@ public class Maze : MonoBehaviour
             {
                 PutWall(new Vector3(MazeCell.CELL_WIDTH * (pos.x + 0.5f), 0, MazeCell.CELL_WIDTH * (pos.y + 1)), true);
             }
-
-            if (pos.y == 0)
-            {
-                PutWall(new Vector3(MazeCell.CELL_WIDTH * (pos.x + 0.5f), 0, MazeCell.CELL_WIDTH * pos.y), true);
-            }
-            if (pos.x == 0)
+            if (cell.WallExists(Vector2Int.left))
             {
                 PutWall(new Vector3(MazeCell.CELL_WIDTH * pos.x, 0, MazeCell.CELL_WIDTH * (pos.y + 0.5f)), false);
+            }
+            if (cell.WallExists(Vector2Int.down))
+            {
+                PutWall(new Vector3(MazeCell.CELL_WIDTH * (pos.x + 0.5f), 0, MazeCell.CELL_WIDTH * pos.y), true);
             }
         }
     }
