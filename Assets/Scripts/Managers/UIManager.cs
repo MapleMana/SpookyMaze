@@ -22,15 +22,10 @@ public class UIManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    void Start()
-    {
-        Invoke("StartGame", 1f);
-    }
-
     /// <summary>
     /// This method is invoked when the "Play" button is pressed
     /// </summary>
-    void StartGame()
+    public void StartGame()
     {
         GameManager.Instance.LoadLevel("Maze");
     }
