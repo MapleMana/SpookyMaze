@@ -29,7 +29,12 @@ public class UIManager : MonoBehaviour
     {
         GameManager.Instance.LoadLevel("Maze");
     }
-    
+
+    public void QuitGame()
+    {
+        Application.Quit();
+    }
+
     void Update()
     {
         
