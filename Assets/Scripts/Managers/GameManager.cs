@@ -6,11 +6,10 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     private static GameManager _instance;
-    private Maze _mazeObject;
-
-    public Maze mazeTemplate;
 
     public static GameManager Instance { get => _instance; }
+
+    private GameManager() { }
 
     private void Awake()
     {
@@ -39,16 +38,18 @@ public class GameManager : MonoBehaviour
     {
         if (scene.name == "Maze")
         {
-            _mazeObject = Instantiate(mazeTemplate, Vector3.zero, Quaternion.identity);
-            _mazeObject.Initialize(10, 15);
-            _mazeObject.Generate();
-            _mazeObject.Display();
-            CameraManager.Instance.FocusOn(_mazeObject);
+            Maze.Instance.Initialize(10, 15);
+            Maze.Instance.Generate();
+            Maze.Instance.Display();
+
+            CameraManager.Instance.FocusOn(Maze.Instance);
+
+            Player.Instance.PlaceOnMaze();
         }
     }
 
-    public void LoadLevel()
+    public void LoadLevel(string sceneName)
     {
-        SceneManager.LoadScene("Maze");
+        SceneManager.LoadScene(sceneName);
     }
 }

@@ -23,7 +23,7 @@ public class CameraManager : MonoBehaviour
 
     public void FocusOn(Maze maze)
     {
-        Vector3 mazeCenter = new Vector3(Maze.CELL_WIDTH * maze.Width / 2, 0, Maze.CELL_WIDTH * maze.Height / 2);
+        Vector3 mazeCenter = new Vector3(MazeCell.CELL_WIDTH * maze.Width / 2, 0, MazeCell.CELL_WIDTH * maze.Height / 2);
         transform.position = new Vector3(mazeCenter.x, transform.position.y, mazeCenter.z);
     }
 }

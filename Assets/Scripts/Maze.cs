@@ -17,28 +17,33 @@ public static class ListExtension
     }
 }
 
-enum WallState
+public enum WallState
 {
     Destroyed,
     Exists
 }
 
-class MazeCell
+public class MazeCell
 {
-    private Dictionary<Vector2Int, WallState> _wallState;
+    private Dictionary<Vector2Int, WallState> _wallState = new Dictionary<Vector2Int, WallState>();
+    private Vector2Int _position;
+    public readonly Vector2 cellCenter;
+
+    public const float CELL_WIDTH = 10;
 
     public static List<Vector2Int> neighbours = new List<Vector2Int> { Vector2Int.up, 
                                                                        Vector2Int.left, 
                                                                        Vector2Int.down, 
                                                                        Vector2Int.right };
 
-    public MazeCell(WallState up, WallState left, WallState down, WallState right)
+    public MazeCell(Vector2Int pos, WallState up, WallState left, WallState down, WallState right)
     {
-        _wallState = new Dictionary<Vector2Int, WallState>();
+        _position = pos;
         _wallState[Vector2Int.up] = up;
         _wallState[Vector2Int.left] = left;
         _wallState[Vector2Int.down] = down;
         _wallState[Vector2Int.right] = right;
+        cellCenter = new Vector2(CELL_WIDTH * (_position.x + 0.5f), CELL_WIDTH * (_position.y + 0.5f));
     }
 
     /// <summary>
@@ -63,18 +68,35 @@ class MazeCell
 
 public class Maze : MonoBehaviour
 {
-    public const float CELL_WIDTH = 10;
-    public const float WALL_WIDTH = 2.5f;
-
-    public GameObject wallTemplate;
+    const float WALL_WIDTH = 2.5f;
+    private static Maze _instance;
 
     private int _width = 10;
     private int _height = 10;
     private Dictionary<Vector2Int, MazeCell> _grid = new Dictionary<Vector2Int, MazeCell>();
     private static Random _generator = new Random();
 
+    public GameObject wallTemplate;
+
+    public Vector2Int start;
+    public Vector2Int finish;
+
     public int Width { get => _width; }
     public int Height { get => _height; }
+    public static Maze Instance { get => _instance; set => _instance = value; }
+    public Dictionary<Vector2Int, MazeCell> Grid { get => _grid; }
+
+    private void Awake()
+    {
+        if (_instance == null)
+        {
+            _instance = this;
+        }
+        else if (_instance != this)
+        {
+            Destroy(gameObject);
+        }
+    }
 
     /// <summary>
     /// Specifies the initial maze state
@@ -87,6 +109,9 @@ public class Maze : MonoBehaviour
         _height = height;
 
         Fill();
+
+        start = new Vector2Int(0, height - 1);
+        finish = new Vector2Int(width - 1, 0);
     }
 
     /// <summary>
@@ -99,7 +124,8 @@ public class Maze : MonoBehaviour
         {
             for (int y = 0; y < _height; y++)
             {
-                _grid[new Vector2Int(x, y)] = new MazeCell(wallState, wallState, wallState, wallState);
+                Vector2Int pos = new Vector2Int(x, y);
+                _grid[pos] = new MazeCell(pos, wallState, wallState, wallState, wallState);
             }
         }
     }
@@ -139,8 +165,8 @@ public class Maze : MonoBehaviour
         {
             visited[kvPair.Key] = false;
         }
-        Vector2Int start = new Vector2Int(0, 0);
         path.Push(start);
+        visited[start] = true;
         while (path.Count != 0)
         {
             Vector2Int curPos = path.Pop();
@@ -170,9 +196,9 @@ public class Maze : MonoBehaviour
     private void PutWall(Vector3 pos, bool horizontal=true)
     {
         GameObject wall = Instantiate(wallTemplate, pos, Quaternion.identity);
-        float wallWidth = horizontal ? CELL_WIDTH + WALL_WIDTH : WALL_WIDTH;
-        float wallHeight = horizontal ? WALL_WIDTH : CELL_WIDTH + WALL_WIDTH;
-        wall.transform.localScale = new Vector3(wallWidth, CELL_WIDTH, wallHeight);
+        float wallWidth = horizontal ? MazeCell.CELL_WIDTH + WALL_WIDTH : WALL_WIDTH;
+        float wallHeight = horizontal ? WALL_WIDTH : MazeCell.CELL_WIDTH + WALL_WIDTH;
+        wall.transform.localScale = new Vector3(wallWidth, MazeCell.CELL_WIDTH, wallHeight);
     }
 
     /// <summary>
@@ -186,20 +212,19 @@ public class Maze : MonoBehaviour
             MazeCell cell = kvPair.Value;
             if (cell.WallExists(Vector2Int.right))
             {
-                PutWall(new Vector3(CELL_WIDTH * (pos.x + 1), 0, CELL_WIDTH * (pos.y + 0.5f)), false);
+                PutWall(new Vector3(MazeCell.CELL_WIDTH * (pos.x + 1), 0, MazeCell.CELL_WIDTH * (pos.y + 0.5f)), false);
             }
             if (cell.WallExists(Vector2Int.up))
             {
-                PutWall(new Vector3(CELL_WIDTH * (pos.x + 0.5f), 0, CELL_WIDTH * (pos.y + 1)), true);
+                PutWall(new Vector3(MazeCell.CELL_WIDTH * (pos.x + 0.5f), 0, MazeCell.CELL_WIDTH * (pos.y + 1)), true);
             }
-
-            if (pos.y == 0)
+            if (cell.WallExists(Vector2Int.left))
             {
-                PutWall(new Vector3(CELL_WIDTH * (pos.x + 0.5f), 0, CELL_WIDTH * pos.y), true);
+                PutWall(new Vector3(MazeCell.CELL_WIDTH * pos.x, 0, MazeCell.CELL_WIDTH * (pos.y + 0.5f)), false);
             }
-            if (pos.x == 0)
+            if (cell.WallExists(Vector2Int.down))
             {
-                PutWall(new Vector3(CELL_WIDTH * pos.x, 0, CELL_WIDTH * (pos.y + 0.5f)), false);
+                PutWall(new Vector3(MazeCell.CELL_WIDTH * (pos.x + 0.5f), 0, MazeCell.CELL_WIDTH * pos.y), true);
             }
         }
     }
