@@ -7,7 +7,6 @@ public class Player : MonoBehaviour
     private static Player _instance;
 
     private Vector2Int _mazePosition;
-    private Vector2Int _movement;
 
     public static Player Instance { get => _instance; set => _instance = value; }
 
@@ -51,36 +50,26 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        if (_movement == Vector2Int.zero)
+        Vector2Int movement = InputDetector.DetectDesktop();
+        if (movement != Vector2Int.zero)
         {
-            _movement = GetInput();
-            if (_movement != Vector2Int.zero)
+            if (!Maze.Instance.Grid[_mazePosition].WallExists(movement))
             {
-                if (!Maze.Instance.Grid[_mazePosition].WallExists(_movement))
-                {
-                    _mazePosition += _movement;
-                }
+                _mazePosition += movement;
+                MazeCell currentCell = Maze.Instance.Grid[_mazePosition];
+                transform.position = new Vector3(currentCell.cellCenter.x, transform.position.y, currentCell.cellCenter.y);
             }
         }
-
-        MazeCell currentCell = Maze.Instance.Grid[_mazePosition];
-        transform.position = new Vector3(currentCell.cellCenter.x, transform.position.y, currentCell.cellCenter.y);
-
-        _movement = GetInput();
     }
 }
 
-class InputDetector : MonoBehaviour
+
+class InputDetector
 {
     static private Vector3 touchStart;
-    static private float minSwipeDistance;  //minimum distance for a swipe to be registered
+    const double minSwipeDistance = 0.1;  //minimum distance for a swipe to be registered (fraction of screen height)
 
-    void Start()
-    {
-        minSwipeDistance = Screen.height * 15 / 100; //dragDistance is 15% height of the screen
-    }
-
-    static Vector2Int DetectMobile()
+    public static Vector2Int DetectMobile()
     {
         if (Input.touchCount == 1)
         {
@@ -93,7 +82,7 @@ class InputDetector : MonoBehaviour
             {
                 Vector3 touchEnd = touch.position;
 
-                if (Vector3.Distance(touchStart, touchEnd) > minSwipeDistance)
+                if (Vector3.Distance(touchStart, touchEnd) > minSwipeDistance * Screen.height)
                 {
                     // check which axis is more significant
                     if (Mathf.Abs(touchEnd.x - touchStart.x) > Mathf.Abs(touchEnd.y - touchStart.y))
@@ -107,6 +96,27 @@ class InputDetector : MonoBehaviour
                 }
             }
         }
-        return null;
+        return Vector2Int.zero;
+    }
+
+    public static Vector2Int DetectDesktop()
+    {
+        if (Input.GetKeyUp(KeyCode.UpArrow))
+        {
+            return Vector2Int.up;
+        }
+        if (Input.GetKeyUp(KeyCode.DownArrow))
+        {
+            return Vector2Int.down;
+        }
+        if (Input.GetKeyUp(KeyCode.LeftArrow))
+        {
+            return Vector2Int.left;
+        }
+        if (Input.GetKeyUp(KeyCode.RightArrow))
+        {
+            return Vector2Int.right;
+        }
+        return Vector2Int.zero;
     }
 }
