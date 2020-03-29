@@ -69,3 +69,44 @@ public class Player : MonoBehaviour
         _movement = GetInput();
     }
 }
+
+class InputDetector : MonoBehaviour
+{
+    static private Vector3 touchStart;
+    static private float minSwipeDistance;  //minimum distance for a swipe to be registered
+
+    void Start()
+    {
+        minSwipeDistance = Screen.height * 15 / 100; //dragDistance is 15% height of the screen
+    }
+
+    static Vector2Int DetectMobile()
+    {
+        if (Input.touchCount == 1)
+        {
+            Touch touch = Input.GetTouch(0);
+            if (touch.phase == TouchPhase.Began)
+            {
+                touchStart = touch.position;
+            }
+            else if (touch.phase == TouchPhase.Ended)
+            {
+                Vector3 touchEnd = touch.position;
+
+                if (Vector3.Distance(touchStart, touchEnd) > minSwipeDistance)
+                {
+                    // check which axis is more significant
+                    if (Mathf.Abs(touchEnd.x - touchStart.x) > Mathf.Abs(touchEnd.y - touchStart.y))
+                    {
+                        return (touchEnd.x > touchStart.x) ? Vector2Int.right : Vector2Int.left;
+                    }
+                    else
+                    {
+                        return (touchEnd.y > touchStart.y) ? Vector2Int.up : Vector2Int.down;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+}
