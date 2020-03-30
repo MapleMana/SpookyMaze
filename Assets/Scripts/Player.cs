@@ -25,6 +25,7 @@ public class Player : MonoBehaviour
     public void PlaceOnMaze()
     {
         _mazePosition = Maze.Instance.start;
+        SyncRealPosition();
     }
 
     static private Vector2Int GetInput()
@@ -56,10 +57,18 @@ public class Player : MonoBehaviour
             if (!Maze.Instance.Grid[_mazePosition].WallExists(movement))
             {
                 _mazePosition += movement;
-                MazeCell currentCell = Maze.Instance.Grid[_mazePosition];
-                transform.position = new Vector3(currentCell.cellCenter.x, transform.position.y, currentCell.cellCenter.y);
+                SyncRealPosition();
             }
         }
+    }
+
+    /// <summary>
+    /// Synchronizes maze position and physical player position
+    /// </summary>
+    void SyncRealPosition()
+    {
+        MazeCell currentCell = Maze.Instance.Grid[_mazePosition];
+        transform.position = new Vector3(currentCell.cellCenter.x, transform.position.y, currentCell.cellCenter.y);
     }
 }
 
