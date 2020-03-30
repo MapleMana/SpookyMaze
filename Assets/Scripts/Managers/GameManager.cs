@@ -7,6 +7,9 @@ public class GameManager : MonoBehaviour
 {
     private static GameManager _instance;
 
+    public static int MazeWidth;
+    public static int MazeHeight;
+
     public static GameManager Instance { get => _instance; }
 
     private GameManager() { }
@@ -34,18 +37,22 @@ public class GameManager : MonoBehaviour
         SceneManager.sceneLoaded -= OnFullLoad;
     }
 
-    public static void GenerateMaze(int width, int height)
-    {
-        Maze.Instance.Initialize(width, height);
-        Maze.Instance.Generate();
-        Maze.Instance.Display();
-    }
-
     private void OnFullLoad(Scene scene, LoadSceneMode mode)
     {
         if (scene.name == "Maze")
         {
-            GenerateMaze(12, 12);
+            if (MazeWidth == 0)
+            {
+                MazeWidth = 12;
+            }
+            if (MazeHeight == 0)
+            {
+                MazeHeight = 12;
+            }
+
+            Maze.Instance.Initialize(MazeWidth, MazeHeight);
+            Maze.Instance.Generate();
+            Maze.Instance.Display();
 
             CameraManager.Instance.FocusOn(Maze.Instance);
 

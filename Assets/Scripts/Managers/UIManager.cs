@@ -6,11 +6,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
-{
-    private int mazeWidth;
-    private int mazeHeight;
-    private bool reload = false;
-    
+{    
     private static UIManager _instance;
 
     public static UIManager Instance { get => _instance; set => _instance = value; }

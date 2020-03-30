@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -22,5 +23,6 @@ public class Height : MonoBehaviour
     public void HeightChanged(float height)
     {
         this.height.text = height.ToString();
+        GameManager.MazeHeight = Convert.ToInt32(height);
     }
 }

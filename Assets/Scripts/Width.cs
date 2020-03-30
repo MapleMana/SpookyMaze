@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -22,5 +23,6 @@ public class Width : MonoBehaviour
     public void WidthChanged(float width)
     {
         this.width.text = width.ToString();
+        GameManager.MazeWidth = Convert.ToInt32(width);
     }
 }
