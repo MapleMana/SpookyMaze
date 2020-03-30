@@ -87,16 +87,16 @@ public class PlayerCommand
 public class PlayerInputHandler
 {
     private static readonly PlayerCommand MoveUp =
-        new PlayerCommand(delegate (Player player) { player.Move(Vector2Int.up); });
+        new PlayerCommand((Player player) => player.Move(Vector2Int.up));
 
     private static readonly PlayerCommand MoveDown =
-        new PlayerCommand(delegate (Player player) { player.Move(Vector2Int.down); });
+        new PlayerCommand((Player player) => player.Move(Vector2Int.down));
 
     private static readonly PlayerCommand MoveLeft =
-        new PlayerCommand(delegate (Player player) { player.Move(Vector2Int.left); });
+        new PlayerCommand((Player player) => player.Move(Vector2Int.left));
 
     private static readonly PlayerCommand MoveRight =
-        new PlayerCommand(delegate (Player player) { player.Move(Vector2Int.right); });
+        new PlayerCommand((Player player) => player.Move(Vector2Int.right));
 
     public static PlayerCommand HandleInput()
     {
