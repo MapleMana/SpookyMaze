@@ -63,12 +63,18 @@ public class Player : MonoBehaviour
     }
 }
 
-
-class InputDetector
+/// <summary>
+/// Detects input for different platforms. Methods to be called on Update.
+/// </summary>
+static class InputDetector
 {
     static private Vector3 touchStart;
     const double minSwipeDistance = 0.1;  //minimum distance for a swipe to be registered (fraction of screen height)
 
+    /// <summary>
+    /// Detects swipes on mobile platforms
+    /// </summary>
+    /// <returns>Direction of movement</returns>
     public static Vector2Int DetectMobile()
     {
         if (Input.touchCount == 1)
@@ -99,6 +105,10 @@ class InputDetector
         return Vector2Int.zero;
     }
 
+    /// <summary>
+    /// Detects arrow key presses on desktop
+    /// </summary>
+    /// <returns>Direction of movement</returns>
     public static Vector2Int DetectDesktop()
     {
         if (Input.GetKeyUp(KeyCode.UpArrow))
