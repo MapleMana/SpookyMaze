@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -10,8 +11,6 @@ public class Player : MonoBehaviour
     private PlayerCommand _command;
     
     private List<PlayerCommand> playerCommands = new List<PlayerCommand>();
-    private Coroutine executeRoutine;
-    const float PAUSE_TIME = 0.3f;
 
     public static Player Instance { get => _instance; set => _instance = value; }
 
@@ -30,25 +29,37 @@ public class Player : MonoBehaviour
     public void PlaceOnMaze()
     {
         _mazePosition = Maze.Instance.start;
+        SyncRealPosition();
     }
     
     void Update()
     {
-        _command = PlayerInputHandler.HandleInput();
-        if (_command != null && executeRoutine == null)
+        if (_command == null)
         {
+            _command = PlayerInputHandler.HandleInput();
             playerCommands.Add(_command);
-            executeRoutine = StartCoroutine(ExecuteCommandsRoutine());
+            ExecuteCommandsRoutine();
         }
+        _command = PlayerInputHandler.HandleInput();
     }
 
-    private IEnumerator ExecuteCommandsRoutine()
+    /// <summary>
+    /// Synchronizes maze position and physical player position
+    /// </summary>
+    void SyncRealPosition()
     {
-        playerCommands[playerCommands.Count - 1].Execute(this);
         MazeCell currentCell = Maze.Instance.Grid[_mazePosition];
         transform.position = new Vector3(currentCell.cellCenter.x, transform.position.y, currentCell.cellCenter.y);
-        yield return new WaitForSeconds(PAUSE_TIME);
-        executeRoutine = null;
+    }
+
+    private void ExecuteCommandsRoutine()
+    {
+        PlayerCommand last = playerCommands.Last();
+        if (last != null)
+        {
+            last.Execute(this);
+            SyncRealPosition();
+        }
     }
 
     public void Move(Vector2Int direction)
@@ -56,20 +67,21 @@ public class Player : MonoBehaviour
         if (!Maze.Instance.Grid[_mazePosition].WallExists(direction))
         {
             _mazePosition += direction;
+            SyncRealPosition();
         }
     }
 }
 
 public class PlayerCommand
 {
+    public delegate void ExecuteCallback(Player player);
+
+    public ExecuteCallback Execute { get; private set; }
+
     public PlayerCommand(ExecuteCallback executeMethod)
     {
         Execute = executeMethod;
     }
-
-    public delegate void ExecuteCallback(Player player);
-
-    public ExecuteCallback Execute { get; private set; }
 }
 
 public class PlayerInputHandler
