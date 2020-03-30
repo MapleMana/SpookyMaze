@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -7,6 +8,8 @@ public class Player : MonoBehaviour
     private static Player _instance;
 
     private Vector2Int _mazePosition;
+    private PlayerCommand _command;
+    private List<PlayerCommand> playerCommands = new List<PlayerCommand>();
 
     public static Player Instance { get => _instance; set => _instance = value; }
 
@@ -27,38 +30,30 @@ public class Player : MonoBehaviour
         _mazePosition = Maze.Instance.start;
         SyncRealPosition();
     }
-
-    static private Vector2Int GetInput()
-    {
-        if (Input.GetAxis("Horizontal") > Mathf.Epsilon)
-        {
-            return Vector2Int.right;
-        }
-        else if (Input.GetAxis("Horizontal") < -Mathf.Epsilon)
-        {
-            return Vector2Int.left;
-        }
-        else if (Input.GetAxis("Vertical") > Mathf.Epsilon)
-        {
-            return Vector2Int.up;
-        }
-        else if (Input.GetAxis("Vertical") < -Mathf.Epsilon)
-        {
-            return Vector2Int.down;
-        }
-        return Vector2Int.zero;
-    }
-
+    
     void Update()
     {
-        Vector2Int movement = InputDetector.DetectDesktop();
-        if (movement != Vector2Int.zero)
+        _command = PlayerActionDetector.DetectDesktop();
+        if (_command != PlayerCommand.Idle)
         {
-            if (!Maze.Instance.Grid[_mazePosition].WallExists(movement))
-            {
-                _mazePosition += movement;
-                SyncRealPosition();
-            }
+            playerCommands.Add(_command);
+            ExecuteLastCommand();
+        }
+    }
+
+    private void ExecuteLastCommand()
+    {
+        PlayerCommand last = playerCommands.Last();
+        last.Execute(this);
+        SyncRealPosition();
+    }
+
+    public void Move(Vector2Int direction)
+    {
+        if (!Maze.Instance.Grid[_mazePosition].WallExists(direction))
+        {
+            _mazePosition += direction;
+            SyncRealPosition();
         }
     }
 
@@ -72,10 +67,37 @@ public class Player : MonoBehaviour
     }
 }
 
+public class PlayerCommand
+{
+    public static readonly PlayerCommand MoveUp =
+        new PlayerCommand((Player player) => player.Move(Vector2Int.up));
+
+    public static readonly PlayerCommand MoveDown =
+        new PlayerCommand((Player player) => player.Move(Vector2Int.down));
+
+    public static readonly PlayerCommand MoveLeft =
+        new PlayerCommand((Player player) => player.Move(Vector2Int.left));
+
+    public static readonly PlayerCommand MoveRight =
+        new PlayerCommand((Player player) => player.Move(Vector2Int.right));
+
+    public static readonly PlayerCommand Idle =
+        new PlayerCommand((Player player) => { });
+
+    public delegate void ExecuteCallback(Player player);
+
+    public PlayerCommand(ExecuteCallback executeMethod)
+    {
+        Execute = executeMethod;
+    }
+
+    public ExecuteCallback Execute { get; private set; }
+}
+
 /// <summary>
 /// Detects input for different platforms. Methods to be called on Update.
 /// </summary>
-static class InputDetector
+static class PlayerActionDetector
 {
     static private Vector3 touchStart;
     const double minSwipeDistance = 0.1;  //minimum distance for a swipe to be registered (fraction of screen height)
@@ -84,7 +106,7 @@ static class InputDetector
     /// Detects swipes on mobile platforms
     /// </summary>
     /// <returns>Direction of movement</returns>
-    public static Vector2Int DetectMobile()
+    public static PlayerCommand DetectMobile()
     {
         if (Input.touchCount == 1)
         {
@@ -102,40 +124,40 @@ static class InputDetector
                     // check which axis is more significant
                     if (Mathf.Abs(touchEnd.x - touchStart.x) > Mathf.Abs(touchEnd.y - touchStart.y))
                     {
-                        return (touchEnd.x > touchStart.x) ? Vector2Int.right : Vector2Int.left;
+                        return (touchEnd.x > touchStart.x) ? PlayerCommand.MoveRight : PlayerCommand.MoveLeft;
                     }
                     else
                     {
-                        return (touchEnd.y > touchStart.y) ? Vector2Int.up : Vector2Int.down;
+                        return (touchEnd.y > touchStart.y) ? PlayerCommand.MoveUp : PlayerCommand.MoveDown;
                     }
                 }
             }
         }
-        return Vector2Int.zero;
+        return PlayerCommand.Idle;
     }
 
     /// <summary>
     /// Detects arrow key presses on desktop
     /// </summary>
     /// <returns>Direction of movement</returns>
-    public static Vector2Int DetectDesktop()
+    public static PlayerCommand DetectDesktop()
     {
         if (Input.GetKeyUp(KeyCode.UpArrow))
         {
-            return Vector2Int.up;
+            return PlayerCommand.MoveUp;
         }
         if (Input.GetKeyUp(KeyCode.DownArrow))
         {
-            return Vector2Int.down;
+            return PlayerCommand.MoveDown;
         }
         if (Input.GetKeyUp(KeyCode.LeftArrow))
         {
-            return Vector2Int.left;
+            return PlayerCommand.MoveLeft;
         }
         if (Input.GetKeyUp(KeyCode.RightArrow))
         {
-            return Vector2Int.right;
+            return PlayerCommand.MoveRight;
         }
-        return Vector2Int.zero;
+        return PlayerCommand.Idle;
     }
 }
