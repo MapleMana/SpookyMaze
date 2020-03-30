@@ -20,6 +20,10 @@ public class Width : MonoBehaviour
         
     }
 
+    /// <summary>
+    /// Called when slider value is changed, displays width and changes it in GameManager
+    /// </summary>
+    /// <param name="width"></param>
     public void WidthChanged(float width)
     {
         this.width.text = width.ToString();

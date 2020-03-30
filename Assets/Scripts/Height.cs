@@ -20,6 +20,10 @@ public class Height : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// Called when slider value is changed, displays height and changes it in GameManager
+    /// </summary>
+    /// <param name="height"></param>
     public void HeightChanged(float height)
     {
         this.height.text = height.ToString();
