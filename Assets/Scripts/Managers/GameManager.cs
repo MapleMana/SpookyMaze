@@ -34,13 +34,18 @@ public class GameManager : MonoBehaviour
         SceneManager.sceneLoaded -= OnFullLoad;
     }
 
+    public static void GenerateMaze(int width, int height)
+    {
+        Maze.Instance.Initialize(width, height);
+        Maze.Instance.Generate();
+        Maze.Instance.Display();
+    }
+
     private void OnFullLoad(Scene scene, LoadSceneMode mode)
     {
         if (scene.name == "Maze")
         {
-            Maze.Instance.Initialize(10, 15);
-            Maze.Instance.Generate();
-            Maze.Instance.Display();
+            GenerateMaze(12, 12);
 
             CameraManager.Instance.FocusOn(Maze.Instance);
 
