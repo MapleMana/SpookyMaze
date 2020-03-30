@@ -1,14 +1,16 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
     private int mazeWidth;
     private int mazeHeight;
     private bool reload = false;
-
+    
     private static UIManager _instance;
 
     public static UIManager Instance { get => _instance; set => _instance = value; }
@@ -42,25 +44,5 @@ public class UIManager : MonoBehaviour
     void Update()
     {
 
-    }
-
-    public void SliderWidthChanged(int newWidth)
-    {
-        mazeWidth = newWidth;
-        reload = true;
-    }
-
-    public void SliderHeightChanged(int newHeight)
-    {
-        mazeHeight = newHeight;
-        reload = true;
-    }
-
-    public void ReloadMazeGeneration()
-    {
-        if (reload)
-        {
-            GameManager.GenerateMaze(mazeWidth, mazeHeight);
-        }
     }
 }
