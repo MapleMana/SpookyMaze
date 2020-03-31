@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
 
     public static int MazeWidth = 0;
     public static int MazeHeight = 0;
-    private const int INITIAL_VALUE = 12;
+    private const int INITIAL_VALUE = 10;
 
     public static GameManager Instance { get => _instance; }
 
