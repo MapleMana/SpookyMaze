@@ -45,15 +45,23 @@ public class UIManager : MonoBehaviour
 
     }
     
+    /// <summary>
+    /// Called when slider value is changed and passes the new width to the GM
+    /// </summary>
+    /// <param name="width"></param>
     public void WidthChanged(float width)
     {
         Width.text = width.ToString();
-        GameManager.MazeWidth = (int) width;
+        GameManager.Instance.MazeWidth = (int) width;
     }
-    
+
+    /// <summary>
+    /// Called when slider value is changed and passes the new height to the GM
+    /// </summary>
+    /// <param name="height"></param>
     public void HeightChanged(float height)
     {
         Height.text = height.ToString();
-        GameManager.MazeHeight = (int) height;
+        GameManager.Instance.MazeHeight = (int) height;
     }
 }
