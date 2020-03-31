@@ -1,11 +1,16 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
-{
+{    
     private static UIManager _instance;
+
+    public Text Width;
+    public Text Height; 
 
     public static UIManager Instance { get => _instance; set => _instance = value; }
 
@@ -37,6 +42,26 @@ public class UIManager : MonoBehaviour
 
     void Update()
     {
-        
+
+    }
+    
+    /// <summary>
+    /// Called when slider value is changed and passes the new width to the GM
+    /// </summary>
+    /// <param name="width"></param>
+    public void WidthChanged(float width)
+    {
+        Width.text = width.ToString();
+        GameManager.Instance.MazeWidth = (int) width;
+    }
+
+    /// <summary>
+    /// Called when slider value is changed and passes the new height to the GM
+    /// </summary>
+    /// <param name="height"></param>
+    public void HeightChanged(float height)
+    {
+        Height.text = height.ToString();
+        GameManager.Instance.MazeHeight = (int) height;
     }
 }

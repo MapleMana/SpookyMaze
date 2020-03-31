@@ -7,6 +7,30 @@ public class GameManager : MonoBehaviour
 {
     private static GameManager _instance;
 
+    private int _mazeWidth;
+    private int _mazeHeight;
+
+    public int initialMazeWidth = 10;
+    public int initialMazeHeight = 10;
+
+    // public setters and getters for _mazeWidth and _mazeHeight
+    public int MazeWidth
+    {
+        get => _mazeWidth;
+        set
+        {
+            _mazeWidth = value > 0 ? value : _mazeWidth;
+        }
+    }
+    public int MazeHeight
+    {
+        get => _mazeHeight;
+        set
+        {
+            _mazeHeight = value > 0 ? value : _mazeHeight;
+        }
+    }
+
     public static GameManager Instance { get => _instance; }
 
     private GameManager() { }
@@ -26,6 +50,8 @@ public class GameManager : MonoBehaviour
 
     private void OnEnable()
     {
+        _mazeWidth = initialMazeWidth;
+        _mazeHeight = initialMazeHeight;
         SceneManager.sceneLoaded += OnFullLoad;
     }
 
@@ -38,7 +64,7 @@ public class GameManager : MonoBehaviour
     {
         if (scene.name == "Maze")
         {
-            Maze.Instance.Initialize(10, 15);
+            Maze.Instance.Initialize(_mazeWidth, _mazeHeight);
             Maze.Instance.Generate();
             Maze.Instance.Display();
 
