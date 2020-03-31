@@ -16,24 +16,18 @@ public class GameManager : MonoBehaviour
     // public setters and getters for _mazeWidth and _mazeHeight
     public int MazeWidth
     {
-        get
-        {
-            return this._mazeWidth;
-        }
+        get => _mazeWidth;
         set
         {
-            this._mazeWidth = value;
+            _mazeWidth = value > 0 ? value : _mazeWidth;
         }
     }
     public int MazeHeight
     {
-        get
-        {
-            return this._mazeHeight;
-        }
+        get => _mazeHeight;
         set
         {
-            this._mazeHeight = value;
+            _mazeHeight = value > 0 ? value : _mazeHeight;
         }
     }
 
