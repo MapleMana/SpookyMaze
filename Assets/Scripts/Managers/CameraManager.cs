@@ -8,7 +8,7 @@ public class CameraManager : MonoBehaviour
     private static CameraManager _instance;
     private Camera _camera;
 
-    public float widthMargin;
+    public float mazeMargin;
 
     public static CameraManager Instance { get => _instance; }
 
@@ -32,13 +32,17 @@ public class CameraManager : MonoBehaviour
 
     public void FocusOn(Maze maze)
     {
+        float screenRatio = 1f * Screen.width / Screen.height;
+
         float mazeHeight = MazeCell.CELL_WIDTH * maze.Height;
         float mazeWidth = MazeCell.CELL_WIDTH * maze.Width;
-        float largerSide = Mathf.Max(mazeWidth, mazeHeight);
-        float heightFOV = 2 * Mathf.Tan(_camera.fieldOfView * Mathf.Deg2Rad / 2);
-        float widthFOV = heightFOV * Screen.width / Screen.height;
+        float significantSide = (mazeWidth > mazeHeight * screenRatio) ? mazeWidth : mazeHeight;
 
-        float cameraHeight = (largerSide + 2 * widthMargin) / widthFOV;
+        float heightFOV = 2 * Mathf.Tan(_camera.fieldOfView * Mathf.Deg2Rad / 2);
+        float widthFOV = heightFOV * screenRatio;
+        float FOV = (mazeWidth > mazeHeight * screenRatio) ? widthFOV : heightFOV;
+
+        float cameraHeight = (significantSide + 2 * mazeMargin) / FOV;
         transform.position = new Vector3(mazeWidth / 2, Mathf.Abs(cameraHeight), mazeHeight / 2);
     }
 }

@@ -2799,7 +2799,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96f82d3736d98fd4190b010dd7085534, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  widthMargin: 10
+  mazeMargin: 10
 --- !u!1 &1481874977
 GameObject:
   m_ObjectHideFlags: 0
