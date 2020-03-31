@@ -210,7 +210,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1247416146}
+      - m_Target: {fileID: 1977626363}
         m_MethodName: WidthChanged
         m_Mode: 0
         m_Arguments:
@@ -2278,7 +2278,6 @@ GameObject:
   - component: {fileID: 970702447}
   - component: {fileID: 970702449}
   - component: {fileID: 970702448}
-  - component: {fileID: 970702450}
   m_Layer: 5
   m_Name: SliderHeightNumber
   m_TagString: Untagged
@@ -2345,18 +2344,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 970702446}
   m_CullTransparentMesh: 0
---- !u!114 &970702450
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 970702446}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d2b3a6ba40f253d4eb31bb38c0f007e4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1027124473
 GameObject:
   m_ObjectHideFlags: 0
@@ -2404,7 +2391,6 @@ GameObject:
   - component: {fileID: 1247416145}
   - component: {fileID: 1247416148}
   - component: {fileID: 1247416147}
-  - component: {fileID: 1247416146}
   m_Layer: 5
   m_Name: SliderWidthNumber
   m_TagString: Untagged
@@ -2431,18 +2417,6 @@ RectTransform:
   m_AnchoredPosition: {x: 9.7, y: 107.999985}
   m_SizeDelta: {x: 38.7, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1247416146
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1247416144}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8933bffe80217954b8544763ebe62b25, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1247416147
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3637,6 +3611,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 755ddf685f74042478c7d5511205869c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Width: {fileID: 1247416147}
+  Height: {fileID: 970702448}
 --- !u!4 &1977626364
 Transform:
   m_ObjectHideFlags: 0
@@ -3741,7 +3717,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 970702450}
+      - m_Target: {fileID: 1977626363}
         m_MethodName: HeightChanged
         m_Mode: 0
         m_Arguments:

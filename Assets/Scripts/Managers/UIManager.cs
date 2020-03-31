@@ -9,6 +9,9 @@ public class UIManager : MonoBehaviour
 {    
     private static UIManager _instance;
 
+    public Text Width;
+    public Text Height; 
+
     public static UIManager Instance { get => _instance; set => _instance = value; }
 
     private void Awake()
@@ -40,5 +43,17 @@ public class UIManager : MonoBehaviour
     void Update()
     {
 
+    }
+    
+    public void WidthChanged(float width)
+    {
+        Width.text = width.ToString();
+        GameManager.MazeWidth = (int) width;
+    }
+    
+    public void HeightChanged(float height)
+    {
+        Height.text = height.ToString();
+        GameManager.MazeHeight = (int) height;
     }
 }

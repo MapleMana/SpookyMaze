@@ -7,8 +7,9 @@ public class GameManager : MonoBehaviour
 {
     private static GameManager _instance;
 
-    public static int MazeWidth;
-    public static int MazeHeight;
+    public static int MazeWidth = 0;
+    public static int MazeHeight = 0;
+    private const int INITIAL_VALUE = 12;
 
     public static GameManager Instance { get => _instance; }
 
@@ -41,14 +42,8 @@ public class GameManager : MonoBehaviour
     {
         if (scene.name == "Maze")
         {
-            if (MazeWidth == 0)
-            {
-                MazeWidth = 12;
-            }
-            if (MazeHeight == 0)
-            {
-                MazeHeight = 12;
-            }
+            MazeWidth = MazeWidth == 0 ? INITIAL_VALUE : MazeWidth;
+            MazeHeight = MazeHeight == 0 ? INITIAL_VALUE : MazeHeight;
 
             Maze.Instance.Initialize(MazeWidth, MazeHeight);
             Maze.Instance.Generate();
