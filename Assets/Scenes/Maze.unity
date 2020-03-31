@@ -208,7 +208,7 @@ Transform:
   m_GameObject: {fileID: 39941531}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 50, y: 1, z: 50}
+  m_LocalScale: {x: 200, y: 1, z: 200}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 1
@@ -426,6 +426,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   wallTemplate: {fileID: 5367195612389504684, guid: 619d23227803240418a40a6a337c1833,
     type: 3}
+  start: {x: 0, y: 0}
+  finish: {x: 0, y: 0}
 --- !u!4 &1980283121
 Transform:
   m_ObjectHideFlags: 0
