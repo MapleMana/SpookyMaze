@@ -426,6 +426,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 180ce68db0e03794287c5675091f7eea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxLightAngle: 120
+  minLightAngle: 20
 --- !u!23 &1144077015
 MeshRenderer:
   m_ObjectHideFlags: 0
