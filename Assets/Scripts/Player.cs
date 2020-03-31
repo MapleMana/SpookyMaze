@@ -10,6 +10,12 @@ public class Player : MonoBehaviour
     private Vector2Int _mazePosition;
     private PlayerCommand _command;
     private List<PlayerCommand> playerCommands = new List<PlayerCommand>();
+    private Light _playerLight;
+
+    [Range(0f, 180f)]
+    public float maxLightAngle;
+    [Range(0f, 180f)]
+    public float minLightAngle;
 
     public static Player Instance { get => _instance; set => _instance = value; }
 
@@ -25,12 +31,26 @@ public class Player : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        _playerLight = GetComponentInChildren<Light>();
+    }
+
     public void PlaceOnMaze()
     {
         _mazePosition = Maze.Instance.start;
         SyncRealPosition();
     }
     
+    /// <summary>
+    /// Sets the angle of the light cone above the player
+    /// </summary>
+    /// <param name="coef">Completeness (max -> min) coefficient</param>
+    public void SetLightAngle(float coef)
+    {
+        _playerLight.spotAngle = Mathf.Lerp(minLightAngle, maxLightAngle, coef);
+    }
+
     void Update()
     {
         _command = PlayerActionDetector.DetectDesktop();

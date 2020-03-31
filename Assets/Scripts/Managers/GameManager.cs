@@ -9,11 +9,15 @@ public class GameManager : MonoBehaviour
 
     private int _mazeWidth;
     private int _mazeHeight;
+    private float _timeLeft;
+    private bool _levelStarted = false;
 
     public int initialMazeWidth = 10;
     public int initialMazeHeight = 10;
+    [Range(0f, 500f)]
+    public float levelTime = 20.0f;
+    
 
-    // public setters and getters for _mazeWidth and _mazeHeight
     public int MazeWidth
     {
         get => _mazeWidth;
@@ -30,8 +34,8 @@ public class GameManager : MonoBehaviour
             _mazeHeight = value > 0 ? value : _mazeHeight;
         }
     }
-
     public static GameManager Instance { get => _instance; }
+
 
     private GameManager() { }
 
@@ -71,11 +75,35 @@ public class GameManager : MonoBehaviour
             CameraManager.Instance.FocusOn(Maze.Instance);
 
             Player.Instance.PlaceOnMaze();
+
+            _levelStarted = true;
+            _timeLeft = levelTime;
         }
     }
 
     public void LoadLevel(string sceneName)
     {
         SceneManager.LoadScene(sceneName);
+    }
+
+    /// <summary>
+    /// Called when the level ends (player wins/loses)
+    /// </summary>
+    public void EndLevel()
+    {
+        _levelStarted = false;
+    }
+
+    public void Update()
+    {
+        if (_levelStarted)
+        {
+            _timeLeft -= Time.deltaTime;
+            if (_timeLeft < 0)
+            {
+                EndLevel();
+            }
+            Player.Instance.SetLightAngle(_timeLeft / levelTime);
+        }
     }
 }

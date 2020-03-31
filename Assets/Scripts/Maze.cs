@@ -68,7 +68,7 @@ public class MazeCell
 
 public class Maze : MonoBehaviour
 {
-    const float WALL_WIDTH = 2.5f;
+    const float WALL_WIDTH = 1.5f;
     private static Maze _instance;
 
     private int _width = 10;
@@ -196,9 +196,13 @@ public class Maze : MonoBehaviour
     private void PutWall(Vector3 pos, bool horizontal=true)
     {
         GameObject wall = Instantiate(wallTemplate, pos, Quaternion.identity);
-        float wallWidth = horizontal ? MazeCell.CELL_WIDTH + WALL_WIDTH : WALL_WIDTH;
-        float wallHeight = horizontal ? WALL_WIDTH : MazeCell.CELL_WIDTH + WALL_WIDTH;
-        wall.transform.localScale = new Vector3(wallWidth, MazeCell.CELL_WIDTH, wallHeight);
+        float wallX = horizontal ? MazeCell.CELL_WIDTH + WALL_WIDTH : WALL_WIDTH;
+        float wallY = horizontal ? WALL_WIDTH : MazeCell.CELL_WIDTH + WALL_WIDTH;
+
+        // a random value is added, so that the overlap is better rendered
+        float wallHeight = MazeCell.CELL_WIDTH + Random.value * 0.1f;
+
+        wall.transform.localScale = new Vector3(wallX, wallHeight, wallY);
     }
 
     /// <summary>
