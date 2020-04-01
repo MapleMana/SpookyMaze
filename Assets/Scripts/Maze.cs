@@ -106,13 +106,12 @@ public class Maze : MonoBehaviour
     /// </summary>
     /// <param name="width">The width (X) of the maze</param>
     /// <param name="height">The height (Z) of the maze</param>
+    /// <param name="algorithm">The algorithm to use for maze generation</param>
     public void Initialize(int width, int height, GenerationStrategy algorithm)
     {
         _width = width;
         _height = height;
         _genAlgo = algorithm;
-
-        Fill();
 
         _start = new Vector2Int(0, height - 1);
         _end = new Vector2Int(width - 1, 0);
@@ -122,7 +121,7 @@ public class Maze : MonoBehaviour
     /// Fills all the walls of the maze with a specific state
     /// </summary>
     /// <param name="wallState">The state of the walls to fill with</param>
-    private void Fill(WallState wallState=WallState.Exists)
+    public void Fill(WallState wallState=WallState.Exists)
     {
         for (int x = 0; x < _width; x++)
         {

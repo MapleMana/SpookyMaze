@@ -33,19 +33,54 @@ public abstract class GenerationStrategy
 
 public class DFSGeneration : GenerationStrategy
 {
+    /// <summary>
+    /// Generates the maze using the DFS algorithm.
+    /// </summary>
     public override void Generate()
     {
+        Maze.Instance.Fill();
+        Stack<Vector2Int> path = new Stack<Vector2Int>();
+        Dictionary<Vector2Int, bool> visited = new Dictionary<Vector2Int, bool>();
+        foreach (var kvPair in Maze.Instance.Grid)
+        {
+            visited[kvPair.Key] = false;
+        }
+        path.Push(Maze.Instance.Start);
+        while (path.Count != 0)
+        {
+            Vector2Int curPos = path.Peek();
+            MazeCell curCell = Maze.Instance.Grid[curPos];
+            visited[curPos] = true;
 
+            MazeCell.neighbours.Shuffle();
+            bool isDeadEnd = true;
+            foreach (Vector2Int direction in MazeCell.neighbours)
+            {
+                Vector2Int newPos = curPos + direction;
+                if (InBounds(newPos) && !visited[newPos])
+                {
+                    path.Push(newPos);
+                    ChangeWall(curPos, direction, WallState.Destroyed);
+                    isDeadEnd = false;
+                    break; // process the newly added cell
+                }
+            }
+            if (isDeadEnd)
+            {
+                path.Pop();
+            }
+        }
     }
 }
 
 public class BFSGeneration : GenerationStrategy
 {
     /// <summary>
-    /// Generates the maze using the BFS algorithm. All the walls should exist at the start of execution.
+    /// Generates the maze using the BFS algorithm.
     /// </summary>
     public override void Generate()
     {
+        Maze.Instance.Fill();
         Stack<Vector2Int> path = new Stack<Vector2Int>();
         Dictionary<Vector2Int, bool> visited = new Dictionary<Vector2Int, bool>();
         foreach (var kvPair in Maze.Instance.Grid)
