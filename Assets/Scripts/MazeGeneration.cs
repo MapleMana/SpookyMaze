@@ -76,36 +76,44 @@ public class DFSGeneration : GenerationStrategy
 public class BFSGeneration : GenerationStrategy
 {
     /// <summary>
-    /// Generates the maze using the BFS algorithm.
+    /// Generates the maze using the BFS algorithm. 
+    /// Randomness is added by randomly selecting if the cell will proceed to the next stage of the BFS
+    /// or it will be processed further
     /// </summary>
     public override void Generate()
     {
         Maze.Instance.Fill();
-        Stack<Vector2Int> path = new Stack<Vector2Int>();
+        Stack<Vector2Int> stage = new Stack<Vector2Int>();
         Dictionary<Vector2Int, bool> visited = new Dictionary<Vector2Int, bool>();
         foreach (var kvPair in Maze.Instance.Grid)
         {
             visited[kvPair.Key] = false;
         }
-        path.Push(Maze.Instance.Start);
+        stage.Push(Maze.Instance.Start);
         visited[Maze.Instance.Start] = true;
-        while (path.Count != 0)
+        while (stage.Count != 0)
         {
-            Vector2Int curPos = path.Pop();
-            MazeCell curCell = Maze.Instance.Grid[curPos];
-
-            MazeCell.neighbours.Shuffle();
-
-            foreach (Vector2Int direction in MazeCell.neighbours)
+            Stack<Vector2Int> nextStage = new Stack<Vector2Int>();
+            while (stage.Count != 0)
             {
-                Vector2Int newPos = curPos + direction;
-                if (InBounds(newPos) && !visited[newPos])
+                Vector2Int curPos = stage.Pop();
+                MazeCell curCell = Maze.Instance.Grid[curPos];
+
+                MazeCell.neighbours.Shuffle();
+
+                foreach (Vector2Int direction in MazeCell.neighbours)
                 {
-                    visited[newPos] = true;
-                    path.Push(newPos);
-                    ChangeWall(curPos, direction, WallState.Destroyed);
+                    Vector2Int newPos = curPos + direction;
+                    if (InBounds(newPos) && !visited[newPos])
+                    {
+                        visited[newPos] = true;
+                        ChangeWall(curPos, direction, WallState.Destroyed);
+                        Stack<Vector2Int> targetStage = (Random.value > 0.5) ? stage : nextStage;
+                        targetStage.Push(newPos);
+                    }
                 }
             }
+            stage = nextStage;
         }
     }
 }
