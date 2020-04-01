@@ -79,13 +79,14 @@ public class Player : MonoBehaviour
 
             if (_mazePosition == Maze.Instance.finish && executeRoutine == null)
             {
-                executeRoutine = StartCoroutine(ReplayAllMovements());
+                executeRoutine = StartCoroutine(ReplayMovementsFromFinish());
             }
         }
     }
 
-    private IEnumerator ReplayAllMovements()
+    private IEnumerator ReplayMovementsFromStart()
     {
+        yield return new WaitForSeconds(0.3f);
         this.PlaceOnMaze();
         yield return new WaitForSeconds(0.3f);
         for (int i = 0; i < playerCommands.Count; i++)
@@ -96,6 +97,37 @@ public class Player : MonoBehaviour
             yield return new WaitForSeconds(0.3f);
         }
         
+        playerCommands.Clear();
+    }
+
+    private IEnumerator ReplayMovementsFromFinish()
+    {
+        yield return new WaitForSeconds(0.3f);
+        for (int i = playerCommands.Count - 1; i >= 0; i--)
+        {
+            PlayerCommand command = playerCommands[i];
+            if (command == PlayerCommand.MoveRight)
+            {
+                command = PlayerCommand.MoveLeft;
+            }
+            else if (command == PlayerCommand.MoveLeft)
+            {
+                command = PlayerCommand.MoveRight;
+            }
+
+            if (command == PlayerCommand.MoveDown)
+            {
+                command = PlayerCommand.MoveUp;
+            }
+            else if (command == PlayerCommand.MoveUp)
+            {
+                command = PlayerCommand.MoveDown;
+            }
+            command.Execute(this);
+
+            yield return new WaitForSeconds(0.3f);
+        }
+
         playerCommands.Clear();
     }
 

@@ -16,7 +16,6 @@ public class GameManager : MonoBehaviour
     public int initialMazeHeight = 10;
     [Range(0f, 500f)]
     public float levelTime = 20.0f;
-    
 
     public int MazeWidth
     {
