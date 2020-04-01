@@ -11,6 +11,8 @@ public class Player : MonoBehaviour
     private PlayerCommand _command;
     private List<PlayerCommand> playerCommands = new List<PlayerCommand>();
     private Light _playerLight;
+    
+    private Coroutine executeRoutine;
 
     [Range(0f, 180f)]
     public float maxLightAngle;
@@ -54,7 +56,7 @@ public class Player : MonoBehaviour
     void Update()
     {
         _command = PlayerActionDetector.DetectDesktop();
-        if (_command != PlayerCommand.Idle)
+        if (_command != PlayerCommand.Idle && executeRoutine == null)
         {
             playerCommands.Add(_command);
             ExecuteLastCommand();
@@ -74,7 +76,27 @@ public class Player : MonoBehaviour
         {
             _mazePosition += direction;
             SyncRealPosition();
+
+            if (_mazePosition == Maze.Instance.finish && executeRoutine == null)
+            {
+                executeRoutine = StartCoroutine(ReplayAllMovements());
+            }
         }
+    }
+
+    private IEnumerator ReplayAllMovements()
+    {
+        this.PlaceOnMaze();
+        yield return new WaitForSeconds(0.3f);
+        for (int i = 0; i < playerCommands.Count; i++)
+        {
+            PlayerCommand command = playerCommands[i];
+            command.Execute(this);
+
+            yield return new WaitForSeconds(0.3f);
+        }
+        
+        playerCommands.Clear();
     }
 
     /// <summary>
