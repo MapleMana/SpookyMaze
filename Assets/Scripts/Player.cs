@@ -79,13 +79,14 @@ public class Player : MonoBehaviour
 
             if (_mazePosition == Maze.Instance.finish && executeRoutine == null)
             {
-                executeRoutine = StartCoroutine(ReplayMovementsFromFinish());
+                executeRoutine = StartCoroutine(ReplayMovementsFromStart());
             }
         }
     }
 
     private IEnumerator ReplayMovementsFromStart()
     {
+        LightManager.Instance.TurnOn();
         yield return new WaitForSeconds(0.3f);
         this.PlaceOnMaze();
         yield return new WaitForSeconds(0.3f);
@@ -98,10 +99,12 @@ public class Player : MonoBehaviour
         }
         
         playerCommands.Clear();
+        LightManager.Instance.TurnOff();
     }
 
     private IEnumerator ReplayMovementsFromFinish()
     {
+        LightManager.Instance.TurnOn();
         yield return new WaitForSeconds(0.3f);
         for (int i = playerCommands.Count - 1; i >= 0; i--)
         {
@@ -129,6 +132,7 @@ public class Player : MonoBehaviour
         }
 
         playerCommands.Clear();
+        LightManager.Instance.TurnOff();
     }
 
     /// <summary>
