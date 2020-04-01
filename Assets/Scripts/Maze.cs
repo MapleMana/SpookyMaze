@@ -73,17 +73,20 @@ public class Maze : MonoBehaviour
 
     private int _width = 10;
     private int _height = 10;
+    private Vector2Int _start;
+    private Vector2Int _end;
     private Dictionary<Vector2Int, MazeCell> _grid = new Dictionary<Vector2Int, MazeCell>();
     private static Random _generator = new Random();
+    private GenerationStrategy _genAlgo;
 
     public GameObject wallTemplate;
 
-    public Vector2Int start;
-    public Vector2Int finish;
+    public Vector2Int Start { get => _start; }
+    public Vector2Int End { get => _end; }
 
     public int Width { get => _width; }
     public int Height { get => _height; }
-    public static Maze Instance { get => _instance; set => _instance = value; }
+    public static Maze Instance { get => _instance; }
     public Dictionary<Vector2Int, MazeCell> Grid { get => _grid; }
 
     private void Awake()
@@ -103,15 +106,16 @@ public class Maze : MonoBehaviour
     /// </summary>
     /// <param name="width">The width (X) of the maze</param>
     /// <param name="height">The height (Z) of the maze</param>
-    public void Initialize(int width, int height)
+    public void Initialize(int width, int height, GenerationStrategy algorithm)
     {
         _width = width;
         _height = height;
+        _genAlgo = algorithm;
 
         Fill();
 
-        start = new Vector2Int(0, height - 1);
-        finish = new Vector2Int(width - 1, 0);
+        _start = new Vector2Int(0, height - 1);
+        _end = new Vector2Int(width - 1, 0);
     }
 
     /// <summary>
@@ -130,62 +134,9 @@ public class Maze : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Checks if the position is in bounds of the maze
-    /// </summary>
-    /// <param name="pos">The position to check</param>
-    /// <returns></returns>
-    private bool InBounds(Vector2Int pos)
-    {
-        return pos.x >= 0 && pos.x < _width && pos.y >= 0 && pos.y < _height;
-    }
-
-    /// <summary>
-    /// Changes the state of the specified wall
-    /// </summary>
-    /// <param name="position">The position of the MazeCell that is adjacent to the target wall</param>
-    /// <param name="direction">Determines which wall to change relative to the specified MazeCell</param>
-    /// <param name="wallState">The desired state of the wall</param>
-    private void ChangeWall(Vector2Int position, Vector2Int direction, WallState wallState)
-    {
-        Vector2Int neighbour = position + direction;
-        _grid[position].SetWall(direction, wallState);
-        _grid[neighbour].SetWall(direction * -1, wallState);
-    }
-
-    
-    /// <summary>
-    /// Generates the maze using the DFS algorithm. All the walls should exist at the start of execution.
-    /// </summary>
     public void Generate()
     {
-        Stack<Vector2Int> path = new Stack<Vector2Int>();
-        Dictionary<Vector2Int, bool> visited = new Dictionary<Vector2Int, bool>();
-        foreach (var kvPair in _grid)
-        {
-            visited[kvPair.Key] = false;
-        }
-        path.Push(start);
-        visited[start] = true;
-        while (path.Count != 0)
-        {
-            Vector2Int curPos = path.Pop();
-            MazeCell curCell = _grid[curPos];
-
-            MazeCell.neighbours.Shuffle();
-
-            foreach (Vector2Int direction in MazeCell.neighbours)
-            {
-                Vector2Int newPos = curPos + direction;
-                if (InBounds(newPos) && !visited[newPos])
-                {
-                    visited[newPos] = true;
-                    path.Push(newPos);
-                    ChangeWall(curPos, direction, WallState.Destroyed);
-                }
-            }
-        }
-
+        _genAlgo.Generate();
     }
 
     /// <summary>
