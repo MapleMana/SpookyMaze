@@ -13,7 +13,7 @@ public class Player : MonoBehaviour
     public Light _playerLight;
     
     private bool replayInProgress = false;
-    public static float PAUSE_IN_REPLAY = 0.2f;
+    public static float PAUSE_IN_REPLAY = 0.15f;
 
     [Range(0f, 180f)]
     public float maxLightAngle;
@@ -63,7 +63,7 @@ public class Player : MonoBehaviour
             ExecuteLastCommand();
         }
         
-        if (_mazePosition == Maze.Instance.finish && replayInProgress == false)
+        if (_mazePosition == Maze.Instance.End && replayInProgress == false)
         {
             replayInProgress = true;
             GameManager.Instance.EndLevel();
