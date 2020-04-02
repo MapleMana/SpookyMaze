@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour
     private int _mazeWidth;
     private int _mazeHeight;
     private float _timeLeft;
-    public bool _levelStarted = false;
+    private bool _levelStarted = false;
 
     public int initialMazeWidth = 10;
     public int initialMazeHeight = 10;
@@ -74,6 +74,9 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Initializes, loads and displays the new maze
+    /// </summary>
     public void StartNewLevel()
     {
         Maze.Instance.Initialize(_mazeWidth, _mazeHeight);

@@ -3061,7 +3061,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fd2e831d02dea64986b02415359c866, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _levelStarted: 0
   initialMazeWidth: 10
   initialMazeHeight: 10
   levelTime: 20
@@ -3162,7 +3161,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1977626363}
-        m_MethodName: NextLevel
+        m_MethodName: GoToNextLevel
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

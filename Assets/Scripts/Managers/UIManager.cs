@@ -30,12 +30,11 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// This method is invoked when the "Play" button is pressed
+    /// This method is invoked when the "Play" button is pressed, loads the new maze
     /// </summary>
     public void StartGame()
     {
-        MainMenu.gameObject.SetActive(false);
-        LightManager.Instance.TurnOff();
+        MainMenu.SetActive(false);
         GameManager.Instance.LoadLevel("Maze");
     }
 
@@ -49,28 +48,41 @@ public class UIManager : MonoBehaviour
 
     }
 
-    public void ShowMenu()
+    /// <summary>
+    /// Displays the finish menu, when a player gets to the end point
+    /// </summary>
+    public void ShowFinishMenu()
     {
         LightManager.Instance.TurnOn();
-        FinishMenu.gameObject.SetActive(true);
+        FinishMenu.SetActive(true);
     }
 
+    /// <summary>
+    /// Replays player's movements from the start
+    /// </summary>
     public void WatchReplay()
     {
-        FinishMenu.gameObject.SetActive(false);
+        FinishMenu.SetActive(false);
         StartCoroutine(Player.Instance.ReplayMovementsFromStart());
     }
 
-    public void NextLevel()
+    /// <summary>
+    /// Replays player's movements from finish to the start and reloads the maze
+    /// </summary>
+    public void GoToNextLevel()
     {
-        FinishMenu.gameObject.SetActive(false);
+        FinishMenu.SetActive(false);
         StartCoroutine(Player.Instance.ReplayMovementsFromFinish());
     }
 
+    /// <summary>
+    /// Goes to the MainMenu Scene and displays the main menu again
+    /// </summary>
     public void GoToMainMenu()
     {
-        FinishMenu.gameObject.SetActive(false);
-        MainMenu.gameObject.SetActive(true);
+        FinishMenu.SetActive(false);
+        MainMenu.SetActive(true);
+        LightManager.Instance.TurnOff();
         GameManager.Instance.LoadLevel("MainMenu");
     }
 
