@@ -496,8 +496,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   wallTemplate: {fileID: 5367195612389504684, guid: 619d23227803240418a40a6a337c1833,
     type: 3}
-  start: {x: 0, y: 0}
-  finish: {x: 0, y: 0}
 --- !u!4 &1980283121
 Transform:
   m_ObjectHideFlags: 0

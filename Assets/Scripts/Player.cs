@@ -41,7 +41,7 @@ public class Player : MonoBehaviour
 
     public void PlaceOnMaze()
     {
-        _mazePosition = Maze.Instance.start;
+        _mazePosition = Maze.Instance.Start;
         SyncRealPosition();
     }
     
