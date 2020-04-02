@@ -3062,8 +3062,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _levelStarted: 0
-  initialMazeWidth: 5
-  initialMazeHeight: 5
+  initialMazeWidth: 10
+  initialMazeHeight: 10
   levelTime: 20
 --- !u!4 &1490064582
 Transform:
