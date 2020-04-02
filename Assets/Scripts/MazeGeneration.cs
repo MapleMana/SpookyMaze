@@ -33,31 +33,121 @@ public abstract class GenerationStrategy
 
 public class DFSGeneration : GenerationStrategy
 {
+    Dictionary<Vector2Int, bool> visited;
+
+    public DFSGeneration()
+    {
+        visited = new Dictionary<Vector2Int, bool>();
+    }
+
     /// <summary>
-    /// Generates the maze using the DFS algorithm.
+    /// Processes a single sell at the specified position. Calls itself for random neighbors.
+    /// </summary>
+    /// <param name="curPos">The position of the cell to process</param>
+    void DFS(Vector2Int curPos)
+    {
+        visited[curPos] = true;
+        MazeCell.neighbours.Shuffle();
+        List<Vector2Int> neighboursOrder = new List<Vector2Int>(MazeCell.neighbours);
+        foreach (Vector2Int direction in neighboursOrder)
+        {
+            Vector2Int newPos = curPos + direction;
+            if (InBounds(newPos) && !visited.ContainsKey(newPos))
+            {
+                ChangeWall(curPos, direction, WallState.Destroyed);
+                DFS(newPos);
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Generates the maze using the Depth First Search algorithm.
+    /// </summary>
+    public override void Generate()
+    {
+        Maze.Instance.Fill();
+        visited.Clear();
+        DFS(Maze.Instance.Start);
+    }
+}
+
+public class BFSGeneration : GenerationStrategy
+{
+    /// <summary>
+    /// Generates the maze using the Breadth First Search algorithm. 
+    /// Randomness is added by randomly selecting if the cell will proceed to the next stage of the BFS
+    /// or it will be processed further
+    /// </summary>
+    public override void Generate()
+    {
+        Maze.Instance.Fill();
+        Stack<Vector2Int> stage = new Stack<Vector2Int>();
+        Dictionary<Vector2Int, bool> visited = new Dictionary<Vector2Int, bool>();
+        stage.Push(Maze.Instance.Start);
+        visited[Maze.Instance.Start] = true;
+        while (stage.Count != 0)
+        {
+            Stack<Vector2Int> nextStage = new Stack<Vector2Int>();
+            while (stage.Count != 0)
+            {
+                Vector2Int curPos = stage.Pop();
+
+                MazeCell.neighbours.Shuffle();
+                foreach (Vector2Int direction in MazeCell.neighbours)
+                {
+                    Vector2Int newPos = curPos + direction;
+                    if (InBounds(newPos) && !visited.ContainsKey(newPos))
+                    {
+                        visited[newPos] = true;
+                        ChangeWall(curPos, direction, WallState.Destroyed);
+                        Stack<Vector2Int> targetStage = (Random.value > 0.5) ? stage : nextStage;
+                        targetStage.Push(newPos);
+                    }
+                }
+            }
+            stage = nextStage;
+        }
+    }
+}
+
+public class BranchedDFSGeneration : GenerationStrategy
+{
+    Stack<T> ReverseStack<T>(Stack<T> stack)
+    {
+        Stack<T> result = new Stack<T>();
+        while (stack.Count != 0)
+        {
+            result.Push(stack.Pop());
+        }
+        return result;
+    }
+
+    /// <summary>
+    /// Generates the maze using the Depth First Search algorithm.
     /// </summary>
     public override void Generate()
     {
         Maze.Instance.Fill();
         Stack<Vector2Int> path = new Stack<Vector2Int>();
         Dictionary<Vector2Int, bool> visited = new Dictionary<Vector2Int, bool>();
-        foreach (var kvPair in Maze.Instance.Grid)
-        {
-            visited[kvPair.Key] = false;
-        }
         path.Push(Maze.Instance.Start);
         while (path.Count != 0)
         {
             Vector2Int curPos = path.Peek();
-            MazeCell curCell = Maze.Instance.Grid[curPos];
             visited[curPos] = true;
+
+            if (curPos == Maze.Instance.End && path.Count > 1)
+            {
+                path = ReverseStack<Vector2Int>(path);
+                continue;
+            }
 
             MazeCell.neighbours.Shuffle();
             bool isDeadEnd = true;
             foreach (Vector2Int direction in MazeCell.neighbours)
             {
                 Vector2Int newPos = curPos + direction;
-                if (InBounds(newPos) && !visited[newPos])
+                if (InBounds(newPos) && !visited.ContainsKey(newPos))
                 {
                     path.Push(newPos);
                     ChangeWall(curPos, direction, WallState.Destroyed);
@@ -71,49 +161,6 @@ public class DFSGeneration : GenerationStrategy
             }
         }
     }
-}
 
-public class BFSGeneration : GenerationStrategy
-{
-    /// <summary>
-    /// Generates the maze using the BFS algorithm. 
-    /// Randomness is added by randomly selecting if the cell will proceed to the next stage of the BFS
-    /// or it will be processed further
-    /// </summary>
-    public override void Generate()
-    {
-        Maze.Instance.Fill();
-        Stack<Vector2Int> stage = new Stack<Vector2Int>();
-        Dictionary<Vector2Int, bool> visited = new Dictionary<Vector2Int, bool>();
-        foreach (var kvPair in Maze.Instance.Grid)
-        {
-            visited[kvPair.Key] = false;
-        }
-        stage.Push(Maze.Instance.Start);
-        visited[Maze.Instance.Start] = true;
-        while (stage.Count != 0)
-        {
-            Stack<Vector2Int> nextStage = new Stack<Vector2Int>();
-            while (stage.Count != 0)
-            {
-                Vector2Int curPos = stage.Pop();
-                MazeCell curCell = Maze.Instance.Grid[curPos];
 
-                MazeCell.neighbours.Shuffle();
-
-                foreach (Vector2Int direction in MazeCell.neighbours)
-                {
-                    Vector2Int newPos = curPos + direction;
-                    if (InBounds(newPos) && !visited[newPos])
-                    {
-                        visited[newPos] = true;
-                        ChangeWall(curPos, direction, WallState.Destroyed);
-                        Stack<Vector2Int> targetStage = (Random.value > 0.5) ? stage : nextStage;
-                        targetStage.Push(newPos);
-                    }
-                }
-            }
-            stage = nextStage;
-        }
-    }
 }
