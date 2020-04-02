@@ -68,7 +68,7 @@ public class GameManager : MonoBehaviour
     {
         if (scene.name == "Maze")
         {
-            Maze.Instance.Initialize(_mazeWidth, _mazeHeight);
+            Maze.Instance.Initialize(_mazeWidth, _mazeHeight, new BranchedDFSGeneration());
             Maze.Instance.Generate();
             Maze.Instance.Display();
 
