@@ -13,6 +13,8 @@ public class Player : MonoBehaviour
     private Light _playerLight;
     
     private Coroutine executeRoutine;
+    public bool playAgain;
+    public static float PAUSE_IN_REPLAY = 0.2f;
 
     [Range(0f, 180f)]
     public float maxLightAngle;
@@ -79,33 +81,37 @@ public class Player : MonoBehaviour
 
             if (_mazePosition == Maze.Instance.finish && executeRoutine == null)
             {
-                executeRoutine = StartCoroutine(ReplayMovementsFromStart());
+                GameManager.Instance.EndLevel();
+                UIManager.Instance.ShowMenu();
             }
         }
     }
 
-    private IEnumerator ReplayMovementsFromStart()
+    /// <summary>
+    /// Player is returned to the inital spot, all movements from there are replayed
+    /// </summary>
+    /// <returns></returns>
+    public IEnumerator ReplayMovementsFromStart()
     {
-        LightManager.Instance.TurnOn();
-        yield return new WaitForSeconds(0.3f);
+        yield return new WaitForSeconds(PAUSE_IN_REPLAY);
         this.PlaceOnMaze();
-        yield return new WaitForSeconds(0.3f);
+        yield return new WaitForSeconds(PAUSE_IN_REPLAY);
         for (int i = 0; i < playerCommands.Count; i++)
         {
             PlayerCommand command = playerCommands[i];
             command.Execute(this);
 
-            yield return new WaitForSeconds(0.3f);
+            yield return new WaitForSeconds(PAUSE_IN_REPLAY);
         }
-        
-        playerCommands.Clear();
-        LightManager.Instance.TurnOff();
     }
 
-    private IEnumerator ReplayMovementsFromFinish()
+    /// <summary>
+    /// All player movements are replayed from the finish spot to the start
+    /// </summary>
+    /// <returns></returns>
+    public IEnumerator ReplayMovementsFromFinish()
     {
-        LightManager.Instance.TurnOn();
-        yield return new WaitForSeconds(0.3f);
+        yield return new WaitForSeconds(PAUSE_IN_REPLAY);
         for (int i = playerCommands.Count - 1; i >= 0; i--)
         {
             PlayerCommand command = playerCommands[i];
@@ -128,7 +134,7 @@ public class Player : MonoBehaviour
             }
             command.Execute(this);
 
-            yield return new WaitForSeconds(0.3f);
+            yield return new WaitForSeconds(PAUSE_IN_REPLAY);
         }
 
         playerCommands.Clear();

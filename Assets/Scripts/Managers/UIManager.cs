@@ -10,7 +10,8 @@ public class UIManager : MonoBehaviour
     private static UIManager _instance;
 
     public Text Width;
-    public Text Height; 
+    public Text Height;
+    public GameObject menu;
 
     public static UIManager Instance { get => _instance; set => _instance = value; }
 
@@ -44,7 +45,25 @@ public class UIManager : MonoBehaviour
     {
 
     }
-    
+
+    public void ShowMenu()
+    {
+        LightManager.Instance.TurnOn();
+        menu.gameObject.SetActive(true);
+    }
+
+    public void PlayAgain()
+    {
+        menu.gameObject.SetActive(false);
+        StartCoroutine(Player.Instance.ReplayMovementsFromFinish());
+    }
+
+    public void GoToMainMenu()
+    {
+        menu.gameObject.SetActive(false);
+        Player.Instance.ReplayMovementsFromStart();
+    }
+
     /// <summary>
     /// Called when slider value is changed and passes the new width to the GM
     /// </summary>

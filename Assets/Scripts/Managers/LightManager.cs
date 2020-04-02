@@ -22,11 +22,17 @@ public class LightManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
+    /// <summary>
+    /// DirectionalLight turns on, all maze becomes visible 
+    /// </summary>
     public void TurnOn()
     {
         light.intensity = 1;
     }
 
+    /// <summary>
+    /// DirectionalLight turns off, onlt highlighted part with the player is visible
+    /// </summary>
     public void TurnOff()
     {
         light.intensity = 0;
