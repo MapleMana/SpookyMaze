@@ -10,7 +10,10 @@ public class Player : MonoBehaviour
     private Vector2Int _mazePosition;
     private PlayerCommand _command;
     private List<PlayerCommand> playerCommands = new List<PlayerCommand>();
-    private Light _playerLight;
+    public Light _playerLight;
+    
+    private bool replayInProgress = false;
+    public static float PAUSE_IN_REPLAY = 0.15f;
 
     [Range(0f, 180f)]
     public float maxLightAngle;
@@ -54,10 +57,17 @@ public class Player : MonoBehaviour
     void Update()
     {
         _command = PlayerActionDetector.DetectDesktop();
-        if (_command != PlayerCommand.Idle)
+        if (_command != PlayerCommand.Idle && replayInProgress == false)
         {
             playerCommands.Add(_command);
             ExecuteLastCommand();
+        }
+        
+        if (_mazePosition == Maze.Instance.End && replayInProgress == false)
+        {
+            replayInProgress = true;
+            GameManager.Instance.EndLevel();
+            UIManager.Instance.ShowFinishMenu();
         }
     }
 
@@ -75,6 +85,47 @@ public class Player : MonoBehaviour
             _mazePosition += direction;
             SyncRealPosition();
         }
+    }
+
+    /// <summary>
+    /// Player is returned to the inital spot, all movements from there are replayed
+    /// </summary>
+    /// <returns></returns>
+    public IEnumerator ReplayMovementsFromStart()
+    {
+        yield return new WaitForSeconds(PAUSE_IN_REPLAY);
+        this.PlaceOnMaze();
+        yield return new WaitForSeconds(PAUSE_IN_REPLAY);
+        for (int i = 0; i < playerCommands.Count; i++)
+        {
+            PlayerCommand command = playerCommands[i];
+            command.Execute(this);
+
+            yield return new WaitForSeconds(PAUSE_IN_REPLAY);
+        }
+
+        replayInProgress = false;
+    }
+
+    /// <summary>
+    /// All player movements are replayed from the finish spot to the start
+    /// </summary>
+    /// <returns></returns>
+    public IEnumerator ReplayMovementsFromFinish()
+    {
+        yield return new WaitForSeconds(PAUSE_IN_REPLAY);
+        for (int i = playerCommands.Count - 1; i >= 0; i--)
+        {
+            PlayerCommand command = PlayerCommand.reverseCommand[playerCommands[i]];
+            command.Execute(this);
+
+            yield return new WaitForSeconds(PAUSE_IN_REPLAY);
+        }
+
+        playerCommands.Clear();
+        LightManager.Instance.TurnOff();
+        GameManager.Instance.LoadLevel("Maze");
+        replayInProgress = false;
     }
 
     /// <summary>
@@ -103,6 +154,14 @@ public class PlayerCommand
 
     public static readonly PlayerCommand Idle =
         new PlayerCommand((Player player) => { });
+
+    public static Dictionary<PlayerCommand, PlayerCommand> reverseCommand = new Dictionary<PlayerCommand, PlayerCommand>
+    {
+        [MoveUp] = MoveDown,
+        [MoveDown] = MoveUp,
+        [MoveRight] = MoveLeft,
+        [MoveLeft] = MoveRight
+    };
 
     public delegate void ExecuteCallback(Player player);
 

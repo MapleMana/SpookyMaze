@@ -10,7 +10,9 @@ public class UIManager : MonoBehaviour
     private static UIManager _instance;
 
     public Text Width;
-    public Text Height; 
+    public Text Height;
+    public GameObject MainMenu;
+    public GameObject FinishMenu;
 
     public static UIManager Instance { get => _instance; set => _instance = value; }
 
@@ -28,10 +30,11 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// This method is invoked when the "Play" button is pressed
+    /// This method is invoked when the "Play" button is pressed, loads the new maze
     /// </summary>
     public void StartGame()
     {
+        MainMenu.SetActive(false);
         GameManager.Instance.LoadLevel("Maze");
     }
 
@@ -44,7 +47,45 @@ public class UIManager : MonoBehaviour
     {
 
     }
-    
+
+    /// <summary>
+    /// Displays the finish menu, when a player gets to the end point
+    /// </summary>
+    public void ShowFinishMenu()
+    {
+        LightManager.Instance.TurnOn();
+        FinishMenu.SetActive(true);
+    }
+
+    /// <summary>
+    /// Replays player's movements from the start
+    /// </summary>
+    public void WatchReplay()
+    {
+        FinishMenu.SetActive(false);
+        StartCoroutine(Player.Instance.ReplayMovementsFromStart());
+    }
+
+    /// <summary>
+    /// Replays player's movements from finish to the start and reloads the maze
+    /// </summary>
+    public void GoToNextLevel()
+    {
+        FinishMenu.SetActive(false);
+        StartCoroutine(Player.Instance.ReplayMovementsFromFinish());
+    }
+
+    /// <summary>
+    /// Goes to the MainMenu Scene and displays the main menu again
+    /// </summary>
+    public void GoToMainMenu()
+    {
+        FinishMenu.SetActive(false);
+        MainMenu.SetActive(true);
+        LightManager.Instance.TurnOff();
+        GameManager.Instance.LoadLevel("MainMenu");
+    }
+
     /// <summary>
     /// Called when slider value is changed and passes the new width to the GM
     /// </summary>
