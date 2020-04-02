@@ -16,7 +16,6 @@ public class GameManager : MonoBehaviour
     public int initialMazeHeight = 10;
     [Range(0f, 500f)]
     public float levelTime = 20.0f;
-    
 
     public int MazeWidth
     {
@@ -68,17 +67,25 @@ public class GameManager : MonoBehaviour
     {
         if (scene.name == "Maze")
         {
-            Maze.Instance.Initialize(_mazeWidth, _mazeHeight);
-            Maze.Instance.Generate();
-            Maze.Instance.Display();
-
-            CameraManager.Instance.FocusOn(Maze.Instance);
-
-            Player.Instance.PlaceOnMaze();
+            StartNewLevel();
 
             _levelStarted = true;
             _timeLeft = levelTime;
         }
+    }
+
+    /// <summary>
+    /// Initializes, loads and displays the new maze
+    /// </summary>
+    public void StartNewLevel()
+    {
+        Maze.Instance.Initialize(_mazeWidth, _mazeHeight, new BranchedDFSGeneration());
+        Maze.Instance.Generate();
+        Maze.Instance.Display();
+
+        CameraManager.Instance.FocusOn(Maze.Instance);
+
+        Player.Instance.PlaceOnMaze();
     }
 
     public void LoadLevel(string sceneName)
