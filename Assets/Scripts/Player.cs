@@ -12,8 +12,7 @@ public class Player : MonoBehaviour
     private List<PlayerCommand> playerCommands = new List<PlayerCommand>();
     private Light _playerLight;
     
-    private Coroutine executeRoutine;
-    public bool playAgain;
+    private bool executeRoutine = false;
     public static float PAUSE_IN_REPLAY = 0.2f;
 
     [Range(0f, 180f)]
@@ -58,10 +57,17 @@ public class Player : MonoBehaviour
     void Update()
     {
         _command = PlayerActionDetector.DetectDesktop();
-        if (_command != PlayerCommand.Idle && executeRoutine == null)
+        if (_command != PlayerCommand.Idle && executeRoutine == false)
         {
             playerCommands.Add(_command);
             ExecuteLastCommand();
+        }
+        
+        if (_mazePosition == Maze.Instance.finish && executeRoutine == false)
+        {
+            executeRoutine = true;
+            GameManager.Instance.EndLevel();
+            UIManager.Instance.ShowMenu();
         }
     }
 
@@ -78,12 +84,6 @@ public class Player : MonoBehaviour
         {
             _mazePosition += direction;
             SyncRealPosition();
-
-            if (_mazePosition == Maze.Instance.finish && executeRoutine == null)
-            {
-                GameManager.Instance.EndLevel();
-                UIManager.Instance.ShowMenu();
-            }
         }
     }
 
@@ -103,6 +103,8 @@ public class Player : MonoBehaviour
 
             yield return new WaitForSeconds(PAUSE_IN_REPLAY);
         }
+
+        executeRoutine = false;
     }
 
     /// <summary>
@@ -139,6 +141,8 @@ public class Player : MonoBehaviour
 
         playerCommands.Clear();
         LightManager.Instance.TurnOff();
+        GameManager.Instance.LoadLevel("Maze");
+        executeRoutine = false;
     }
 
     /// <summary>

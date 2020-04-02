@@ -11,7 +11,8 @@ public class UIManager : MonoBehaviour
 
     public Text Width;
     public Text Height;
-    public GameObject menu;
+    public GameObject MainMenu;
+    public GameObject FinishMenu;
 
     public static UIManager Instance { get => _instance; set => _instance = value; }
 
@@ -33,6 +34,8 @@ public class UIManager : MonoBehaviour
     /// </summary>
     public void StartGame()
     {
+        MainMenu.gameObject.SetActive(false);
+        LightManager.Instance.TurnOff();
         GameManager.Instance.LoadLevel("Maze");
     }
 
@@ -49,19 +52,26 @@ public class UIManager : MonoBehaviour
     public void ShowMenu()
     {
         LightManager.Instance.TurnOn();
-        menu.gameObject.SetActive(true);
+        FinishMenu.gameObject.SetActive(true);
     }
 
-    public void PlayAgain()
+    public void WatchReplay()
     {
-        menu.gameObject.SetActive(false);
+        FinishMenu.gameObject.SetActive(false);
+        StartCoroutine(Player.Instance.ReplayMovementsFromStart());
+    }
+
+    public void NextLevel()
+    {
+        FinishMenu.gameObject.SetActive(false);
         StartCoroutine(Player.Instance.ReplayMovementsFromFinish());
     }
 
     public void GoToMainMenu()
     {
-        menu.gameObject.SetActive(false);
-        Player.Instance.ReplayMovementsFromStart();
+        FinishMenu.gameObject.SetActive(false);
+        MainMenu.gameObject.SetActive(true);
+        GameManager.Instance.LoadLevel("MainMenu");
     }
 
     /// <summary>

@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour
     private int _mazeWidth;
     private int _mazeHeight;
     private float _timeLeft;
-    private bool _levelStarted = false;
+    public bool _levelStarted = false;
 
     public int initialMazeWidth = 10;
     public int initialMazeHeight = 10;
@@ -67,17 +67,22 @@ public class GameManager : MonoBehaviour
     {
         if (scene.name == "Maze")
         {
-            Maze.Instance.Initialize(_mazeWidth, _mazeHeight);
-            Maze.Instance.Generate();
-            Maze.Instance.Display();
-            
-            CameraManager.Instance.FocusOn(Maze.Instance);
-
-            Player.Instance.PlaceOnMaze();
+            StartNewLevel();
 
             _levelStarted = true;
             _timeLeft = levelTime;
         }
+    }
+
+    public void StartNewLevel()
+    {
+        Maze.Instance.Initialize(_mazeWidth, _mazeHeight);
+        Maze.Instance.Generate();
+        Maze.Instance.Display();
+
+        CameraManager.Instance.FocusOn(Maze.Instance);
+
+        Player.Instance.PlaceOnMaze();
     }
 
     public void LoadLevel(string sceneName)
