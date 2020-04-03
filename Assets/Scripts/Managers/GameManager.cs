@@ -12,8 +12,10 @@ public class GameManager : MonoBehaviour
     private float _timeLeft;
     private bool _levelStarted = false;
 
-    public int initialMazeWidth = 10;
-    public int initialMazeHeight = 10;
+    public int initialMazeWidth;
+    public int initialMazeHeight;
+    public int mazeSizeIncrement;
+    public float timeDecrement;
     [Range(0f, 500f)]
     public float levelTime = 20.0f;
 
@@ -96,11 +98,17 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// Called when the level ends (player wins/loses)
     /// </summary>
-    public void EndLevel()
+    public void EndLevel(bool mazeComplete)
     {
         _levelStarted = false;
         UIManager.Instance.ShowFinishMenu();
         Player.Instance.CanMove = false;
+        if (mazeComplete)
+        {
+            _mazeHeight += mazeSizeIncrement;
+            _mazeWidth += mazeSizeIncrement;
+            levelTime -= timeDecrement;
+        }
     }
 
     public void Update()
@@ -110,7 +118,7 @@ public class GameManager : MonoBehaviour
             _timeLeft -= Time.deltaTime;
             if (_timeLeft < 0)
             {
-                EndLevel();
+                EndLevel(mazeComplete: false);
             }
             Player.Instance.SetLightAngle(_timeLeft / levelTime);
         }
