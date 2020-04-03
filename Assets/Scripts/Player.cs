@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -97,8 +98,9 @@ public class Player : MonoBehaviour
     /// <summary>
     /// Player is returned to the inital spot, all movements from there are replayed
     /// </summary>
-    /// <returns></returns>
-    public IEnumerator ReplayMovementsFromStart()
+    /// <param name="onComplete">Action to perform after the replay is comlete</param>
+    /// <returns>A couroutine to execute</returns>
+    public IEnumerator ReplayMovementsFromStart(Action onComplete)
     {
         yield return new WaitForSeconds(PAUSE_IN_REPLAY);
         _mazePosition = Maze.Instance.Start;
@@ -110,6 +112,7 @@ public class Player : MonoBehaviour
 
             yield return new WaitForSeconds(PAUSE_IN_REPLAY);
         }
+        onComplete();
     }
 
     /// <summary>
