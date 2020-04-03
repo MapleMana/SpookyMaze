@@ -7,6 +7,7 @@ public class CameraManager : MonoBehaviour
 {
     private static CameraManager _instance;
     private Camera _camera;
+    private const int cameraHeight = 200;
 
     public float mazeMargin;
 
@@ -48,6 +49,6 @@ public class CameraManager : MonoBehaviour
 
     public void FocusOnMenu(Vector3 menuPosition)
     {
-        transform.position = new Vector3(menuPosition.x, menuPosition.y + 200, menuPosition.z);
+        transform.position = new Vector3(menuPosition.x, menuPosition.y + cameraHeight, menuPosition.z);
     }
 }
