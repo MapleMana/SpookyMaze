@@ -13,6 +13,7 @@ public class UIManager : MonoBehaviour
     public Text Height;
     public GameObject MainMenu;
     public GameObject FinishMenu;
+    public GameObject SettingsMenu;
 
     public static UIManager Instance { get => _instance; set => _instance = value; }
 
@@ -29,6 +30,12 @@ public class UIManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
+    private void Start()
+    {
+        WidthChanged(GameManager.Instance.MazeWidth);
+        HeightChanged(GameManager.Instance.MazeHeight);
+    }
+
     /// <summary>
     /// This method is invoked when the "Play" button is pressed, loads the new maze
     /// </summary>
@@ -41,11 +48,6 @@ public class UIManager : MonoBehaviour
     public void QuitGame()
     {
         Application.Quit();
-    }
-
-    void Update()
-    {
-
     }
 
     /// <summary>
