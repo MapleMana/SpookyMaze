@@ -66,10 +66,10 @@ public class Player : MonoBehaviour
     void Update()
     {
         _command = PlayerActionDetector.DetectDesktop();
-        if (_command != PlayerCommand.Idle && _canMove)
+        if (_canMove && _command.Execute(this))
         {
             playerCommands.Add(_command);
-            ExecuteLastCommand();
+            SyncRealPosition();
         }
         
         // when the player reaches the end (not from replay)
@@ -91,16 +91,17 @@ public class Player : MonoBehaviour
     /// it doesn't do anything and remove this command from the commands list 
     /// </summary>
     /// <param name="direction"></param>
-    public void Move(Vector2Int direction)
+    public bool Move(Vector2Int direction)
     {
         if (!Maze.Instance.Grid[_mazePosition].WallExists(direction))
         {
             _mazePosition += direction;
             SyncRealPosition();
+            return true;
         }
         else
         {
-            playerCommands.RemoveAt(playerCommands.Count - 1);
+            return false;
         }
     }
 
@@ -169,7 +170,7 @@ public class PlayerCommand
         new PlayerCommand((Player player) => player.Move(Vector2Int.right));
 
     public static readonly PlayerCommand Idle =
-        new PlayerCommand((Player player) => { });
+        new PlayerCommand((Player player) => false);
 
     public static Dictionary<PlayerCommand, PlayerCommand> reverseCommand = new Dictionary<PlayerCommand, PlayerCommand>
     {
@@ -180,7 +181,7 @@ public class PlayerCommand
         [Idle] = Idle
     };
 
-    public delegate void ExecuteCallback(Player player);
+    public delegate bool ExecuteCallback(Player player);
 
     public PlayerCommand(ExecuteCallback executeMethod)
     {
