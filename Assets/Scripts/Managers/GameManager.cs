@@ -85,7 +85,7 @@ public class GameManager : MonoBehaviour
 
         CameraManager.Instance.FocusOn(Maze.Instance);
 
-        Player.Instance.PlaceOnMaze();
+        Player.Instance.ResetState();
     }
 
     public void LoadLevel(string sceneName)
@@ -99,6 +99,8 @@ public class GameManager : MonoBehaviour
     public void EndLevel()
     {
         _levelStarted = false;
+        UIManager.Instance.ShowFinishMenu();
+        Player.Instance.CanMove = false;
     }
 
     public void Update()

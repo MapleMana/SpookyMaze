@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -9,10 +10,10 @@ public class Player : MonoBehaviour
 
     private Vector2Int _mazePosition;
     private PlayerCommand _command;
-    private List<PlayerCommand> playerCommands = new List<PlayerCommand>();
-    public Light _playerLight;
+    private List<PlayerCommand> playerCommands;
+    private Light _playerLight;
+    private bool _canMove = false;
     
-    private bool replayInProgress = false;
     public static float PAUSE_IN_REPLAY = 0.15f;
 
     [Range(0f, 180f)]
@@ -20,7 +21,9 @@ public class Player : MonoBehaviour
     [Range(0f, 180f)]
     public float minLightAngle;
 
-    public static Player Instance { get => _instance; set => _instance = value; }
+    public static Player Instance { get => _instance; }
+    public Light PlayerLight { get => _playerLight; }
+    public bool CanMove { get => _canMove; set => _canMove = value; }
 
     void Awake()
     {
@@ -32,6 +35,7 @@ public class Player : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        playerCommands = new List<PlayerCommand>();
     }
 
     private void Start()
@@ -39,10 +43,15 @@ public class Player : MonoBehaviour
         _playerLight = GetComponentInChildren<Light>();
     }
 
-    public void PlaceOnMaze()
+    /// <summary>
+    /// Places the player at the start of the maze and inits player's state
+    /// </summary>
+    public void ResetState()
     {
         _mazePosition = Maze.Instance.Start;
         SyncRealPosition();
+        playerCommands.Clear();
+        _canMove = true;
     }
     
     /// <summary>
@@ -57,17 +66,16 @@ public class Player : MonoBehaviour
     void Update()
     {
         _command = PlayerActionDetector.DetectDesktop();
-        if (_command != PlayerCommand.Idle && replayInProgress == false)
+        if (_command != PlayerCommand.Idle && _canMove)
         {
             playerCommands.Add(_command);
             ExecuteLastCommand();
         }
         
-        if (_mazePosition == Maze.Instance.End && replayInProgress == false)
+        // when the player reaches the end (not from replay)
+        if (_mazePosition == Maze.Instance.End && _canMove)
         {
-            replayInProgress = true;
             GameManager.Instance.EndLevel();
-            UIManager.Instance.ShowFinishMenu();
         }
     }
 
@@ -90,11 +98,12 @@ public class Player : MonoBehaviour
     /// <summary>
     /// Player is returned to the inital spot, all movements from there are replayed
     /// </summary>
-    /// <returns></returns>
-    public IEnumerator ReplayMovementsFromStart()
+    /// <param name="onComplete">Action to perform after the replay is comlete</param>
+    /// <returns>A couroutine to execute</returns>
+    public IEnumerator ReplayMovementsFromStart(Action onComplete)
     {
         yield return new WaitForSeconds(PAUSE_IN_REPLAY);
-        this.PlaceOnMaze();
+        _mazePosition = Maze.Instance.Start;
         yield return new WaitForSeconds(PAUSE_IN_REPLAY);
         for (int i = 0; i < playerCommands.Count; i++)
         {
@@ -103,8 +112,7 @@ public class Player : MonoBehaviour
 
             yield return new WaitForSeconds(PAUSE_IN_REPLAY);
         }
-
-        replayInProgress = false;
+        onComplete();
     }
 
     /// <summary>
@@ -125,7 +133,6 @@ public class Player : MonoBehaviour
         playerCommands.Clear();
         LightManager.Instance.TurnOff();
         GameManager.Instance.LoadLevel("Maze");
-        replayInProgress = false;
     }
 
     /// <summary>
