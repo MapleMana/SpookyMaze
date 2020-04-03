@@ -65,7 +65,9 @@ public class UIManager : MonoBehaviour
     public void WatchReplay()
     {
         FinishMenu.SetActive(false);
-        StartCoroutine(Player.Instance.ReplayMovementsFromStart(
+        StartCoroutine(Player.Instance.PlayCommands(
+            initialPosition: Maze.Instance.Start,
+            playTime: Player.Instance.replayTime,
             onComplete: () => FinishMenu.SetActive(true)
         ));
     }
@@ -76,7 +78,15 @@ public class UIManager : MonoBehaviour
     public void GoToNextLevel()
     {
         FinishMenu.SetActive(false);
-        StartCoroutine(Player.Instance.ReplayMovementsFromFinish());
+        StartCoroutine(Player.Instance.PlayCommands(
+            reversed: true,
+            playTime: Player.Instance.reversedReplayTime,
+            onComplete: () =>
+            {
+                LightManager.Instance.TurnOff();
+                GameManager.Instance.LoadLevel("Maze");
+            }
+        ));
     }
 
     /// <summary>

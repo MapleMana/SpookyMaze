@@ -9,7 +9,7 @@ public class Player : MonoBehaviour
     private static Player _instance;
 
     private Vector2Int _mazePosition;
-    private List<PlayerMovementCommand> playerCommands;
+    private List<PlayerCommand> _playerLevelCommands;
     private Light _playerLight;
     private bool _canMove = false;
 
@@ -35,7 +35,7 @@ public class Player : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        playerCommands = new List<PlayerMovementCommand>();
+        _playerLevelCommands = new List<PlayerCommand>();
     }
 
     private void Start()
@@ -50,7 +50,7 @@ public class Player : MonoBehaviour
     {
         _mazePosition = Maze.Instance.Start;
         SyncRealPosition();
-        playerCommands.Clear();
+        _playerLevelCommands.Clear();
         _canMove = true;
     }
     
@@ -68,13 +68,13 @@ public class Player : MonoBehaviour
         PlayerMovementCommand _command = (PlayerMovementCommand)PlayerActionDetector.DetectDesktop();
         if (_canMove && _command.Execute(this))
         {
-            playerCommands.Add(_command);
+            _playerLevelCommands.Add(_command);
             SyncRealPosition();
             Vector2Int previousMoveDirection = _command.Direction;
-            while (Maze.Instance.Grid[_mazePosition].GetCorridorOpening(previousMoveDirection) != Vector2Int.zero)
-            {
-                MazeCell curCell
-            }
+            //while (Maze.Instance.Grid[_mazePosition].GetCorridorOpening(previousMoveDirection) != Vector2Int.zero)
+            //{
+            //    MazeCell curCell
+            //}
         }
         
         // when the player reaches the end (not from replay)
@@ -86,7 +86,7 @@ public class Player : MonoBehaviour
 
     private void ExecuteLastCommand()
     {
-        PlayerCommand last = playerCommands.Last();
+        PlayerCommand last = _playerLevelCommands.Last();
         last.Execute(this);
         SyncRealPosition();
     }
@@ -104,8 +104,7 @@ public class Player : MonoBehaviour
             SyncRealPosition();
             return true;
         }
-        else
-            return false;
+        return false;
     }
 
     /// <summary>
@@ -113,39 +112,29 @@ public class Player : MonoBehaviour
     /// </summary>
     /// <param name="onComplete">Action to perform after the replay is comlete</param>
     /// <returns>A couroutine to execute</returns>
-    public IEnumerator ReplayMovementsFromStart(Action onComplete)
+    public IEnumerator PlayCommands(
+        List<PlayerCommand> playerCommands = null,
+        bool reversed = false,
+        Vector2Int? initialPosition = null,
+        float? playTime = null,
+        Action onComplete = null)
     {
-        float pauseInReplay = replayTime / playerCommands.Count;
-
-        _mazePosition = Maze.Instance.Start;
-        for (int i = 0; i < playerCommands.Count; i++)
+        playerCommands = playerCommands ?? _playerLevelCommands;
+        if (reversed)
         {
-            yield return new WaitForSeconds(pauseInReplay);
-
-            PlayerCommand command = playerCommands[i];
-            command.Execute(this);
+            playerCommands.Reverse();
         }
-        onComplete();
-    }
+        _mazePosition = initialPosition ?? _mazePosition;
 
-    /// <summary>
-    /// All player movements are replayed from the finish spot to the start
-    /// </summary>
-    /// <returns></returns>
-    public IEnumerator ReplayMovementsFromFinish()
-    {
-        float pauseInReplay = reversedReplayTime / playerCommands.Count;
+        float pauseBetweenCommands = (playTime ?? replayTime) / playerCommands.Count;
 
-        for (int i = playerCommands.Count - 1; i >= 0; i--)
+        foreach (PlayerCommand command in playerCommands)
         {
-            yield return new WaitForSeconds(pauseInReplay);
-
-            PlayerCommand command = PlayerCommand.reverseCommand[playerCommands[i]];
-            command.Execute(this);
+            yield return new WaitForSeconds(pauseBetweenCommands);
+            PlayerCommand execution = reversed ? PlayerCommand.reverseCommand[command] : command;
+            execution.Execute(this);
         }
-
-        LightManager.Instance.TurnOff();
-        GameManager.Instance.LoadLevel("Maze");
+        onComplete?.Invoke();
     }
 
     /// <summary>
