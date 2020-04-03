@@ -9,8 +9,9 @@ public class Player : MonoBehaviour
 
     private Vector2Int _mazePosition;
     private PlayerCommand _command;
-    private List<PlayerCommand> playerCommands = new List<PlayerCommand>();
-
+    private List<PlayerCommand> playerCommands;
+    private Light _playerLight;
+    private bool _canMove = false;
     
     private bool replayInProgress = false;
     public static float PAUSE_IN_REPLAY = 0.15f;
@@ -37,12 +38,17 @@ public class Player : MonoBehaviour
     private void Start()
     {
         _playerLight = GetComponentInChildren<Light>();
+        playerCommands = new List<PlayerCommand>();
     }
 
-    public void PlaceOnMaze()
+    /// <summary>
+    /// Places the player at the start of the maze and inits player's state
+    /// </summary>
+    public void Reset()
     {
         _mazePosition = Maze.Instance.Start;
         SyncRealPosition();
+        playerCommands.Clear();
     }
     
     /// <summary>
@@ -93,7 +99,7 @@ public class Player : MonoBehaviour
     public IEnumerator ReplayMovementsFromStart()
     {
         yield return new WaitForSeconds(PAUSE_IN_REPLAY);
-        this.PlaceOnMaze();
+        this.Reset();
         yield return new WaitForSeconds(PAUSE_IN_REPLAY);
         for (int i = 0; i < playerCommands.Count; i++)
         {
