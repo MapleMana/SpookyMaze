@@ -7,6 +7,7 @@ public class CameraManager : MonoBehaviour
 {
     private static CameraManager _instance;
     private Camera _camera;
+    private const int MAIN_MENU_CAMERA_HEIGHT = 200;
 
     public float mazeMargin;
 
@@ -44,5 +45,10 @@ public class CameraManager : MonoBehaviour
 
         float cameraHeight = (significantSide + 2 * mazeMargin) / FOV;
         transform.position = new Vector3(mazeWidth / 2, Mathf.Abs(cameraHeight), mazeHeight / 2);
+    }
+
+    public void FocusOnMenu(Vector3 menuPosition)
+    {
+        transform.position = new Vector3(menuPosition.x, menuPosition.y + MAIN_MENU_CAMERA_HEIGHT, menuPosition.z);
     }
 }

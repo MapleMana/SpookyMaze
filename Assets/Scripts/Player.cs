@@ -13,8 +13,8 @@ public class Player : MonoBehaviour
     private List<PlayerCommand> playerCommands;
     private Light _playerLight;
     private bool _canMove = false;
-    
-    public static float PAUSE_IN_REPLAY = 0.15f;
+
+    public const float PAUSE_IN_REPLAY = 0.15f;
 
     [Range(0f, 180f)]
     public float maxLightAngle;
@@ -66,10 +66,10 @@ public class Player : MonoBehaviour
     void Update()
     {
         _command = PlayerActionDetector.DetectDesktop();
-        if (_command != PlayerCommand.Idle && _canMove)
+        if (_canMove && _command.Execute(this))
         {
             playerCommands.Add(_command);
-            ExecuteLastCommand();
+            SyncRealPosition();
         }
         
         // when the player reaches the end (not from replay)
@@ -86,13 +86,21 @@ public class Player : MonoBehaviour
         SyncRealPosition();
     }
 
-    public void Move(Vector2Int direction)
+    /// <summary>
+    /// Move player in the chosen direction, but if there is a wall on the way,
+    /// it doesn't do anything and remove this command from the commands list 
+    /// </summary>
+    /// <param name="direction"></param>
+    public bool Move(Vector2Int direction)
     {
         if (!Maze.Instance.Grid[_mazePosition].WallExists(direction))
         {
             _mazePosition += direction;
             SyncRealPosition();
+            return true;
         }
+        else
+            return false;
     }
 
     /// <summary>
@@ -160,17 +168,18 @@ public class PlayerCommand
         new PlayerCommand((Player player) => player.Move(Vector2Int.right));
 
     public static readonly PlayerCommand Idle =
-        new PlayerCommand((Player player) => { });
+        new PlayerCommand((Player player) => false);
 
     public static Dictionary<PlayerCommand, PlayerCommand> reverseCommand = new Dictionary<PlayerCommand, PlayerCommand>
     {
         [MoveUp] = MoveDown,
         [MoveDown] = MoveUp,
         [MoveRight] = MoveLeft,
-        [MoveLeft] = MoveRight
+        [MoveLeft] = MoveRight,
+        [Idle] = Idle
     };
 
-    public delegate void ExecuteCallback(Player player);
+    public delegate bool ExecuteCallback(Player player);
 
     public PlayerCommand(ExecuteCallback executeMethod)
     {
