@@ -13,7 +13,8 @@ public class Player : MonoBehaviour
     private Light _playerLight;
     private bool _canMove = false;
 
-    public const float PAUSE_IN_REPLAY = 0.15f;
+    public float replayTime;
+    public float reversedReplayTime;
 
     [Range(0f, 180f)]
     public float maxLightAngle;
@@ -79,7 +80,7 @@ public class Player : MonoBehaviour
         // when the player reaches the end (not from replay)
         if (_canMove && _mazePosition == Maze.Instance.End)
         {
-            GameManager.Instance.EndLevel();
+            GameManager.Instance.EndLevel(mazeComplete: true);
         }
     }
 
@@ -114,15 +115,15 @@ public class Player : MonoBehaviour
     /// <returns>A couroutine to execute</returns>
     public IEnumerator ReplayMovementsFromStart(Action onComplete)
     {
-        yield return new WaitForSeconds(PAUSE_IN_REPLAY);
+        float pauseInReplay = replayTime / playerCommands.Count;
+
         _mazePosition = Maze.Instance.Start;
-        yield return new WaitForSeconds(PAUSE_IN_REPLAY);
         for (int i = 0; i < playerCommands.Count; i++)
         {
+            yield return new WaitForSeconds(pauseInReplay);
+
             PlayerCommand command = playerCommands[i];
             command.Execute(this);
-
-            yield return new WaitForSeconds(PAUSE_IN_REPLAY);
         }
         onComplete();
     }
@@ -133,16 +134,16 @@ public class Player : MonoBehaviour
     /// <returns></returns>
     public IEnumerator ReplayMovementsFromFinish()
     {
-        yield return new WaitForSeconds(PAUSE_IN_REPLAY);
+        float pauseInReplay = reversedReplayTime / playerCommands.Count;
+
         for (int i = playerCommands.Count - 1; i >= 0; i--)
         {
+            yield return new WaitForSeconds(pauseInReplay);
+
             PlayerCommand command = PlayerCommand.reverseCommand[playerCommands[i]];
             command.Execute(this);
-
-            yield return new WaitForSeconds(PAUSE_IN_REPLAY);
         }
 
-        playerCommands.Clear();
         LightManager.Instance.TurnOff();
         GameManager.Instance.LoadLevel("Maze");
     }
