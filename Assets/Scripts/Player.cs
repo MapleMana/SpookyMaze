@@ -15,6 +15,7 @@ public class Player : MonoBehaviour
     private bool _canMove = false;
 
     public float replayTime;
+    public float reversedReplayTime;
 
     [Range(0f, 180f)]
     public float maxLightAngle;
@@ -129,7 +130,7 @@ public class Player : MonoBehaviour
     /// <returns></returns>
     public IEnumerator ReplayMovementsFromFinish()
     {
-        float pauseInReplay = replayTime / playerCommands.Count;
+        float pauseInReplay = reversedReplayTime / playerCommands.Count;
 
         for (int i = playerCommands.Count - 1; i >= 0; i--)
         {
