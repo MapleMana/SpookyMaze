@@ -10,7 +10,7 @@ public class Player : MonoBehaviour
     private Vector2Int _mazePosition;
     private PlayerCommand _command;
     private List<PlayerCommand> playerCommands = new List<PlayerCommand>();
-    public Light _playerLight;
+
     
     private bool replayInProgress = false;
     public static float PAUSE_IN_REPLAY = 0.15f;
@@ -57,17 +57,16 @@ public class Player : MonoBehaviour
     void Update()
     {
         _command = PlayerActionDetector.DetectDesktop();
-        if (_command != PlayerCommand.Idle && replayInProgress == false)
+        if (_command != PlayerCommand.Idle && !replayInProgress)
         {
             playerCommands.Add(_command);
             ExecuteLastCommand();
         }
         
-        if (_mazePosition == Maze.Instance.End && replayInProgress == false)
+        if (_mazePosition == Maze.Instance.End && !replayInProgress)
         {
             replayInProgress = true;
             GameManager.Instance.EndLevel();
-            UIManager.Instance.ShowFinishMenu();
         }
     }
 

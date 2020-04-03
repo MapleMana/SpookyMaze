@@ -99,6 +99,7 @@ public class GameManager : MonoBehaviour
     public void EndLevel()
     {
         _levelStarted = false;
+        UIManager.Instance.ShowFinishMenu();
     }
 
     public void Update()
