@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CameraManager : MonoBehaviour
 {
-    private Vector3 menuPosition = new Vector3(25, 200, 20);
+    private const Vector3 menuPosition = new Vector3(25, 200, 20);
 
     private static CameraManager _instance;
 

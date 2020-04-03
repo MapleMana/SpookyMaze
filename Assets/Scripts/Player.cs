@@ -13,7 +13,7 @@ public class Player : MonoBehaviour
     public Light _playerLight;
     
     private bool replayInProgress = false;
-    public static float PAUSE_IN_REPLAY = 0.15f;
+    public const float PAUSE_IN_REPLAY = 0.15f;
 
     [Range(0f, 180f)]
     public float maxLightAngle;
