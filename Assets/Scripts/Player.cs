@@ -78,12 +78,21 @@ public class Player : MonoBehaviour
         SyncRealPosition();
     }
 
+    /// <summary>
+    /// Move player in the chosen direction, but if there is a wall on the way,
+    /// it doesn't do anything and remove this command from the commands list 
+    /// </summary>
+    /// <param name="direction"></param>
     public void Move(Vector2Int direction)
     {
         if (!Maze.Instance.Grid[_mazePosition].WallExists(direction))
         {
             _mazePosition += direction;
             SyncRealPosition();
+        }
+        else
+        {
+            playerCommands.RemoveAt(playerCommands.Count - 1);
         }
     }
 
@@ -160,7 +169,8 @@ public class PlayerCommand
         [MoveUp] = MoveDown,
         [MoveDown] = MoveUp,
         [MoveRight] = MoveLeft,
-        [MoveLeft] = MoveRight
+        [MoveLeft] = MoveRight,
+        [Idle] = Idle
     };
 
     public delegate void ExecuteCallback(Player player);
