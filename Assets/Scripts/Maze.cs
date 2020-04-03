@@ -64,6 +64,25 @@ public class MazeCell
     public bool WallExists(Vector2Int direction) {
         return _wallState[direction] == WallState.Exists;
     }
+
+    /// <summary>
+    /// Checks if this cell is a corridor (only 2 entrances) and 
+    /// returns an entrance (different from the input one)
+    /// </summary>
+    /// <param name="incomingDirection">The direction of the entrance that should not be considered</param>
+    /// <returns>An opposite corridor entrance or Vector2Int.zero if this is not a corridor</returns>
+    public Vector2Int GetCorridorOpening(Vector2Int incomingDirection)
+    {
+        List<Vector2Int> otherOpenings = new List<Vector2Int>();
+        foreach (Vector2Int direction in neighbours)
+        {
+            if (direction != incomingDirection && _wallState[direction] == WallState.Destroyed)
+            {
+                otherOpenings.Add(direction);
+            }
+        }
+        return otherOpenings.Count == 1 ? otherOpenings[0] : Vector2Int.zero;
+    }
 }
 
 public class Maze : MonoBehaviour

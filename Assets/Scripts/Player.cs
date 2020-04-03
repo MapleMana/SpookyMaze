@@ -9,8 +9,7 @@ public class Player : MonoBehaviour
     private static Player _instance;
 
     private Vector2Int _mazePosition;
-    private PlayerCommand _command;
-    private List<PlayerCommand> playerCommands;
+    private List<PlayerMovementCommand> playerCommands;
     private Light _playerLight;
     private bool _canMove = false;
 
@@ -35,7 +34,7 @@ public class Player : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        playerCommands = new List<PlayerCommand>();
+        playerCommands = new List<PlayerMovementCommand>();
     }
 
     private void Start()
@@ -65,15 +64,20 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        _command = PlayerActionDetector.DetectDesktop();
+        PlayerMovementCommand _command = (PlayerMovementCommand)PlayerActionDetector.DetectDesktop();
         if (_canMove && _command.Execute(this))
         {
             playerCommands.Add(_command);
             SyncRealPosition();
+            Vector2Int previousMoveDirection = _command.Direction;
+            while (Maze.Instance.Grid[_mazePosition].GetCorridorOpening(previousMoveDirection) != Vector2Int.zero)
+            {
+                MazeCell curCell
+            }
         }
         
         // when the player reaches the end (not from replay)
-        if (_mazePosition == Maze.Instance.End && _canMove)
+        if (_canMove && _mazePosition == Maze.Instance.End)
         {
             GameManager.Instance.EndLevel();
         }
@@ -156,16 +160,16 @@ public class Player : MonoBehaviour
 public class PlayerCommand
 {
     public static readonly PlayerCommand MoveUp =
-        new PlayerCommand((Player player) => player.Move(Vector2Int.up));
+        new PlayerMovementCommand(Vector2Int.up);
 
     public static readonly PlayerCommand MoveDown =
-        new PlayerCommand((Player player) => player.Move(Vector2Int.down));
+        new PlayerMovementCommand(Vector2Int.down);
 
     public static readonly PlayerCommand MoveLeft =
-        new PlayerCommand((Player player) => player.Move(Vector2Int.left));
+        new PlayerMovementCommand(Vector2Int.left);
 
     public static readonly PlayerCommand MoveRight =
-        new PlayerCommand((Player player) => player.Move(Vector2Int.right));
+        new PlayerMovementCommand(Vector2Int.right);
 
     public static readonly PlayerCommand Idle =
         new PlayerCommand((Player player) => false);
@@ -186,7 +190,20 @@ public class PlayerCommand
         Execute = executeMethod;
     }
 
-    public ExecuteCallback Execute { get; private set; }
+    public ExecuteCallback Execute { get; internal set; }
+}
+
+public class PlayerMovementCommand : PlayerCommand
+{
+    private Vector2Int _direction;
+
+    public PlayerMovementCommand(Vector2Int direction) : base(player => false)
+    {
+        _direction = direction;
+        Execute = (Player player) => player.Move(direction);
+    }
+
+    public Vector2Int Direction { get => _direction; }
 }
 
 /// <summary>
