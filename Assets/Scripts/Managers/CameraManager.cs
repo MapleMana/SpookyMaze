@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class CameraManager : MonoBehaviour
 {
+    private Vector3 menuPosition = new Vector3(25, 200, 20);
+
     private static CameraManager _instance;
 
     public static CameraManager Instance { get => _instance; }
@@ -25,5 +27,10 @@ public class CameraManager : MonoBehaviour
     {
         Vector3 mazeCenter = new Vector3(MazeCell.CELL_WIDTH * maze.Width / 2, 0, MazeCell.CELL_WIDTH * maze.Height / 2);
         transform.position = new Vector3(mazeCenter.x, transform.position.y, mazeCenter.z);
+    }
+
+    public void FocusOnMenu()
+    {
+        transform.position = menuPosition;
     }
 }

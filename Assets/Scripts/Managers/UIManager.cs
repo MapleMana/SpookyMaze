@@ -83,6 +83,7 @@ public class UIManager : MonoBehaviour
         FinishMenu.SetActive(false);
         MainMenu.SetActive(true);
         LightManager.Instance.TurnOff();
+        CameraManager.Instance.FocusOnMenu();
         GameManager.Instance.LoadLevel("MainMenu");
     }
 
