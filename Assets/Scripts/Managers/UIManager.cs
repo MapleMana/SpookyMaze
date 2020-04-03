@@ -63,7 +63,9 @@ public class UIManager : MonoBehaviour
     public void WatchReplay()
     {
         FinishMenu.SetActive(false);
-        StartCoroutine(Player.Instance.ReplayMovementsFromStart());
+        StartCoroutine(Player.Instance.ReplayMovementsFromStart(
+            onComplete: () => FinishMenu.SetActive(true)
+        ));
     }
 
     /// <summary>
