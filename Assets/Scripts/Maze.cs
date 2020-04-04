@@ -157,15 +157,21 @@ public class Maze : MonoBehaviour
         _genAlgo.Generate();
     }
 
-    public List<Vector2Int> GetSequenceToDicisionPoint(Vector2Int position, Vector2Int direction)
+    /// <summary>
+    /// Returns a sequence of directions until the next decision point (eintersenction or dead end)
+    /// </summary>
+    /// <param name="position">The current position to start from</param>
+    /// <param name="incomingDirection">The direction where current position was entered from</param>
+    /// <returns></returns>
+    public List<Vector2Int> GetSequenceToDicisionPoint(Vector2Int position, Vector2Int incomingDirection)
     {
         List<Vector2Int> sequence = new List<Vector2Int>();
         while (true)
         {
-            direction = _grid[position].GetCorridorOpening(direction * -1);
-            if (direction == Vector2Int.zero) break;
-            sequence.Add(direction);
-            position += direction;
+            incomingDirection = _grid[position].GetCorridorOpening(incomingDirection * -1);
+            if (incomingDirection == Vector2Int.zero) break;
+            sequence.Add(incomingDirection);
+            position += incomingDirection;
         }
         return sequence;
     }
