@@ -17,130 +17,185 @@ public static class ListExtension
     }
 }
 
-enum WallState
+public enum WallState
 {
     Destroyed,
     Exists
 }
 
-class MazeCell
+public class MazeCell
 {
-    private Dictionary<Vector2Int, WallState> _wallState;
+    private Dictionary<Vector2Int, WallState> _wallState = new Dictionary<Vector2Int, WallState>();
+    private Vector2Int _position;
+    public readonly Vector2 cellCenter;
+
+    public const float CELL_WIDTH = 10;
 
     public static List<Vector2Int> neighbours = new List<Vector2Int> { Vector2Int.up, 
                                                                        Vector2Int.left, 
                                                                        Vector2Int.down, 
                                                                        Vector2Int.right };
 
-    public MazeCell(WallState up, WallState left, WallState down, WallState right)
+    public MazeCell(Vector2Int pos, WallState up, WallState left, WallState down, WallState right)
     {
-        _wallState = new Dictionary<Vector2Int, WallState>();
+        _position = pos;
         _wallState[Vector2Int.up] = up;
         _wallState[Vector2Int.left] = left;
         _wallState[Vector2Int.down] = down;
         _wallState[Vector2Int.right] = right;
+        cellCenter = new Vector2(CELL_WIDTH * (_position.x + 0.5f), CELL_WIDTH * (_position.y + 0.5f));
     }
 
+    /// <summary>
+    /// Changes the state of a specific wall adjacent to the cell
+    /// </summary>
+    /// <param name="direction">The direction where the wall is located relative to the center of the cell</param>
+    /// <param name="state">The desired wall state</param>
     public void SetWall(Vector2Int direction, WallState state)
     {
         _wallState[direction] = state;
     }
 
+    /// <summary>
+    /// Checks if the wall exists at the specified direction
+    /// </summary>
+    /// <param name="direction">The direction where the wall is located relative to the center of the cell</param>
+    /// <returns></returns>
     public bool WallExists(Vector2Int direction) {
         return _wallState[direction] == WallState.Exists;
+    }
+
+    /// <summary>
+    /// Checks if this cell is a corridor (only 2 entrances) and 
+    /// returns an entrance (different from the input one)
+    /// </summary>
+    /// <param name="incomingDirection">The direction of the entrance that should not be considered</param>
+    /// <returns>An opposite corridor entrance or Vector2Int.zero if this is not a corridor</returns>
+    public Vector2Int GetCorridorOpening(Vector2Int incomingDirection)
+    {
+        List<Vector2Int> otherOpenings = new List<Vector2Int>();
+        foreach (Vector2Int direction in neighbours)
+        {
+            if (direction != incomingDirection && _wallState[direction] == WallState.Destroyed)
+            {
+                otherOpenings.Add(direction);
+            }
+        }
+        return otherOpenings.Count == 1 ? otherOpenings[0] : Vector2Int.zero;
     }
 }
 
 public class Maze : MonoBehaviour
 {
-    const float CELL_WIDTH = 10;
-    const float WALL_WIDTH = 2.5f;
+    const float WALL_WIDTH = 1.5f;
+    private static Maze _instance;
 
-    public int width;
-    public int height;
+    private int _width = 10;
+    private int _height = 10;
+    private Vector2Int _start;
+    private Vector2Int _end;
+    private Dictionary<Vector2Int, MazeCell> _grid = new Dictionary<Vector2Int, MazeCell>();
+    private static Random _generator = new Random();
+    private GenerationStrategy _genAlgo;
+
     public GameObject wallTemplate;
 
-    private Dictionary<Vector2Int, MazeCell> _grid;
-    private static Random _generator = new Random();
+    public Vector2Int Start => _start;
+    public Vector2Int End => _end;
 
-    private void OnEnable()
-    {
-        width = 10;
-        height = 10;
-        _grid = new Dictionary<Vector2Int, MazeCell>();
-    }
+    public int Width => _width;
+    public int Height => _height;
+    public static Maze Instance => _instance;
+    public MazeCell this[Vector2Int pos] => _grid[pos];
 
-    void Start()
+    private void Awake()
     {
-        
-    }
-
-    private void Fill(WallState wallState=WallState.Exists)
-    {
-        for (int x = 0; x < width; x++)
+        if (_instance == null)
         {
-            for (int y = 0; y < height; y++)
-            {
-                _grid[new Vector2Int(x, y)] = new MazeCell(wallState, wallState, wallState, wallState);
-            }
+            _instance = this;
+        }
+        else if (_instance != this)
+        {
+            Destroy(gameObject);
         }
     }
 
-    private bool InBounds(Vector2Int pos)
+    /// <summary>
+    /// Specifies the initial maze state
+    /// </summary>
+    /// <param name="width">The width (X) of the maze</param>
+    /// <param name="height">The height (Z) of the maze</param>
+    /// <param name="algorithm">The algorithm to use for maze generation</param>
+    public void Initialize(int width, int height, GenerationStrategy algorithm)
     {
-        return pos.x >= 0 && pos.x < width && pos.y >= 0 && pos.y < height;
+        _width = width;
+        _height = height;
+        _genAlgo = algorithm;
+
+        _start = new Vector2Int(0, height - 1);
+        _end = new Vector2Int(width - 1, 0);
     }
 
-    private void ChangeWall(Vector2Int position, Vector2Int direction, WallState wallState)
+    /// <summary>
+    /// Fills all the walls of the maze with a specific state
+    /// </summary>
+    /// <param name="wallState">The state of the walls to fill with</param>
+    public void Fill(WallState wallState=WallState.Exists)
     {
-        Vector2Int neighbour = position + direction;
-        _grid[position].SetWall(direction, wallState);
-        _grid[neighbour].SetWall(direction * -1, wallState);
+        for (int x = 0; x < _width; x++)
+        {
+            for (int y = 0; y < _height; y++)
+            {
+                Vector2Int pos = new Vector2Int(x, y);
+                _grid[pos] = new MazeCell(pos, wallState, wallState, wallState, wallState);
+            }
+        }
     }
-
-    
 
     public void Generate()
     {
-        Fill();
-
-        Stack<Vector2Int> path = new Stack<Vector2Int>();
-        Dictionary<Vector2Int, bool> visited = new Dictionary<Vector2Int, bool>();
-        foreach (var kvPair in _grid)
-        {
-            visited[kvPair.Key] = false;
-        }
-        Vector2Int start = new Vector2Int(0, 0);
-        path.Push(start);
-        while (path.Count != 0)
-        {
-            Vector2Int curPos = path.Pop();
-            MazeCell curCell = _grid[curPos];
-
-            MazeCell.neighbours.Shuffle();
-
-            foreach (Vector2Int direction in MazeCell.neighbours)
-            {
-                Vector2Int newPos = curPos + direction;
-                if (InBounds(newPos) && !visited[newPos])
-                {
-                    visited[newPos] = true;
-                    path.Push(newPos);
-                    ChangeWall(curPos, direction, WallState.Destroyed);
-                }
-            }
-        }
-
+        _genAlgo.Generate();
     }
 
+    /// <summary>
+    /// Returns a sequence of directions until the next decision point (eintersenction or dead end)
+    /// </summary>
+    /// <param name="position">The current position to start from</param>
+    /// <param name="incomingDirection">The direction where current position was entered from</param>
+    /// <returns></returns>
+    public List<Vector2Int> GetSequenceToDicisionPoint(Vector2Int position, Vector2Int incomingDirection)
+    {
+        List<Vector2Int> sequence = new List<Vector2Int>();
+        incomingDirection = _grid[position].GetCorridorOpening(incomingDirection * -1);
+        while (incomingDirection != Vector2Int.zero)
+        {
+            sequence.Add(incomingDirection);
+            position += incomingDirection;
+            incomingDirection = _grid[position].GetCorridorOpening(incomingDirection * -1);
+        }
+        return sequence;
+    }
+
+    /// <summary>
+    /// Creates a wall GameObject at the specified position
+    /// </summary>
+    /// <param name="pos">The position to place the wall at</param>
+    /// <param name="horizontal">Determines whether the wall is horizontal or vertical</param>
     private void PutWall(Vector3 pos, bool horizontal=true)
     {
         GameObject wall = Instantiate(wallTemplate, pos, Quaternion.identity);
-        float wallWidth = horizontal ? CELL_WIDTH + WALL_WIDTH : WALL_WIDTH;
-        float wallHeight = horizontal ? WALL_WIDTH : CELL_WIDTH + WALL_WIDTH;
-        wall.transform.localScale = new Vector3(wallWidth, CELL_WIDTH, wallHeight);
+        float wallX = horizontal ? MazeCell.CELL_WIDTH + WALL_WIDTH : WALL_WIDTH;
+        float wallY = horizontal ? WALL_WIDTH : MazeCell.CELL_WIDTH + WALL_WIDTH;
+
+        // a random value is added, so that the overlap is better rendered
+        float wallHeight = MazeCell.CELL_WIDTH + Random.value * 0.1f;
+
+        wall.transform.localScale = new Vector3(wallX, wallHeight, wallY);
     }
 
+    /// <summary>
+    /// For each MazeCell in _grid creates an actual Wall in 3D space
+    /// </summary>
     public void Display()
     {
         foreach (var kvPair in _grid)
@@ -149,20 +204,19 @@ public class Maze : MonoBehaviour
             MazeCell cell = kvPair.Value;
             if (cell.WallExists(Vector2Int.right))
             {
-                PutWall(new Vector3(CELL_WIDTH * (pos.x + 1), 0, CELL_WIDTH * (pos.y + 0.5f)), false);
+                PutWall(new Vector3(MazeCell.CELL_WIDTH * (pos.x + 1), 0, MazeCell.CELL_WIDTH * (pos.y + 0.5f)), false);
             }
             if (cell.WallExists(Vector2Int.up))
             {
-                PutWall(new Vector3(CELL_WIDTH * (pos.x + 0.5f), 0, CELL_WIDTH * (pos.y + 1)), true);
+                PutWall(new Vector3(MazeCell.CELL_WIDTH * (pos.x + 0.5f), 0, MazeCell.CELL_WIDTH * (pos.y + 1)), true);
             }
-
-            if (pos.y == 0)
+            if (cell.WallExists(Vector2Int.left))
             {
-                PutWall(new Vector3(CELL_WIDTH * (pos.x + 0.5f), 0, CELL_WIDTH * pos.y), true);
+                PutWall(new Vector3(MazeCell.CELL_WIDTH * pos.x, 0, MazeCell.CELL_WIDTH * (pos.y + 0.5f)), false);
             }
-            if (pos.x == 0)
+            if (cell.WallExists(Vector2Int.down))
             {
-                PutWall(new Vector3(CELL_WIDTH * pos.x, 0, CELL_WIDTH * (pos.y + 0.5f)), false);
+                PutWall(new Vector3(MazeCell.CELL_WIDTH * (pos.x + 0.5f), 0, MazeCell.CELL_WIDTH * pos.y), true);
             }
         }
     }
