@@ -35,7 +35,7 @@ public class GameManager : MonoBehaviour
             _mazeHeight = value > 0 ? value : _mazeHeight;
         }
     }
-    public static GameManager Instance { get => _instance; }
+    public static GameManager Instance => _instance;
 
 
     private GameManager() { }

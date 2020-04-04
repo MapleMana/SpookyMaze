@@ -64,6 +64,25 @@ public class MazeCell
     public bool WallExists(Vector2Int direction) {
         return _wallState[direction] == WallState.Exists;
     }
+
+    /// <summary>
+    /// Checks if this cell is a corridor (only 2 entrances) and 
+    /// returns an entrance (different from the input one)
+    /// </summary>
+    /// <param name="incomingDirection">The direction of the entrance that should not be considered</param>
+    /// <returns>An opposite corridor entrance or Vector2Int.zero if this is not a corridor</returns>
+    public Vector2Int GetCorridorOpening(Vector2Int incomingDirection)
+    {
+        List<Vector2Int> otherOpenings = new List<Vector2Int>();
+        foreach (Vector2Int direction in neighbours)
+        {
+            if (direction != incomingDirection && _wallState[direction] == WallState.Destroyed)
+            {
+                otherOpenings.Add(direction);
+            }
+        }
+        return otherOpenings.Count == 1 ? otherOpenings[0] : Vector2Int.zero;
+    }
 }
 
 public class Maze : MonoBehaviour
@@ -81,13 +100,13 @@ public class Maze : MonoBehaviour
 
     public GameObject wallTemplate;
 
-    public Vector2Int Start { get => _start; }
-    public Vector2Int End { get => _end; }
+    public Vector2Int Start => _start;
+    public Vector2Int End => _end;
 
-    public int Width { get => _width; }
-    public int Height { get => _height; }
-    public static Maze Instance { get => _instance; }
-    public Dictionary<Vector2Int, MazeCell> Grid { get => _grid; }
+    public int Width => _width;
+    public int Height => _height;
+    public static Maze Instance => _instance;
+    public MazeCell this[Vector2Int pos] => _grid[pos];
 
     private void Awake()
     {
@@ -136,6 +155,25 @@ public class Maze : MonoBehaviour
     public void Generate()
     {
         _genAlgo.Generate();
+    }
+
+    /// <summary>
+    /// Returns a sequence of directions until the next decision point (eintersenction or dead end)
+    /// </summary>
+    /// <param name="position">The current position to start from</param>
+    /// <param name="incomingDirection">The direction where current position was entered from</param>
+    /// <returns></returns>
+    public List<Vector2Int> GetSequenceToDicisionPoint(Vector2Int position, Vector2Int incomingDirection)
+    {
+        List<Vector2Int> sequence = new List<Vector2Int>();
+        incomingDirection = _grid[position].GetCorridorOpening(incomingDirection * -1);
+        while (incomingDirection != Vector2Int.zero)
+        {
+            sequence.Add(incomingDirection);
+            position += incomingDirection;
+            incomingDirection = _grid[position].GetCorridorOpening(incomingDirection * -1);
+        }
+        return sequence;
     }
 
     /// <summary>
