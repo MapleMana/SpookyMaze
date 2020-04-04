@@ -157,6 +157,19 @@ public class Maze : MonoBehaviour
         _genAlgo.Generate();
     }
 
+    public List<Vector2Int> GetSequenceToDicisionPoint(Vector2Int position, Vector2Int direction)
+    {
+        List<Vector2Int> sequence = new List<Vector2Int>();
+        while (true)
+        {
+            direction = _grid[position].GetCorridorOpening(direction * -1);
+            if (direction == Vector2Int.zero) break;
+            sequence.Add(direction);
+            position += direction;
+        }
+        return sequence;
+    }
+
     /// <summary>
     /// Creates a wall GameObject at the specified position
     /// </summary>

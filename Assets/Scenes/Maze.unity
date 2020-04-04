@@ -340,6 +340,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   replayTime: 10
   reversedReplayTime: 5
+  playerSpeed: 7
   maxLightAngle: 150
   minLightAngle: 20
 --- !u!23 &1144077015

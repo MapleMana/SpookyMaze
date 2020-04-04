@@ -15,6 +15,7 @@ public class Player : MonoBehaviour
 
     public float replayTime;
     public float reversedReplayTime;
+    public float playerSpeed;
 
     [Range(0f, 180f)]
     public float maxLightAngle;
@@ -65,22 +66,35 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        PlayerMovementCommand _command = (PlayerMovementCommand)PlayerActionDetector.DetectDesktop();
-        if (_canMove && _command.Execute(this))
-        {
-            _playerLevelCommands.Add(_command);
-            SyncRealPosition();
-            Vector2Int previousMoveDirection = _command.Direction;
-            //while (Maze.Instance.Grid[_mazePosition].GetCorridorOpening(previousMoveDirection) != Vector2Int.zero)
-            //{
-            //    MazeCell curCell
-            //}
-        }
-        
         // when the player reaches the end (not from replay)
         if (_canMove && _mazePosition == Maze.Instance.End)
         {
             GameManager.Instance.EndLevel(mazeComplete: true);
+        }
+
+        PlayerCommand _command = PlayerActionDetector.DetectDesktop();
+        if (_canMove && _command.Execute(this))
+        {
+            _playerLevelCommands.Add(_command);
+            SyncRealPosition();
+            List<Vector2Int> movementSequence = Maze.Instance.GetSequenceToDicisionPoint(
+                _mazePosition,
+                PlayerCommand.ComDirTranslator(_command)
+            );
+            List<PlayerCommand> commandSequence = new List<PlayerCommand>();
+            for (int i = 0; i < movementSequence.Count; i++)
+            {
+                Vector2Int direction = movementSequence[i];
+                PlayerCommand newMovement = PlayerCommand.ComDirTranslator(direction);
+                commandSequence.Add(newMovement);
+                _playerLevelCommands.Add(newMovement);
+            }
+            _canMove = false;
+            StartCoroutine(PlayCommands(
+                playerCommands: commandSequence,
+                pauseBetween: 1 / playerSpeed,
+                onComplete: () => _canMove = true
+           ));
         }
     }
 
@@ -117,6 +131,7 @@ public class Player : MonoBehaviour
         bool reversed = false,
         Vector2Int? initialPosition = null,
         float? playTime = null,
+        float? pauseBetween = null,
         Action onComplete = null)
     {
         playerCommands = playerCommands ?? _playerLevelCommands;
@@ -126,7 +141,7 @@ public class Player : MonoBehaviour
         }
         _mazePosition = initialPosition ?? _mazePosition;
 
-        float pauseBetweenCommands = (playTime ?? replayTime) / playerCommands.Count;
+        float pauseBetweenCommands = pauseBetween ?? ((playTime ?? replayTime) / playerCommands.Count);
 
         foreach (PlayerCommand command in playerCommands)
         {
@@ -150,16 +165,16 @@ public class Player : MonoBehaviour
 public class PlayerCommand
 {
     public static readonly PlayerCommand MoveUp =
-        new PlayerMovementCommand(Vector2Int.up);
+        new PlayerCommand((player) => player.Move(Vector2Int.up));
 
     public static readonly PlayerCommand MoveDown =
-        new PlayerMovementCommand(Vector2Int.down);
+        new PlayerCommand((player) => player.Move(Vector2Int.down));
 
     public static readonly PlayerCommand MoveLeft =
-        new PlayerMovementCommand(Vector2Int.left);
+        new PlayerCommand((player) => player.Move(Vector2Int.left));
 
     public static readonly PlayerCommand MoveRight =
-        new PlayerMovementCommand(Vector2Int.right);
+        new PlayerCommand((player) => player.Move(Vector2Int.right));
 
     public static readonly PlayerCommand Idle =
         new PlayerCommand((Player player) => false);
@@ -181,19 +196,24 @@ public class PlayerCommand
     }
 
     public ExecuteCallback Execute { get; internal set; }
-}
 
-public class PlayerMovementCommand : PlayerCommand
-{
-    private Vector2Int _direction;
-
-    public PlayerMovementCommand(Vector2Int direction) : base(player => false)
+    public static PlayerCommand ComDirTranslator(Vector2Int direction)
     {
-        _direction = direction;
-        Execute = (Player player) => player.Move(direction);
+        if (direction == Vector2Int.up) return MoveUp;
+        if (direction == Vector2Int.down) return MoveDown;
+        if (direction == Vector2Int.right) return MoveRight;
+        if (direction == Vector2Int.left) return MoveLeft;
+        return Idle;
     }
 
-    public Vector2Int Direction { get => _direction; }
+    public static Vector2Int ComDirTranslator(PlayerCommand direction)
+    {
+        if (direction == MoveUp) return Vector2Int.up;
+        if (direction == MoveDown) return Vector2Int.down;
+        if (direction == MoveLeft) return Vector2Int.left;
+        if (direction == MoveRight) return Vector2Int.right;
+        return Vector2Int.zero;
+    }
 }
 
 /// <summary>
