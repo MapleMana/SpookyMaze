@@ -100,13 +100,13 @@ public class Maze : MonoBehaviour
 
     public GameObject wallTemplate;
 
-    public Vector2Int Start { get => _start; }
-    public Vector2Int End { get => _end; }
+    public Vector2Int Start => _start;
+    public Vector2Int End => _end;
 
-    public int Width { get => _width; }
-    public int Height { get => _height; }
-    public static Maze Instance { get => _instance; }
-    public Dictionary<Vector2Int, MazeCell> Grid { get => _grid; }
+    public int Width => _width;
+    public int Height => _height;
+    public static Maze Instance => _instance;
+    public MazeCell this[Vector2Int pos] => _grid[pos];
 
     private void Awake()
     {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using UnityEngine;
 
@@ -22,8 +23,8 @@ public class Player : MonoBehaviour
     [Range(0f, 180f)]
     public float minLightAngle;
 
-    public static Player Instance { get => _instance; }
-    public Light PlayerLight { get => _playerLight; }
+    public static Player Instance => _instance;
+    public Light PlayerLight => _playerLight;
     public bool CanMove { get => _canMove; set => _canMove = value; }
 
     void Awake()
@@ -77,20 +78,20 @@ public class Player : MonoBehaviour
         {
             _playerLevelCommands.Add(_command);
             SyncRealPosition();
-            MoveToDecisionPoint();
+            Vector2Int lastDirection = PlayerCommand.ComDirTranslator(_command);
+            MoveToDecisionPoint(incomingDirection: lastDirection);
         }
     }
 
     /// <summary>
     /// Moves the player to the next decision point in the maze (intersection or dead end)
     /// </summary>
-    private void MoveToDecisionPoint()
+    private void MoveToDecisionPoint(Vector2Int incomingDirection)
     {
-        PlayerCommand lastCommand = _playerLevelCommands.Last();
         List<Vector2Int> movementSequence = Maze.Instance.GetSequenceToDicisionPoint(
-                _mazePosition,
-                PlayerCommand.ComDirTranslator(lastCommand)
-            );
+            position: _mazePosition,
+            incomingDirection: incomingDirection
+        );
         List<PlayerCommand> commandSequence = new List<PlayerCommand>();
         for (int i = 0; i < movementSequence.Count; i++)
         {
@@ -99,9 +100,11 @@ public class Player : MonoBehaviour
             commandSequence.Add(newMovement);
             _playerLevelCommands.Add(newMovement);
         }
+
+
         _canMove = false;
         StartCoroutine(PlayCommands(
-            playerCommands: commandSequence,
+            playerCommands: _playerLevelCommands,
             pauseBetween: 1 / playerSpeed,
             onComplete: () => _canMove = true
        ));
@@ -113,7 +116,7 @@ public class Player : MonoBehaviour
     /// <param name="direction">THe direction of movement</param>
     public bool Move(Vector2Int direction)
     {
-        if (!Maze.Instance.Grid[_mazePosition].WallExists(direction))
+        if (!Maze.Instance[_mazePosition].WallExists(direction))
         {
             _mazePosition += direction;
             SyncRealPosition();
@@ -146,8 +149,10 @@ public class Player : MonoBehaviour
             playerCommands.Reverse();
         }
         _mazePosition = initialPosition ?? _mazePosition;
-
         float pauseBetweenCommands = pauseBetween ?? ((playTime ?? replayTime) / playerCommands.Count);
+
+        yield return new WaitForSeconds(pauseBetweenCommands);
+        SyncRealPosition();
 
         foreach (PlayerCommand command in playerCommands)
         {
@@ -163,7 +168,7 @@ public class Player : MonoBehaviour
     /// </summary>
     void SyncRealPosition()
     {
-        MazeCell currentCell = Maze.Instance.Grid[_mazePosition];
+        MazeCell currentCell = Maze.Instance[_mazePosition];
         transform.position = new Vector3(currentCell.cellCenter.x, transform.position.y, currentCell.cellCenter.y);
     }
 }

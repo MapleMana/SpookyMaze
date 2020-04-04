@@ -15,7 +15,7 @@ public class UIManager : MonoBehaviour
     public GameObject FinishMenu;
     public GameObject SettingsMenu;
 
-    public static UIManager Instance { get => _instance; set => _instance = value; }
+    public static UIManager Instance => _instance;
 
     private void Awake()
     {
