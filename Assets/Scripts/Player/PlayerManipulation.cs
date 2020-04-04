@@ -4,20 +4,13 @@ using UnityEngine;
 
 public class PlayerCommand
 {
-    public static readonly PlayerCommand MoveUp =
-        new PlayerCommand((player) => player.Move(Vector2Int.up));
+    private Vector2Int _direction;
 
-    public static readonly PlayerCommand MoveDown =
-        new PlayerCommand((player) => player.Move(Vector2Int.down));
-
-    public static readonly PlayerCommand MoveLeft =
-        new PlayerCommand((player) => player.Move(Vector2Int.left));
-
-    public static readonly PlayerCommand MoveRight =
-        new PlayerCommand((player) => player.Move(Vector2Int.right));
-
-    public static readonly PlayerCommand Idle =
-        new PlayerCommand((Player player) => false);
+    public static readonly PlayerCommand MoveUp = new PlayerCommand(Vector2Int.up);
+    public static readonly PlayerCommand MoveDown = new PlayerCommand(Vector2Int.down);
+    public static readonly PlayerCommand MoveLeft = new PlayerCommand(Vector2Int.left);
+    public static readonly PlayerCommand MoveRight = new PlayerCommand(Vector2Int.right);
+    public static readonly PlayerCommand Idle = new PlayerCommand((Player player) => false);
 
     public static Dictionary<PlayerCommand, PlayerCommand> reverseCommand = new Dictionary<PlayerCommand, PlayerCommand>
     {
@@ -35,24 +28,27 @@ public class PlayerCommand
         Execute = executeMethod;
     }
 
-    public ExecuteCallback Execute { get; internal set; }
+    public PlayerCommand(Vector2Int direction)
+    {
+        Execute = player => player.Move(direction);
+        _direction = direction;
+    }
 
-    public static PlayerCommand ComDirTranslator(Vector2Int direction)
+    public ExecuteCallback Execute { get; internal set; }
+    public Vector2Int Direction => _direction;
+    
+    /// <summary>
+    /// Returns an appropriate command for the given direction
+    /// </summary>
+    /// <param name="direction">The direction to get the command for</param>
+    /// <returns>Desired command or null if the mapping does not exist</returns>
+    public static PlayerCommand FromVector(Vector2Int direction)
     {
         if (direction == Vector2Int.up) return MoveUp;
         if (direction == Vector2Int.down) return MoveDown;
         if (direction == Vector2Int.right) return MoveRight;
         if (direction == Vector2Int.left) return MoveLeft;
-        return Idle;
-    }
-
-    public static Vector2Int ComDirTranslator(PlayerCommand direction)
-    {
-        if (direction == MoveUp) return Vector2Int.up;
-        if (direction == MoveDown) return Vector2Int.down;
-        if (direction == MoveLeft) return Vector2Int.left;
-        if (direction == MoveRight) return Vector2Int.right;
-        return Vector2Int.zero;
+        return null;
     }
 }
 

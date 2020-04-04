@@ -166,12 +166,12 @@ public class Maze : MonoBehaviour
     public List<Vector2Int> GetSequenceToDicisionPoint(Vector2Int position, Vector2Int incomingDirection)
     {
         List<Vector2Int> sequence = new List<Vector2Int>();
-        while (true)
+        incomingDirection = _grid[position].GetCorridorOpening(incomingDirection * -1);
+        while (incomingDirection != Vector2Int.zero)
         {
-            incomingDirection = _grid[position].GetCorridorOpening(incomingDirection * -1);
-            if (incomingDirection == Vector2Int.zero) break;
             sequence.Add(incomingDirection);
             position += incomingDirection;
+            incomingDirection = _grid[position].GetCorridorOpening(incomingDirection * -1);
         }
         return sequence;
     }

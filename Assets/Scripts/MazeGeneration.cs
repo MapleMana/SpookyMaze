@@ -26,8 +26,8 @@ public abstract class GenerationStrategy
     internal void ChangeWall(Vector2Int position, Vector2Int direction, WallState wallState)
     {
         Vector2Int neighbour = position + direction;
-        Maze.Instance.Grid[position].SetWall(direction, wallState);
-        Maze.Instance.Grid[neighbour].SetWall(direction * -1, wallState);
+        Maze.Instance[position].SetWall(direction, wallState);
+        Maze.Instance[neighbour].SetWall(direction * -1, wallState);
     }
 }
 

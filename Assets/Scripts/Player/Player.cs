@@ -78,8 +78,7 @@ public class Player : MonoBehaviour
         {
             _playerLevelCommands.Add(_command);
             SyncRealPosition();
-            Vector2Int lastDirection = PlayerCommand.ComDirTranslator(_command);
-            MoveToDecisionPoint(incomingDirection: lastDirection);
+            MoveToDecisionPoint(incomingDirection: _command.Direction);
         }
     }
 
@@ -96,15 +95,14 @@ public class Player : MonoBehaviour
         for (int i = 0; i < movementSequence.Count; i++)
         {
             Vector2Int direction = movementSequence[i];
-            PlayerCommand newMovement = PlayerCommand.ComDirTranslator(direction);
+            PlayerCommand newMovement = PlayerCommand.FromVector(direction);
             commandSequence.Add(newMovement);
             _playerLevelCommands.Add(newMovement);
         }
 
-
         _canMove = false;
         StartCoroutine(PlayCommands(
-            playerCommands: _playerLevelCommands,
+            playerCommands: commandSequence,
             pauseBetween: 1 / playerSpeed,
             onComplete: () => _canMove = true
        ));
