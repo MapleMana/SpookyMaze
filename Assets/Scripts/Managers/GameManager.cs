@@ -17,7 +17,9 @@ public class GameManager : MonoBehaviour
     public int mazeSizeIncrement;
     public float timeDecrement;
     [Range(0f, 500f)]
-    public float levelTime = 20.0f;
+    public float levelTime = 20;
+    public float replayTime = 10;
+    public float reversedReplayTime = 5;
 
     public int MazeWidth
     {

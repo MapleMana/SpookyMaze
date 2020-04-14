@@ -67,7 +67,7 @@ public class UIManager : MonoBehaviour
         FinishMenu.SetActive(false);
         StartCoroutine(Player.Instance.PlayCommands(
             initialPosition: Maze.Instance.Start,
-            playTime: Player.Instance.replayTime,
+            playTime: GameManager.Instance.replayTime,
             onComplete: () => FinishMenu.SetActive(true)
         ));
     }
@@ -80,7 +80,7 @@ public class UIManager : MonoBehaviour
         FinishMenu.SetActive(false);
         StartCoroutine(Player.Instance.PlayCommands(
             reversed: true,
-            playTime: Player.Instance.reversedReplayTime,
+            playTime: GameManager.Instance.reversedReplayTime,
             onComplete: () =>
             {
                 LightManager.Instance.TurnOff();

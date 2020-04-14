@@ -14,8 +14,6 @@ public class Player : MonoBehaviour
     private Light _playerLight;
     private bool _canMove = false;
 
-    public float replayTime;
-    public float reversedReplayTime;
     public float playerSpeed;
 
     [Range(0f, 180f)]
@@ -147,7 +145,7 @@ public class Player : MonoBehaviour
             playerCommands.Reverse();
         }
         _mazePosition = initialPosition ?? _mazePosition;
-        float pauseBetweenCommands = pauseBetween ?? ((playTime ?? replayTime) / playerCommands.Count);
+        float pauseBetweenCommands = pauseBetween ?? ((playTime ?? 0) / playerCommands.Count);
 
         yield return new WaitForSeconds(pauseBetweenCommands);
         SyncRealPosition();
