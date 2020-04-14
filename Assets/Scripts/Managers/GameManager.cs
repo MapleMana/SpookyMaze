@@ -113,6 +113,28 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void WatchReplay()
+    {
+        StartCoroutine(Player.Instance.PlayCommands(
+            initialPosition: Maze.Instance.Start,
+            playTime: replayTime,
+            onComplete: () => UIManager.Instance.FinishMenu.SetActive(true)
+        ));
+    }
+
+    public void GoToNextLevel()
+    {
+        StartCoroutine(Player.Instance.PlayCommands(
+            reversed: true,
+            playTime: reversedReplayTime,
+            onComplete: () =>
+            {
+                LightManager.Instance.TurnOff();
+                LoadLevel("Maze");
+            }
+        ));
+    }
+
     public void Update()
     {
         if (_levelStarted)
