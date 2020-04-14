@@ -149,7 +149,6 @@ public class Player : MonoBehaviour
         _mazePosition = initialPosition ?? _mazePosition;
         float pauseBetweenCommands = pauseBetween ?? ((playTime ?? 0) / playerCommands.Count);
 
-        yield return new WaitForSeconds(pauseBetweenCommands);
         SyncRealPosition();
 
         foreach (PlayerCommand command in playerCommands)
