@@ -55,7 +55,6 @@ public class UIManager : MonoBehaviour
     /// </summary>
     public void ShowFinishMenu()
     {
-        LightManager.Instance.TurnOn();
         FinishMenu.SetActive(true);
     }
 
@@ -65,7 +64,9 @@ public class UIManager : MonoBehaviour
     public void WatchReplay()
     {
         FinishMenu.SetActive(false);
-        GameManager.Instance.WatchReplay();
+        GameManager.Instance.WatchReplay(
+            onComplete: () => FinishMenu.SetActive(true)
+        );
     }
 
     /// <summary>

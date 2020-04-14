@@ -68,7 +68,7 @@ public class Player : MonoBehaviour
         // when the player reaches the end (not from replay)
         if (_canMove && _mazePosition == Maze.Instance.End)
         {
-            GameManager.Instance.EndLevel(mazeComplete: true);
+            GameManager.Instance.EndLevel(mazeCompleted: true);
         }
 
         PlayerCommand _command = PlayerActionDetector.DetectDesktop();

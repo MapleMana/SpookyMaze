@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -20,6 +21,7 @@ public class GameManager : MonoBehaviour
     private int _mazeHeight;
     private float _timeLeft;
     private LevelState _levelState;
+    private bool _mazeCompleted;
 
     public int initialMazeWidth;
     public int initialMazeHeight;
@@ -84,6 +86,7 @@ public class GameManager : MonoBehaviour
 
             _levelState = LevelState.InProgress;
             _timeLeft = levelTime;
+            _mazeCompleted = false;
         }
     }
 
@@ -109,25 +112,28 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// Called when the level ends (player wins/loses)
     /// </summary>
-    public void EndLevel(bool mazeComplete)
+    public void EndLevel(bool mazeCompleted)
     {
         _levelState = LevelState.Ended;
         UIManager.Instance.ShowFinishMenu();
         Player.Instance.CanMove = false;
-        if (mazeComplete)
+        _mazeCompleted = mazeCompleted;
+        if (mazeCompleted)
         {
+            LightManager.Instance.TurnOn();
             _mazeHeight += mazeSizeIncrement;
             _mazeWidth += mazeSizeIncrement;
             levelTime -= timeDecrement;
         }
     }
 
-    public void WatchReplay()
+    public void WatchReplay(Action onComplete)
     {
+        _timeLeft = replayTime;
         StartCoroutine(Player.Instance.PlayCommands(
             initialPosition: Maze.Instance.Start,
             playTime: replayTime,
-            onComplete: () => UIManager.Instance.FinishMenu.SetActive(true)
+            onComplete: onComplete
         ));
     }
 
@@ -146,17 +152,28 @@ public class GameManager : MonoBehaviour
 
     public void Update()
     {
+        if (_timeLeft > 0)
+        {
+            _timeLeft -= Time.deltaTime;
+        }
+
         switch (_levelState)
         {
             case LevelState.InProgress:
-                _timeLeft -= Time.deltaTime;
                 if (_timeLeft < 0)
                 {
-                    EndLevel(mazeComplete: false);
+                    EndLevel(mazeCompleted: false);
                 }
-                Player.Instance.SetLightAngle(_timeLeft / levelTime);
+                else
+                {
+                    Player.Instance.SetLightAngle(_timeLeft / levelTime);
+                }
                 break;
             case LevelState.InReplay:
+                if (_timeLeft > 0)
+                {
+
+                }
                 break;
             case LevelState.InReplayReversed:
                 break;
