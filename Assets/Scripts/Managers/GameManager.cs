@@ -3,6 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+public enum LevelState
+{
+    None,
+    InProgress,
+    Ended,
+    InReplay,
+    InReplayReversed
+}
+
 public class GameManager : MonoBehaviour
 {
     private static GameManager _instance;
@@ -10,7 +19,7 @@ public class GameManager : MonoBehaviour
     private int _mazeWidth;
     private int _mazeHeight;
     private float _timeLeft;
-    private bool _levelStarted = false;
+    private LevelState _levelState;
 
     public int initialMazeWidth;
     public int initialMazeHeight;
@@ -73,7 +82,7 @@ public class GameManager : MonoBehaviour
         {
             StartNewLevel();
 
-            _levelStarted = true;
+            _levelState = LevelState.InProgress;
             _timeLeft = levelTime;
         }
     }
@@ -102,7 +111,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void EndLevel(bool mazeComplete)
     {
-        _levelStarted = false;
+        _levelState = LevelState.Ended;
         UIManager.Instance.ShowFinishMenu();
         Player.Instance.CanMove = false;
         if (mazeComplete)
@@ -137,14 +146,22 @@ public class GameManager : MonoBehaviour
 
     public void Update()
     {
-        if (_levelStarted)
+        switch (_levelState)
         {
-            _timeLeft -= Time.deltaTime;
-            if (_timeLeft < 0)
-            {
-                EndLevel(mazeComplete: false);
-            }
-            Player.Instance.SetLightAngle(_timeLeft / levelTime);
+            case LevelState.InProgress:
+                _timeLeft -= Time.deltaTime;
+                if (_timeLeft < 0)
+                {
+                    EndLevel(mazeComplete: false);
+                }
+                Player.Instance.SetLightAngle(_timeLeft / levelTime);
+                break;
+            case LevelState.InReplay:
+                break;
+            case LevelState.InReplayReversed:
+                break;
+            default:
+                break;
         }
     }
 }
