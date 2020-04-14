@@ -13,11 +13,9 @@ public class Player : MonoBehaviour
     private List<PlayerCommand> _playerLevelCommands;
     private Light _playerLight;
     private bool _canMove = false;
+    private float _lightIntensity;
 
-    public float replayTime;
-    public float reversedReplayTime;
     public float playerSpeed;
-
     [Range(0f, 180f)]
     public float maxLightAngle;
     [Range(0f, 180f)]
@@ -25,6 +23,7 @@ public class Player : MonoBehaviour
 
     public static Player Instance => _instance;
     public Light PlayerLight => _playerLight;
+    public float LightIntensity => _lightIntensity;
     public bool CanMove { get => _canMove; set => _canMove = value; }
 
     void Awake()
@@ -43,6 +42,7 @@ public class Player : MonoBehaviour
     private void Start()
     {
         _playerLight = GetComponentInChildren<Light>();
+        _lightIntensity = _playerLight.intensity;
     }
 
     /// <summary>
@@ -60,9 +60,11 @@ public class Player : MonoBehaviour
     /// Sets the angle of the light cone above the player
     /// </summary>
     /// <param name="coef">Completeness (max -> min) coefficient</param>
-    public void SetLightAngle(float coef)
+    /// <param name="min">Minimal value to interpolate from</param>
+    /// <param name="max">Maximal value to interpolate to</param>
+    public void LerpLightAngle(float? min = null, float? max = null, float coef = 0)
     {
-        _playerLight.spotAngle = Mathf.Lerp(minLightAngle, maxLightAngle, coef);
+        _playerLight.spotAngle = Mathf.Lerp(min ?? minLightAngle, max ?? maxLightAngle, coef);
     }
 
     void Update()
@@ -70,7 +72,7 @@ public class Player : MonoBehaviour
         // when the player reaches the end (not from replay)
         if (_canMove && _mazePosition == Maze.Instance.End)
         {
-            GameManager.Instance.EndLevel(mazeComplete: true);
+            GameManager.Instance.EndLevel(mazeCompleted: true);
         }
 
         PlayerCommand _command = PlayerActionDetector.DetectDesktop();
@@ -147,9 +149,8 @@ public class Player : MonoBehaviour
             playerCommands.Reverse();
         }
         _mazePosition = initialPosition ?? _mazePosition;
-        float pauseBetweenCommands = pauseBetween ?? ((playTime ?? replayTime) / playerCommands.Count);
+        float pauseBetweenCommands = pauseBetween ?? ((playTime ?? 0) / playerCommands.Count);
 
-        yield return new WaitForSeconds(pauseBetweenCommands);
         SyncRealPosition();
 
         foreach (PlayerCommand command in playerCommands)

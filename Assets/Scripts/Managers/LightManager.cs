@@ -32,11 +32,11 @@ public class LightManager : MonoBehaviour
     }
 
     /// <summary>
-    /// DirectionalLight turns off, onlt highlighted part with the player is visible
+    /// DirectionalLight turns off, only highlighted part with the player is visible
     /// </summary>
     public void TurnOff()
     {
         light.intensity = 0;
-        Player.Instance.PlayerLight.intensity = 1;
+        Player.Instance.PlayerLight.intensity = Player.Instance.LightIntensity;
     }
 }

@@ -55,38 +55,27 @@ public class UIManager : MonoBehaviour
     /// </summary>
     public void ShowFinishMenu()
     {
-        LightManager.Instance.TurnOn();
         FinishMenu.SetActive(true);
     }
 
     /// <summary>
-    /// Replays player's movements from the start
+    /// Replays player's movements from the start. Fired from FinishMenu.
     /// </summary>
     public void WatchReplay()
     {
         FinishMenu.SetActive(false);
-        StartCoroutine(Player.Instance.PlayCommands(
-            initialPosition: Maze.Instance.Start,
-            playTime: Player.Instance.replayTime,
+        GameManager.Instance.WatchReplay(
             onComplete: () => FinishMenu.SetActive(true)
-        ));
+        );
     }
 
     /// <summary>
-    /// Replays player's movements from finish to the start and reloads the maze
+    /// Replays player's movements from finish to the start. Fired from FinishMenu.
     /// </summary>
     public void GoToNextLevel()
     {
         FinishMenu.SetActive(false);
-        StartCoroutine(Player.Instance.PlayCommands(
-            reversed: true,
-            playTime: Player.Instance.reversedReplayTime,
-            onComplete: () =>
-            {
-                LightManager.Instance.TurnOff();
-                GameManager.Instance.LoadLevel("Maze");
-            }
-        ));
+        GameManager.Instance.GoToNextLevel();
     }
 
     /// <summary>
