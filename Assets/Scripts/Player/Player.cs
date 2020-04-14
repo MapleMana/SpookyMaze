@@ -60,7 +60,9 @@ public class Player : MonoBehaviour
     /// Sets the angle of the light cone above the player
     /// </summary>
     /// <param name="coef">Completeness (max -> min) coefficient</param>
-    public void SetLightAngle(float coef, float? min = null, float? max = null)
+    /// <param name="min">Minimal value to interpolate from</param>
+    /// <param name="max">Maximal value to interpolate to</param>
+    public void LerpLightAngle(float? min = null, float? max = null, float coef = 0)
     {
         _playerLight.spotAngle = Mathf.Lerp(min ?? minLightAngle, max ?? maxLightAngle, coef);
     }

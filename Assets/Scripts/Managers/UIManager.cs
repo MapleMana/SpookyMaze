@@ -59,7 +59,7 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Replays player's movements from the start
+    /// Replays player's movements from the start. Fired from FinishMenu.
     /// </summary>
     public void WatchReplay()
     {
@@ -70,7 +70,7 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Replays player's movements from finish to the start and reloads the maze
+    /// Replays player's movements from finish to the start. Fired from FinishMenu.
     /// </summary>
     public void GoToNextLevel()
     {

@@ -22,7 +22,7 @@ public class GameManager : MonoBehaviour
     private float _timeLeft;
     private LevelState _levelState;
     private bool _mazeCompleted;
-    private float _finalPlayerLightAngle;
+    private float _finalPlayerLightAngle;      // the player light angle at the end of the level
 
     public int initialMazeWidth;
     public int initialMazeHeight;
@@ -129,6 +129,10 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Replays player movements from the start.
+    /// </summary>
+    /// <param name="onComplete">Action to perform when the replay is complete</param>
     public void WatchReplay(Action onComplete)
     {
         _levelState = LevelState.InReplay;
@@ -140,6 +144,9 @@ public class GameManager : MonoBehaviour
         ));
     }
 
+    /// <summary>
+    /// Replays the player movements reversely. Transitions to the next.
+    /// </summary>
     public void GoToNextLevel()
     {
         _levelState = LevelState.InReplayReversed;
@@ -148,10 +155,7 @@ public class GameManager : MonoBehaviour
         StartCoroutine(Player.Instance.PlayCommands(
             reversed: true,
             playTime: reversedReplayTime,
-            onComplete: () =>
-            {
-                LoadLevel("Maze");
-            }
+            onComplete: () => LoadLevel("Maze")
         ));
     }
 
@@ -167,16 +171,16 @@ public class GameManager : MonoBehaviour
                 else
                 {
                     _timeLeft -= Time.deltaTime;
-                    Player.Instance.SetLightAngle(_timeLeft / levelTime);
+                    Player.Instance.LerpLightAngle(_timeLeft / levelTime);
                 }
                 break;
             case LevelState.InReplay:
                 if (_timeLeft > 0)
                 {
                     _timeLeft -= Time.deltaTime;
-                    Player.Instance.SetLightAngle(
-                        coef: _timeLeft / replayTime, 
-                        min: _finalPlayerLightAngle
+                    Player.Instance.LerpLightAngle(
+                        min: _finalPlayerLightAngle,
+                        coef: _timeLeft / replayTime
                     );
                 }
                 break;
@@ -184,9 +188,9 @@ public class GameManager : MonoBehaviour
                 if (_timeLeft < reversedReplayTime)
                 {
                     _timeLeft += Time.deltaTime;
-                    Player.Instance.SetLightAngle(
-                        coef: _timeLeft / reversedReplayTime,
-                        min: _finalPlayerLightAngle
+                    Player.Instance.LerpLightAngle(
+                        min: _finalPlayerLightAngle,
+                        coef: _timeLeft / reversedReplayTime
                     );
                 }
                 break;
