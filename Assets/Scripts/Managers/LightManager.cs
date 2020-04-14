@@ -37,6 +37,6 @@ public class LightManager : MonoBehaviour
     public void TurnOff()
     {
         light.intensity = 0;
-        Player.Instance.PlayerLight.intensity = 1;
+        Player.Instance.PlayerLight.intensity = Player.Instance.LightIntensity;
     }
 }

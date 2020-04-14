@@ -22,6 +22,7 @@ public class GameManager : MonoBehaviour
     private float _timeLeft;
     private LevelState _levelState;
     private bool _mazeCompleted;
+    private float _finalPlayerLightAngle;
 
     public int initialMazeWidth;
     public int initialMazeHeight;
@@ -117,6 +118,7 @@ public class GameManager : MonoBehaviour
         _levelState = LevelState.Ended;
         UIManager.Instance.ShowFinishMenu();
         Player.Instance.CanMove = false;
+        _finalPlayerLightAngle = Player.Instance.PlayerLight.spotAngle;
         _mazeCompleted = mazeCompleted;
         if (mazeCompleted)
         {
@@ -129,6 +131,7 @@ public class GameManager : MonoBehaviour
 
     public void WatchReplay(Action onComplete)
     {
+        _levelState = LevelState.InReplay;
         _timeLeft = replayTime;
         StartCoroutine(Player.Instance.PlayCommands(
             initialPosition: Maze.Instance.Start,
@@ -139,12 +142,14 @@ public class GameManager : MonoBehaviour
 
     public void GoToNextLevel()
     {
+        _levelState = LevelState.InReplayReversed;
+        _timeLeft = 0;
+        LightManager.Instance.TurnOff();
         StartCoroutine(Player.Instance.PlayCommands(
             reversed: true,
             playTime: reversedReplayTime,
             onComplete: () =>
             {
-                LightManager.Instance.TurnOff();
                 LoadLevel("Maze");
             }
         ));
@@ -152,11 +157,6 @@ public class GameManager : MonoBehaviour
 
     public void Update()
     {
-        if (_timeLeft > 0)
-        {
-            _timeLeft -= Time.deltaTime;
-        }
-
         switch (_levelState)
         {
             case LevelState.InProgress:
@@ -166,16 +166,29 @@ public class GameManager : MonoBehaviour
                 }
                 else
                 {
+                    _timeLeft -= Time.deltaTime;
                     Player.Instance.SetLightAngle(_timeLeft / levelTime);
                 }
                 break;
             case LevelState.InReplay:
                 if (_timeLeft > 0)
                 {
-
+                    _timeLeft -= Time.deltaTime;
+                    Player.Instance.SetLightAngle(
+                        coef: _timeLeft / replayTime, 
+                        min: _finalPlayerLightAngle
+                    );
                 }
                 break;
             case LevelState.InReplayReversed:
+                if (_timeLeft < reversedReplayTime)
+                {
+                    _timeLeft += Time.deltaTime;
+                    Player.Instance.SetLightAngle(
+                        coef: _timeLeft / reversedReplayTime,
+                        min: _finalPlayerLightAngle
+                    );
+                }
                 break;
             default:
                 break;
