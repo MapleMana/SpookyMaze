@@ -52,7 +52,7 @@ public class Player : MonoBehaviour
     /// </summary>
     public void ResetState()
     {
-        _mazePosition = Maze.Instance.Start;
+        _mazePosition = Maze.Instance.StartPos;
         SyncRealPosition();
         _playerLevelCommands.Clear();
         _canMove = true;
@@ -73,7 +73,7 @@ public class Player : MonoBehaviour
     void Update()
     {
         // when the player reaches the end (not from replay)
-        if (CanBeMoved && _mazePosition == Maze.Instance.End)
+        if (CanBeMoved && _mazePosition == Maze.Instance.EndPos)
         {
             GameManager.Instance.EndLevel(mazeCompleted: true);
         }

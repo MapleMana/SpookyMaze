@@ -133,7 +133,7 @@ public class GameManager : MonoBehaviour
         _levelState = LevelState.InReplay;
         _timeLeft = replayTime;
         StartCoroutine(Player.Instance.PlayCommands(
-            initialPosition: Maze.Instance.Start,
+            initialPosition: Maze.Instance.StartPos,
             playTime: replayTime,
             onComplete: onComplete
         ));
