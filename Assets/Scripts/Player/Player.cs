@@ -13,7 +13,7 @@ public class Player : MonoBehaviour
     private List<PlayerCommand> _playerLevelCommands;
     private Light _playerLight;
     private bool _canMove = false;
-    private bool _moving= false;
+    private bool _canBeMoved= false;
     private float _lightIntensity;
 
     public float playerSpeed;
@@ -26,7 +26,7 @@ public class Player : MonoBehaviour
     public Light PlayerLight => _playerLight;
     public float LightIntensity => _lightIntensity;
     public bool CanMove { get => _canMove; set => _canMove = value; }
-    public bool CanBeMoved => _canMove && !_moving;
+    public bool CanBeMoved { get => _canBeMoved; set => _canBeMoved = value; }
 
     void Awake()
     {
@@ -55,8 +55,7 @@ public class Player : MonoBehaviour
         _mazePosition = Maze.Instance.StartPos;
         SyncRealPosition();
         _playerLevelCommands.Clear();
-        _canMove = true;
-        _moving = false;
+        _canMove = _canBeMoved = true;
     }
     
     /// <summary>
@@ -73,13 +72,13 @@ public class Player : MonoBehaviour
     void Update()
     {
         // when the player reaches the end (not from replay)
-        if (CanBeMoved && _mazePosition == Maze.Instance.EndPos)
+        if (_canBeMoved && _mazePosition == Maze.Instance.EndPos)
         {
             GameManager.Instance.EndLevel(mazeCompleted: true);
         }
 
         PlayerCommand _command = PlayerActionDetector.DetectDesktop();
-        if (CanBeMoved && _command.Execute(this))
+        if (_canBeMoved && _command.Execute(this))
         {
             _playerLevelCommands.Add(_command);
             SyncRealPosition();
@@ -105,18 +104,18 @@ public class Player : MonoBehaviour
             _playerLevelCommands.Add(newMovement);
         }
 
-        _moving = true;
+        _canBeMoved = false;
         StartCoroutine(PlayCommands(
             playerCommands: commandSequence,
             pauseBetween: 1 / playerSpeed,
-            onComplete: () => _moving = false
+            onComplete: () => _canBeMoved = true
        ));
     }
 
     /// <summary>
     /// Move player in the chosen direction. If there is a wall on the way, player idles
     /// </summary>
-    /// <param name="direction">THe direction of movement</param>
+    /// <param name="direction">The direction of movement</param>
     public bool Move(Vector2Int direction)
     {
         if (!Maze.Instance[_mazePosition].WallExists(direction))

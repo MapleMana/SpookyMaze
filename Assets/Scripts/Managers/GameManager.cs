@@ -112,7 +112,7 @@ public class GameManager : MonoBehaviour
     {
         _levelState = LevelState.Ended;
         UIManager.Instance.ShowFinishMenu();
-        Player.Instance.CanMove = false;
+        Player.Instance.CanBeMoved = false;
         _finalPlayerLightAngle = Player.Instance.PlayerLight.spotAngle;
         _mazeCompleted = mazeCompleted;
         if (mazeCompleted)
