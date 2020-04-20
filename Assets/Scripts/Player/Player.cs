@@ -13,6 +13,7 @@ public class Player : MonoBehaviour
     private List<PlayerCommand> _playerLevelCommands;
     private Light _playerLight;
     private bool _canMove = false;
+    private bool _moving= false;
     private float _lightIntensity;
 
     public float playerSpeed;
@@ -25,6 +26,7 @@ public class Player : MonoBehaviour
     public Light PlayerLight => _playerLight;
     public float LightIntensity => _lightIntensity;
     public bool CanMove { get => _canMove; set => _canMove = value; }
+    public bool CanBeMoved => _canMove && !_moving;
 
     void Awake()
     {
@@ -54,6 +56,7 @@ public class Player : MonoBehaviour
         SyncRealPosition();
         _playerLevelCommands.Clear();
         _canMove = true;
+        _moving = false;
     }
     
     /// <summary>
@@ -70,13 +73,13 @@ public class Player : MonoBehaviour
     void Update()
     {
         // when the player reaches the end (not from replay)
-        if (_canMove && _mazePosition == Maze.Instance.End)
+        if (CanBeMoved && _mazePosition == Maze.Instance.End)
         {
             GameManager.Instance.EndLevel(mazeCompleted: true);
         }
 
         PlayerCommand _command = PlayerActionDetector.DetectDesktop();
-        if (_canMove && _command.Execute(this))
+        if (CanBeMoved && _command.Execute(this))
         {
             _playerLevelCommands.Add(_command);
             SyncRealPosition();
@@ -102,11 +105,11 @@ public class Player : MonoBehaviour
             _playerLevelCommands.Add(newMovement);
         }
 
-        _canMove = false;
+        _moving = true;
         StartCoroutine(PlayCommands(
             playerCommands: commandSequence,
             pauseBetween: 1 / playerSpeed,
-            onComplete: () => _canMove = true
+            onComplete: () => _moving = false
        ));
     }
 
@@ -155,9 +158,12 @@ public class Player : MonoBehaviour
 
         foreach (PlayerCommand command in playerCommands)
         {
-            yield return new WaitForSeconds(pauseBetweenCommands);
-            PlayerCommand execution = reversed ? PlayerCommand.reverseCommand[command] : command;
-            execution.Execute(this);
+            if (_canMove)
+            {
+                yield return new WaitForSeconds(pauseBetweenCommands);
+                PlayerCommand execution = reversed ? PlayerCommand.reverseCommand[command] : command;
+                execution.Execute(this);
+            }
         }
         onComplete?.Invoke();
     }

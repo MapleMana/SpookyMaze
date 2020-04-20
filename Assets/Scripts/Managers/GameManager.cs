@@ -84,10 +84,6 @@ public class GameManager : MonoBehaviour
         if (scene.name == "Maze")
         {
             StartNewLevel();
-
-            _levelState = LevelState.InProgress;
-            _timeLeft = levelTime;
-            _mazeCompleted = false;
         }
     }
 
@@ -96,6 +92,10 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void StartNewLevel()
     {
+        _levelState = LevelState.InProgress;
+        _timeLeft = levelTime;
+        _mazeCompleted = false;
+
         Maze.Instance.Initialize(_mazeWidth, _mazeHeight, new BranchedDFSGeneration());
         Maze.Instance.Generate();
         Maze.Instance.Display();
@@ -103,11 +103,6 @@ public class GameManager : MonoBehaviour
         CameraManager.Instance.FocusOn(Maze.Instance);
 
         Player.Instance.ResetState();
-    }
-
-    public void LoadLevel(string sceneName)
-    {
-        SceneManager.LoadScene(sceneName);
     }
 
     /// <summary>
@@ -155,7 +150,7 @@ public class GameManager : MonoBehaviour
         StartCoroutine(Player.Instance.PlayCommands(
             reversed: true,
             playTime: reversedReplayTime,
-            onComplete: () => LoadLevel("Maze")
+            onComplete: () => StartNewLevel()
         ));
     }
 
