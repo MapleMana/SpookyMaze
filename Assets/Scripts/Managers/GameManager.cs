@@ -171,7 +171,7 @@ public class GameManager : MonoBehaviour
                 else
                 {
                     _timeLeft -= Time.deltaTime;
-                    Player.Instance.LerpLightAngle(_timeLeft / levelTime);
+                    Player.Instance.LerpLightAngle(coef: _timeLeft / levelTime);
                 }
                 break;
             case LevelState.InReplay:
