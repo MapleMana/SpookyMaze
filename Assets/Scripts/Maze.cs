@@ -97,11 +97,12 @@ public class Maze : MonoBehaviour
     private Dictionary<Vector2Int, MazeCell> _grid = new Dictionary<Vector2Int, MazeCell>();
     private static Random _generator = new Random();
     private GenerationStrategy _genAlgo;
+    private Transform _walls;
 
     public GameObject wallTemplate;
 
-    public Vector2Int Start => _start;
-    public Vector2Int End => _end;
+    public Vector2Int StartPos => _start;
+    public Vector2Int EndPos => _end;
 
     public int Width => _width;
     public int Height => _height;
@@ -120,6 +121,11 @@ public class Maze : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        _walls = transform.GetChild(0);
+    }
+
     /// <summary>
     /// Specifies the initial maze state
     /// </summary>
@@ -134,6 +140,12 @@ public class Maze : MonoBehaviour
 
         _start = new Vector2Int(0, height - 1);
         _end = new Vector2Int(width - 1, 0);
+
+        // clean up after previous level
+        foreach (Transform child in _walls)
+        {
+            Destroy(child.gameObject);
+        }
     }
 
     /// <summary>
@@ -191,6 +203,7 @@ public class Maze : MonoBehaviour
         float wallHeight = MazeCell.CELL_WIDTH + Random.value * 0.1f;
 
         wall.transform.localScale = new Vector3(wallX, wallHeight, wallY);
+        wall.transform.SetParent(_walls);
     }
 
     /// <summary>

@@ -67,7 +67,7 @@ public class DFSGeneration : GenerationStrategy
     {
         Maze.Instance.Fill();
         visited.Clear();
-        DFS(Maze.Instance.Start);
+        DFS(Maze.Instance.StartPos);
     }
 }
 
@@ -83,8 +83,8 @@ public class BFSGeneration : GenerationStrategy
         Maze.Instance.Fill();
         Stack<Vector2Int> stage = new Stack<Vector2Int>();
         Dictionary<Vector2Int, bool> visited = new Dictionary<Vector2Int, bool>();
-        stage.Push(Maze.Instance.Start);
-        visited[Maze.Instance.Start] = true;
+        stage.Push(Maze.Instance.StartPos);
+        visited[Maze.Instance.StartPos] = true;
         while (stage.Count != 0)
         {
             Stack<Vector2Int> nextStage = new Stack<Vector2Int>();
@@ -130,13 +130,13 @@ public class BranchedDFSGeneration : GenerationStrategy
         Maze.Instance.Fill();
         Stack<Vector2Int> path = new Stack<Vector2Int>();
         Dictionary<Vector2Int, bool> visited = new Dictionary<Vector2Int, bool>();
-        path.Push(Maze.Instance.Start);
+        path.Push(Maze.Instance.StartPos);
         while (path.Count != 0)
         {
             Vector2Int curPos = path.Peek();
             visited[curPos] = true;
 
-            if (curPos == Maze.Instance.End && path.Count > 1)
+            if (curPos == Maze.Instance.EndPos && path.Count > 1)
             {
                 path = ReverseStack<Vector2Int>(path);
                 continue;

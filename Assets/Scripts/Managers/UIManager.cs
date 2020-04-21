@@ -42,7 +42,7 @@ public class UIManager : MonoBehaviour
     public void StartGame()
     {
         MainMenu.SetActive(false);
-        GameManager.Instance.LoadLevel("Maze");
+        SceneManager.LoadScene("Maze");
     }
 
     public void QuitGame()
@@ -86,8 +86,8 @@ public class UIManager : MonoBehaviour
         FinishMenu.SetActive(false);
         MainMenu.SetActive(true);
         LightManager.Instance.TurnOff();
+        SceneManager.LoadScene("MainMenu");
         CameraManager.Instance.FocusOnMenu(MainMenu.transform.position);
-        GameManager.Instance.LoadLevel("MainMenu");
     }
 
     /// <summary>

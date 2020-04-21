@@ -12,7 +12,8 @@ public class Player : MonoBehaviour
     private Vector2Int _mazePosition;
     private List<PlayerCommand> _playerLevelCommands;
     private Light _playerLight;
-    private bool _canMove = false;
+    private bool _moving = false;
+    private bool _canBeMoved= false;
     private float _lightIntensity;
 
     public float playerSpeed;
@@ -24,7 +25,8 @@ public class Player : MonoBehaviour
     public static Player Instance => _instance;
     public Light PlayerLight => _playerLight;
     public float LightIntensity => _lightIntensity;
-    public bool CanMove { get => _canMove; set => _canMove = value; }
+    public bool Moving { get => _moving; set => _moving = value; }
+    public bool CanBeMoved { get => _canBeMoved && !_moving; set => _canBeMoved = value; }
 
     void Awake()
     {
@@ -50,10 +52,11 @@ public class Player : MonoBehaviour
     /// </summary>
     public void ResetState()
     {
-        _mazePosition = Maze.Instance.Start;
+        _mazePosition = Maze.Instance.StartPos;
         SyncRealPosition();
         _playerLevelCommands.Clear();
-        _canMove = true;
+        _canBeMoved = true;
+        _moving = false;
     }
     
     /// <summary>
@@ -70,13 +73,13 @@ public class Player : MonoBehaviour
     void Update()
     {
         // when the player reaches the end (not from replay)
-        if (_canMove && _mazePosition == Maze.Instance.End)
+        if (_canBeMoved && _mazePosition == Maze.Instance.EndPos)
         {
             GameManager.Instance.EndLevel(mazeCompleted: true);
         }
 
         PlayerCommand _command = PlayerActionDetector.DetectDesktop();
-        if (_canMove && _command.Execute(this))
+        if (CanBeMoved && _command.Execute(this))
         {
             _playerLevelCommands.Add(_command);
             SyncRealPosition();
@@ -102,18 +105,16 @@ public class Player : MonoBehaviour
             _playerLevelCommands.Add(newMovement);
         }
 
-        _canMove = false;
         StartCoroutine(PlayCommands(
             playerCommands: commandSequence,
-            pauseBetween: 1 / playerSpeed,
-            onComplete: () => _canMove = true
+            pauseBetween: 1 / playerSpeed
        ));
     }
 
     /// <summary>
     /// Move player in the chosen direction. If there is a wall on the way, player idles
     /// </summary>
-    /// <param name="direction">THe direction of movement</param>
+    /// <param name="direction">The direction of movement</param>
     public bool Move(Vector2Int direction)
     {
         if (!Maze.Instance[_mazePosition].WallExists(direction))
@@ -152,13 +153,18 @@ public class Player : MonoBehaviour
         float pauseBetweenCommands = pauseBetween ?? ((playTime ?? 0) / playerCommands.Count);
 
         SyncRealPosition();
+        Moving = true;
 
         foreach (PlayerCommand command in playerCommands)
         {
-            yield return new WaitForSeconds(pauseBetweenCommands);
-            PlayerCommand execution = reversed ? PlayerCommand.reverseCommand[command] : command;
-            execution.Execute(this);
+            if (Moving)
+            {
+                yield return new WaitForSeconds(pauseBetweenCommands);
+                PlayerCommand execution = reversed ? PlayerCommand.reverseCommand[command] : command;
+                execution.Execute(this);
+            }
         }
+        Moving = false;
         onComplete?.Invoke();
     }
 

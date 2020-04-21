@@ -84,10 +84,6 @@ public class GameManager : MonoBehaviour
         if (scene.name == "Maze")
         {
             StartNewLevel();
-
-            _levelState = LevelState.InProgress;
-            _timeLeft = levelTime;
-            _mazeCompleted = false;
         }
     }
 
@@ -96,6 +92,10 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void StartNewLevel()
     {
+        _levelState = LevelState.InProgress;
+        _timeLeft = levelTime;
+        _mazeCompleted = false;
+
         Maze.Instance.Initialize(_mazeWidth, _mazeHeight, new BranchedDFSGeneration());
         Maze.Instance.Generate();
         Maze.Instance.Display();
@@ -105,11 +105,6 @@ public class GameManager : MonoBehaviour
         Player.Instance.ResetState();
     }
 
-    public void LoadLevel(string sceneName)
-    {
-        SceneManager.LoadScene(sceneName);
-    }
-
     /// <summary>
     /// Called when the level ends (player wins/loses)
     /// </summary>
@@ -117,7 +112,7 @@ public class GameManager : MonoBehaviour
     {
         _levelState = LevelState.Ended;
         UIManager.Instance.ShowFinishMenu();
-        Player.Instance.CanMove = false;
+        Player.Instance.CanBeMoved = Player.Instance.Moving = false;
         _finalPlayerLightAngle = Player.Instance.PlayerLight.spotAngle;
         _mazeCompleted = mazeCompleted;
         if (mazeCompleted)
@@ -138,7 +133,7 @@ public class GameManager : MonoBehaviour
         _levelState = LevelState.InReplay;
         _timeLeft = replayTime;
         StartCoroutine(Player.Instance.PlayCommands(
-            initialPosition: Maze.Instance.Start,
+            initialPosition: Maze.Instance.StartPos,
             playTime: replayTime,
             onComplete: onComplete
         ));
@@ -155,7 +150,7 @@ public class GameManager : MonoBehaviour
         StartCoroutine(Player.Instance.PlayCommands(
             reversed: true,
             playTime: reversedReplayTime,
-            onComplete: () => LoadLevel("Maze")
+            onComplete: () => StartNewLevel()
         ));
     }
 
@@ -171,7 +166,7 @@ public class GameManager : MonoBehaviour
                 else
                 {
                     _timeLeft -= Time.deltaTime;
-                    Player.Instance.LerpLightAngle(_timeLeft / levelTime);
+                    Player.Instance.LerpLightAngle(coef: _timeLeft / levelTime);
                 }
                 break;
             case LevelState.InReplay:
