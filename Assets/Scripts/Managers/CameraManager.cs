@@ -9,6 +9,8 @@ public class CameraManager : MonoBehaviour
     private Camera _camera;
     private const int MAIN_MENU_CAMERA_HEIGHT = 200;
 
+    public float speed;
+    public Vector3 playerOffset;
     public float mazeMargin;
 
     public static CameraManager Instance { get => _instance; }
@@ -31,7 +33,7 @@ public class CameraManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    public void FocusOn(Maze maze)
+    public void FocusOnMaze(Maze maze)
     {
         float screenRatio = 1f * Screen.width / Screen.height;
 
@@ -50,5 +52,10 @@ public class CameraManager : MonoBehaviour
     public void FocusOnMenu(Vector3 menuPosition)
     {
         transform.position = new Vector3(menuPosition.x, menuPosition.y + MAIN_MENU_CAMERA_HEIGHT, menuPosition.z);
+    }
+
+    public void FocusOnPlayer()
+    {
+        transform.position = Vector3.Lerp(transform.position, Player.Instance.transform.position + playerOffset, speed * Time.deltaTime);
     }
 }

@@ -3034,6 +3034,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96f82d3736d98fd4190b010dd7085534, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  speed: 5
+  playerOffset: {x: 0, y: 150, z: 0}
   mazeMargin: 10
 --- !u!1 &1490064580
 GameObject:
@@ -3068,8 +3070,8 @@ MonoBehaviour:
   initialMazeHeight: 8
   mazeSizeIncrement: 2
   timeDecrement: 0
-  levelTime: 10
-  replayTime: 10
+  levelTime: 20
+  replayTime: 5
   reversedReplayTime: 5
 --- !u!4 &1490064582
 Transform:
