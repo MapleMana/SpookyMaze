@@ -10,7 +10,7 @@ public class Player : MonoBehaviour
     private static Player _instance;
 
     private Vector2Int _mazePosition;
-    private List<PlayerCommand> _playerLevelCommands;
+    private List<PlayerCommand> _commandHistory;
     private Light _playerLight;
     private bool _moving = false;
     private bool _canBeMoved= false;
@@ -38,7 +38,7 @@ public class Player : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        _playerLevelCommands = new List<PlayerCommand>();
+        _commandHistory = new List<PlayerCommand>();
     }
 
     private void Start()
@@ -54,7 +54,7 @@ public class Player : MonoBehaviour
     {
         _mazePosition = Maze.Instance.StartPos;
         SyncRealPosition();
-        _playerLevelCommands.Clear();
+        _commandHistory.Clear();
         _canBeMoved = true;
         _moving = false;
     }
@@ -81,7 +81,7 @@ public class Player : MonoBehaviour
         PlayerCommand _command = PlayerActionDetector.DetectDesktop();
         if (CanBeMoved && _command.Execute(this))
         {
-            _playerLevelCommands.Add(_command);
+            _commandHistory.Add(_command);
             SyncRealPosition();
             MoveToDecisionPoint(incomingDirection: _command.Direction);
         }
@@ -102,12 +102,12 @@ public class Player : MonoBehaviour
             Vector2Int direction = movementSequence[i];
             PlayerCommand newMovement = PlayerCommand.FromVector(direction);
             commandSequence.Add(newMovement);
-            _playerLevelCommands.Add(newMovement);
         }
 
         StartCoroutine(PlayCommands(
             playerCommands: commandSequence,
-            pauseBetween: 1 / playerSpeed
+            pauseBetween: 1 / playerSpeed,
+            saveToHistory: true
        ));
     }
 
@@ -135,6 +135,7 @@ public class Player : MonoBehaviour
     /// <param name="playTime">The time the coroutine will take. If null, replay time is taken. This parameter is overriden by pauseBetween</param>
     /// <param name="pauseBetween">Pause between each command. If null, play time is considered.</param>
     /// <param name="onComplete">Action to perform after the replay is comlete</param>
+    /// <param name="saveToHistory">Whether the command sequence should be added to player's history</param>
     /// <returns>A coroutine to execute</returns>
     public IEnumerator PlayCommands(
         List<PlayerCommand> playerCommands = null,
@@ -142,9 +143,10 @@ public class Player : MonoBehaviour
         Vector2Int? initialPosition = null,
         float? playTime = null,
         float? pauseBetween = null,
-        Action onComplete = null)
+        Action onComplete = null,
+        bool saveToHistory = false)
     {
-        playerCommands = playerCommands ?? _playerLevelCommands;
+        playerCommands = playerCommands ?? _commandHistory;
         if (reversed)
         {
             playerCommands.Reverse();
@@ -162,6 +164,10 @@ public class Player : MonoBehaviour
                 yield return new WaitForSeconds(pauseBetweenCommands);
                 PlayerCommand execution = reversed ? PlayerCommand.reverseCommand[command] : command;
                 execution.Execute(this);
+                if (saveToHistory)
+                {
+                    _commandHistory.Add(execution);
+                }
             }
         }
         Moving = false;
