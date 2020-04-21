@@ -10,9 +10,10 @@ public class Player : MonoBehaviour
     private static Player _instance;
 
     private Vector2Int _mazePosition;
-    private List<PlayerCommand> _playerLevelCommands;
+    private List<PlayerCommand> _commandHistory;
     private Light _playerLight;
-    private bool _canMove = false;
+    private bool _moving = false;
+    private bool _canBeMoved= false;
     private float _lightIntensity;
 
     public float playerSpeed;
@@ -24,7 +25,8 @@ public class Player : MonoBehaviour
     public static Player Instance => _instance;
     public Light PlayerLight => _playerLight;
     public float LightIntensity => _lightIntensity;
-    public bool CanMove { get => _canMove; set => _canMove = value; }
+    public bool Moving { get => _moving; set => _moving = value; }
+    public bool CanBeMoved { get => _canBeMoved && !_moving; set => _canBeMoved = value; }
 
     void Awake()
     {
@@ -36,7 +38,7 @@ public class Player : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        _playerLevelCommands = new List<PlayerCommand>();
+        _commandHistory = new List<PlayerCommand>();
     }
 
     private void Start()
@@ -50,10 +52,11 @@ public class Player : MonoBehaviour
     /// </summary>
     public void ResetState()
     {
-        _mazePosition = Maze.Instance.Start;
+        _mazePosition = Maze.Instance.StartPos;
         SyncRealPosition();
-        _playerLevelCommands.Clear();
-        _canMove = true;
+        _commandHistory.Clear();
+        _canBeMoved = true;
+        _moving = false;
     }
     
     /// <summary>
@@ -70,15 +73,15 @@ public class Player : MonoBehaviour
     void Update()
     {
         // when the player reaches the end (not from replay)
-        if (_canMove && _mazePosition == Maze.Instance.End)
+        if (_canBeMoved && _mazePosition == Maze.Instance.EndPos)
         {
             GameManager.Instance.EndLevel(mazeCompleted: true);
         }
 
         PlayerCommand _command = PlayerActionDetector.DetectDesktop();
-        if (_canMove && _command.Execute(this))
+        if (CanBeMoved && _command.Execute(this))
         {
-            _playerLevelCommands.Add(_command);
+            _commandHistory.Add(_command);
             SyncRealPosition();
             MoveToDecisionPoint(incomingDirection: _command.Direction);
         }
@@ -99,21 +102,19 @@ public class Player : MonoBehaviour
             Vector2Int direction = movementSequence[i];
             PlayerCommand newMovement = PlayerCommand.FromVector(direction);
             commandSequence.Add(newMovement);
-            _playerLevelCommands.Add(newMovement);
         }
 
-        _canMove = false;
         StartCoroutine(PlayCommands(
             playerCommands: commandSequence,
             pauseBetween: 1 / playerSpeed,
-            onComplete: () => _canMove = true
+            saveToHistory: true
        ));
     }
 
     /// <summary>
     /// Move player in the chosen direction. If there is a wall on the way, player idles
     /// </summary>
-    /// <param name="direction">THe direction of movement</param>
+    /// <param name="direction">The direction of movement</param>
     public bool Move(Vector2Int direction)
     {
         if (!Maze.Instance[_mazePosition].WallExists(direction))
@@ -134,6 +135,7 @@ public class Player : MonoBehaviour
     /// <param name="playTime">The time the coroutine will take. If null, replay time is taken. This parameter is overriden by pauseBetween</param>
     /// <param name="pauseBetween">Pause between each command. If null, play time is considered.</param>
     /// <param name="onComplete">Action to perform after the replay is comlete</param>
+    /// <param name="saveToHistory">Whether the command sequence should be added to player's history</param>
     /// <returns>A coroutine to execute</returns>
     public IEnumerator PlayCommands(
         List<PlayerCommand> playerCommands = null,
@@ -141,9 +143,10 @@ public class Player : MonoBehaviour
         Vector2Int? initialPosition = null,
         float? playTime = null,
         float? pauseBetween = null,
-        Action onComplete = null)
+        Action onComplete = null,
+        bool saveToHistory = false)
     {
-        playerCommands = playerCommands ?? _playerLevelCommands;
+        playerCommands = playerCommands ?? _commandHistory;
         if (reversed)
         {
             playerCommands.Reverse();
@@ -152,13 +155,22 @@ public class Player : MonoBehaviour
         float pauseBetweenCommands = pauseBetween ?? ((playTime ?? 0) / playerCommands.Count);
 
         SyncRealPosition();
+        Moving = true;
 
         foreach (PlayerCommand command in playerCommands)
         {
-            yield return new WaitForSeconds(pauseBetweenCommands);
-            PlayerCommand execution = reversed ? PlayerCommand.reverseCommand[command] : command;
-            execution.Execute(this);
+            if (Moving)
+            {
+                yield return new WaitForSeconds(pauseBetweenCommands);
+                PlayerCommand execution = reversed ? PlayerCommand.reverseCommand[command] : command;
+                execution.Execute(this);
+                if (saveToHistory)
+                {
+                    _commandHistory.Add(execution);
+                }
+            }
         }
+        Moving = false;
         onComplete?.Invoke();
     }
 

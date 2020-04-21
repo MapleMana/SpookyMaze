@@ -8,7 +8,8 @@ public enum LevelState
 {
     None,
     InProgress,
-    Ended,
+    Completed,
+    Failed,
     InReplay,
     InReplayReversed
 }
@@ -21,7 +22,6 @@ public class GameManager : MonoBehaviour
     private int _mazeHeight;
     private float _timeLeft;
     private LevelState _levelState;
-    private bool _mazeCompleted;
     private float _finalPlayerLightAngle;      // the player light angle at the end of the level
 
     public int initialMazeWidth;
@@ -84,10 +84,6 @@ public class GameManager : MonoBehaviour
         if (scene.name == "Maze")
         {
             StartNewLevel();
-
-            _levelState = LevelState.InProgress;
-            _timeLeft = levelTime;
-            _mazeCompleted = false;
         }
     }
 
@@ -96,6 +92,9 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void StartNewLevel()
     {
+        _levelState = LevelState.InProgress;
+        _timeLeft = levelTime;
+
         Maze.Instance.Initialize(_mazeWidth, _mazeHeight, new BranchedDFSGeneration());
         Maze.Instance.Generate();
         Maze.Instance.Display();
@@ -105,21 +104,14 @@ public class GameManager : MonoBehaviour
         Player.Instance.ResetState();
     }
 
-    public void LoadLevel(string sceneName)
-    {
-        SceneManager.LoadScene(sceneName);
-    }
-
     /// <summary>
     /// Called when the level ends (player wins/loses)
     /// </summary>
     public void EndLevel(bool mazeCompleted)
     {
-        _levelState = LevelState.Ended;
-        UIManager.Instance.ShowFinishMenu();
-        Player.Instance.CanMove = false;
+        _levelState = mazeCompleted ? LevelState.Completed : LevelState.Failed;
+        Player.Instance.CanBeMoved = Player.Instance.Moving = false;
         _finalPlayerLightAngle = Player.Instance.PlayerLight.spotAngle;
-        _mazeCompleted = mazeCompleted;
         if (mazeCompleted)
         {
             LightManager.Instance.TurnOn();
@@ -127,6 +119,7 @@ public class GameManager : MonoBehaviour
             _mazeWidth += mazeSizeIncrement;
             levelTime -= timeDecrement;
         }
+        UIManager.Instance.ShowFinishMenu();
     }
 
     /// <summary>
@@ -138,7 +131,7 @@ public class GameManager : MonoBehaviour
         _levelState = LevelState.InReplay;
         _timeLeft = replayTime;
         StartCoroutine(Player.Instance.PlayCommands(
-            initialPosition: Maze.Instance.Start,
+            initialPosition: Maze.Instance.StartPos,
             playTime: replayTime,
             onComplete: onComplete
         ));
@@ -155,7 +148,7 @@ public class GameManager : MonoBehaviour
         StartCoroutine(Player.Instance.PlayCommands(
             reversed: true,
             playTime: reversedReplayTime,
-            onComplete: () => LoadLevel("Maze")
+            onComplete: () => StartNewLevel()
         ));
     }
 
@@ -171,7 +164,7 @@ public class GameManager : MonoBehaviour
                 else
                 {
                     _timeLeft -= Time.deltaTime;
-                    Player.Instance.LerpLightAngle(_timeLeft / levelTime);
+                    Player.Instance.LerpLightAngle(coef: _timeLeft / levelTime);
                 }
                 break;
             case LevelState.InReplay:
