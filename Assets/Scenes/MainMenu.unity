@@ -3035,7 +3035,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 5
-  playerOffset: {x: 0, y: 150, z: 0}
+  playerOffset: {x: 0, y: 120, z: 0}
   mazeMargin: 10
 --- !u!1 &1490064580
 GameObject:
