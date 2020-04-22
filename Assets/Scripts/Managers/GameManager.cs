@@ -178,8 +178,14 @@ public class GameManager : MonoBehaviour
                         coef: _timeLeft / replayTime
                     );
 
-                    if (_mazeCompleted) CameraManager.Instance.FocusOnMaze(Maze.Instance);
-                    else CameraManager.Instance.FocusOnPlayer();
+                    if (_mazeCompleted)
+                    {
+                        CameraManager.Instance.FocusOnMaze(Maze.Instance);
+                    }
+                    else
+                    {
+                        CameraManager.Instance.FocusOnPlayer();
+                    }
                 }
                 break;
             case LevelState.InReplayReversed:
@@ -191,8 +197,14 @@ public class GameManager : MonoBehaviour
                         coef: _timeLeft / reversedReplayTime
                     );
 
-                    if (_mazeCompleted) CameraManager.Instance.FocusOnMaze(Maze.Instance);
-                    else CameraManager.Instance.FocusOnPlayer();
+                    if (_mazeCompleted)
+                    {
+                        CameraManager.Instance.FocusOnMaze(Maze.Instance);
+                    }
+                    else
+                    {
+                        CameraManager.Instance.FocusOnPlayer();
+                    }
                 }
                 break;
             default:
