@@ -50,6 +50,7 @@ public class GameManager : MonoBehaviour
         }
     }
     public static GameManager Instance => _instance;
+    public LevelState GameState => _levelState;
 
 
     private GameManager() { }
@@ -98,8 +99,6 @@ public class GameManager : MonoBehaviour
         Maze.Instance.Initialize(_mazeWidth, _mazeHeight, new BranchedDFSGeneration());
         Maze.Instance.Generate();
         Maze.Instance.Display();
-
-        CameraManager.Instance.FocusOn(Maze.Instance);
 
         Player.Instance.ResetState();
     }
@@ -165,6 +164,7 @@ public class GameManager : MonoBehaviour
                 {
                     _timeLeft -= Time.deltaTime;
                     Player.Instance.LerpLightAngle(coef: _timeLeft / levelTime);
+                    CameraManager.Instance.FocusOnPlayer();
                 }
                 break;
             case LevelState.InReplay:
@@ -175,6 +175,15 @@ public class GameManager : MonoBehaviour
                         min: _finalPlayerLightAngle,
                         coef: _timeLeft / replayTime
                     );
+
+                    if (_mazeCompleted)
+                    {
+                        CameraManager.Instance.FocusOnMaze(Maze.Instance);
+                    }
+                    else
+                    {
+                        CameraManager.Instance.FocusOnPlayer();
+                    }
                 }
                 break;
             case LevelState.InReplayReversed:
@@ -185,6 +194,15 @@ public class GameManager : MonoBehaviour
                         min: _finalPlayerLightAngle,
                         coef: _timeLeft / reversedReplayTime
                     );
+
+                    if (_mazeCompleted)
+                    {
+                        CameraManager.Instance.FocusOnMaze(Maze.Instance);
+                    }
+                    else
+                    {
+                        CameraManager.Instance.FocusOnPlayer();
+                    }
                 }
                 break;
             default:
