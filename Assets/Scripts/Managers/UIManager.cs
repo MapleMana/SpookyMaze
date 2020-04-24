@@ -12,6 +12,7 @@ public class UIManager : MonoBehaviour
     public Text Width;
     public Text Height;
     public GameObject MainMenu;
+    public GameObject LevelSelect;
     public GameObject FinishMenu;
     public GameObject SettingsMenu;
 
@@ -41,7 +42,7 @@ public class UIManager : MonoBehaviour
     /// </summary>
     public void StartGame()
     {
-        MainMenu.SetActive(false);
+        LevelSelect.SetActive(false);
         SceneManager.LoadScene("Maze");
     }
 
