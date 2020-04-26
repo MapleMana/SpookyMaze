@@ -33,7 +33,7 @@ public class GameManager : MonoBehaviour
     public float levelTime = 20;
     public float replayTime = 10;
     public float reversedReplayTime = 5;
-    public int levelReached = 1;
+    private int levelReached = 0;
 
     public int MazeWidth
     {
@@ -115,6 +115,9 @@ public class GameManager : MonoBehaviour
         Player.Instance.CanBeMoved = Player.Instance.Moving = false;
         _finalPlayerLightAngle = Player.Instance.PlayerLight.spotAngle;
 
+        // Might be used in complete version of our game
+        // int levelReached = PlayerPrefs.GetInt("levelReached", 1);
+
         if (mazeCompleted)
         {
             LightManager.Instance.TurnOn();
@@ -122,7 +125,8 @@ public class GameManager : MonoBehaviour
             _mazeWidth += mazeSizeIncrement;
             levelTime -= timeDecrement;
             levelReached += 1;
-            UIManager.Instance.LoadLevels();
+            // PlayerPrefs.SetInt("levelReached", levelReached + 1);
+            UIManager.Instance.UnlockLevel(levelReached);   // unlocks next level
         }
         UIManager.Instance.ShowFinishMenu();
     }

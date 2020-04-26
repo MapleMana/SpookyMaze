@@ -11,11 +11,17 @@ public class UIManager : MonoBehaviour
 
     public Text Width;
     public Text Height;
+
     public GameObject MainMenu;
     public GameObject LevelSelect;
     public GameObject FinishMenu;
     public GameObject SettingsMenu;
-    public Button[] levelButtons;
+
+    public GameObject ButtonsPanel;
+    public Button ButtonTemplate;
+    public List<Button> buttonList;
+    public int levels = 10;     // later levels will be loaded from a file and this variable
+                                // will be assigned to the number of the levels in the file
 
     public static UIManager Instance => _instance;
 
@@ -40,21 +46,34 @@ public class UIManager : MonoBehaviour
         LoadLevels();
     }
 
+    /// <summary>
+    /// Invoked when the game starts and loads level buttons to the Level Select screen
+    /// </summary>
     public void LoadLevels()
     {
-        int levelReached = GameManager.Instance.levelReached;
+        buttonList = new List<Button>();
+        // Might be used in complete version of our game
+        // int levelReached = PlayerPrefs.GetInt("levelReached", 1);
 
-        for (int i = 0; i < levelButtons.Length; i++)
+        for (int i = 0; i < levels; i++)
         {
-            if(i + 1 > levelReached)
-            {
-                levelButtons[i].interactable = false;
-            }
-            else
-            {
-                levelButtons[i].interactable = true;
-            }
+            Button newButton = Instantiate(ButtonTemplate);
+            newButton.GetComponentInChildren<Text>().text = (i + 1).ToString();
+            newButton.onClick.AddListener(StartGame);
+            newButton.interactable = i == 0 ? true : false;
+
+            buttonList.Add(newButton);
+            buttonList[i].transform.SetParent(ButtonsPanel.transform, false);
         }
+    }
+
+    /// <summary>
+    /// Makes "levelNumber" button interactable
+    /// </summary>
+    /// <param name="levelNumber">Level to be inlocked</param>
+    public void UnlockLevel(int levelNumber)
+    {
+        buttonList[levelNumber].interactable = true;
     }
 
     /// <summary>
