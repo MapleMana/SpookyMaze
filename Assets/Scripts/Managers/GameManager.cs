@@ -33,6 +33,7 @@ public class GameManager : MonoBehaviour
     public float levelTime = 20;
     public float replayTime = 10;
     public float reversedReplayTime = 5;
+    public int levelReached = 1;
 
     public int MazeWidth
     {
@@ -52,8 +53,7 @@ public class GameManager : MonoBehaviour
     }
     public static GameManager Instance => _instance;
     public LevelState GameState => _levelState;
-
-
+    
     private GameManager() { }
 
     private void Awake()
@@ -114,12 +114,15 @@ public class GameManager : MonoBehaviour
         _levelState = mazeCompleted ? LevelState.Completed : LevelState.Failed;
         Player.Instance.CanBeMoved = Player.Instance.Moving = false;
         _finalPlayerLightAngle = Player.Instance.PlayerLight.spotAngle;
+
         if (mazeCompleted)
         {
             LightManager.Instance.TurnOn();
             _mazeHeight += mazeSizeIncrement;
             _mazeWidth += mazeSizeIncrement;
             levelTime -= timeDecrement;
+            levelReached += 1;
+            UIManager.Instance.LoadLevels();
         }
         UIManager.Instance.ShowFinishMenu();
     }

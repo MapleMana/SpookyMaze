@@ -15,6 +15,7 @@ public class UIManager : MonoBehaviour
     public GameObject LevelSelect;
     public GameObject FinishMenu;
     public GameObject SettingsMenu;
+    public Button[] levelButtons;
 
     public static UIManager Instance => _instance;
 
@@ -35,6 +36,25 @@ public class UIManager : MonoBehaviour
     {
         WidthChanged(GameManager.Instance.MazeWidth);
         HeightChanged(GameManager.Instance.MazeHeight);
+
+        LoadLevels();
+    }
+
+    public void LoadLevels()
+    {
+        int levelReached = GameManager.Instance.levelReached;
+
+        for (int i = 0; i < levelButtons.Length; i++)
+        {
+            if(i + 1 > levelReached)
+            {
+                levelButtons[i].interactable = false;
+            }
+            else
+            {
+                levelButtons[i].interactable = true;
+            }
+        }
     }
 
     /// <summary>
