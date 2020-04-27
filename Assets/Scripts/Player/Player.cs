@@ -15,7 +15,7 @@ public class Player : MonoBehaviour
     private bool _moving = false;
     private bool _canBeMoved= false;
     private float _lightIntensity;
-    private List<Item> _inventory;
+    private List<ItemType> _inventory;
 
     public float playerSpeed;
     [Range(0f, 180f)]
@@ -26,8 +26,10 @@ public class Player : MonoBehaviour
     public static Player Instance => _instance;
     public Light PlayerLight => _playerLight;
     public float LightIntensity => _lightIntensity;
+    public List<ItemType> Inventory => _inventory;
     public bool Moving { get => _moving; set => _moving = value; }
     public bool CanBeMoved { get => _canBeMoved && !_moving; set => _canBeMoved = value; }
+    public bool AtMazeEnd => _mazePosition == Maze.Instance.EndPos;
 
     void Awake()
     {
@@ -40,7 +42,7 @@ public class Player : MonoBehaviour
             Destroy(gameObject);
         }
         _commandHistory = new List<PlayerCommand>();
-        _inventory = new List<Item>();
+        _inventory = new List<ItemType>();
     }
 
     private void Start()
@@ -74,12 +76,6 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        // end level when the player reaches the end (not from replay)
-        if (_canBeMoved && _mazePosition == Maze.Instance.EndPos)
-        {
-            GameManager.Instance.EndLevel(mazeCompleted: true);
-        }
-
         PickUpItem();
 
         PlayerCommand _command = PlayerActionDetector.DetectDesktop();
@@ -187,7 +183,7 @@ public class Player : MonoBehaviour
         MazeCell currentCell = Maze.Instance[_mazePosition];
         if (!currentCell.IsEmpty)
         {
-            _inventory.Add(currentCell.Item);
+            _inventory.Add(currentCell.Item.Type);
             currentCell.ClearItem();
         }
     }

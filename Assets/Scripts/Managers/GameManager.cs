@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour
     private int _mazeHeight;
     private float _timeLeft;
     private LevelState _levelState;
+    private IGameMode _gameMode = new DoorKeyGameMode();
     private float _finalPlayerLightAngle;      // the player light angle at the end of the level
 
     public int initialMazeWidth;
@@ -41,7 +42,6 @@ public class GameManager : MonoBehaviour
     }
     public static GameManager Instance => _instance;
     public bool LevelIs(LevelState state) => (_levelState & state) != 0;
-
 
     private GameManager() { }
 
@@ -87,7 +87,7 @@ public class GameManager : MonoBehaviour
         _timeLeft = levelTime;
 
         Maze.Instance.Initialize(_mazeWidth, _mazeHeight, new BranchedDFSGeneration());
-        Maze.Instance.Generate(new List<ItemType> { ItemType.Key });
+        Maze.Instance.Generate(_gameMode.GetItems());
         Maze.Instance.Display();
 
         Player.Instance.ResetState();
@@ -157,6 +157,11 @@ public class GameManager : MonoBehaviour
                 _timeLeft -= Time.deltaTime;
                 Player.Instance.LerpLightAngle(coef: _timeLeft / levelTime);
                 CameraManager.Instance.FocusOnPlayer();
+            }
+
+            if (_gameMode.GameEnded())
+            {
+                EndLevel(mazeCompleted: true);
             }
         }
         else if (LevelIs(LevelState.InReplay))
