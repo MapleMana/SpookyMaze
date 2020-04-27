@@ -80,19 +80,27 @@ public class Maze : MonoBehaviour
     {
         _genAlgo.Generate();
         List<MazeCell> cells = _grid.Values.ToList();
-        List<int> ind = new List<int>();
+        List<int> randInd = new List<int>();
         for (int i = 0; i < cells.Count; i++)
         {
             if (cells[i].Position != _start && cells[i].Position != _end)
             {
-                ind.Add(i);
+                randInd.Add(i);
             }
         }
-        ind.Shuffle();
-        for (int i = 0; i < items.Count; i++)
+        randInd.Shuffle();
+        int cellInd = 0;
+        foreach (ItemType itemType in items)
         {
-            MazeCell cell = cells[ind[i]];
-            cell.Item = new Item(items[i]);
+            while (cellInd < randInd.Count && !cells[randInd[cellInd]].IsEmpty)
+            {
+                cellInd++;
+            }
+            if (cellInd < randInd.Count)
+            {
+                MazeCell cell = cells[randInd[cellInd]];
+                cell.Item = new Item(itemType);
+            }
         }
     }
 

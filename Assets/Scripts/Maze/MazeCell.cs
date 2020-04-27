@@ -20,6 +20,7 @@ public class MazeCell : System.IDisposable
                                                                        Vector2Int.right };
 
     public Item Item { get => _item; set => _item = value; }
+    public bool IsEmpty => _item.Type == ItemType.None;
     public Vector2Int Position => _position;
 
     public MazeCell(Vector2Int pos, WallState up, WallState left, WallState down, WallState right)
@@ -113,6 +114,15 @@ public class MazeCell : System.IDisposable
         {
             PutWall(new Vector3(CELL_WIDTH * (_position.x + 0.5f), 0, CELL_WIDTH * _position.y), true);
         }
+    }
+
+    /// <summary>
+    /// Removes the item from the cell
+    /// </summary>
+    public void ClearItem()
+    {
+        _item.Dispose();
+        _item = new Item();
     }
 
     public void Dispose()

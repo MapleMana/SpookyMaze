@@ -15,6 +15,7 @@ public class Player : MonoBehaviour
     private bool _moving = false;
     private bool _canBeMoved= false;
     private float _lightIntensity;
+    private List<Item> _inventory;
 
     public float playerSpeed;
     [Range(0f, 180f)]
@@ -39,6 +40,7 @@ public class Player : MonoBehaviour
             Destroy(gameObject);
         }
         _commandHistory = new List<PlayerCommand>();
+        _inventory = new List<Item>();
     }
 
     private void Start()
@@ -72,11 +74,13 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        // when the player reaches the end (not from replay)
+        // end level when the player reaches the end (not from replay)
         if (_canBeMoved && _mazePosition == Maze.Instance.EndPos)
         {
             GameManager.Instance.EndLevel(mazeCompleted: true);
         }
+
+        PickUpItem();
 
         PlayerCommand _command = PlayerActionDetector.DetectDesktop();
         if (CanBeMoved && _command.Execute(this))
@@ -172,6 +176,20 @@ public class Player : MonoBehaviour
         }
         Moving = false;
         onComplete?.Invoke();
+    }
+
+    /// <summary>
+    /// Picks any item from the cell the player is currently standing on 
+    /// and places the item in the player's inventory
+    /// </summary>
+    void PickUpItem()
+    {
+        MazeCell currentCell = Maze.Instance[_mazePosition];
+        if (!currentCell.IsEmpty)
+        {
+            _inventory.Add(currentCell.Item);
+            currentCell.ClearItem();
+        }
     }
 
     /// <summary>
