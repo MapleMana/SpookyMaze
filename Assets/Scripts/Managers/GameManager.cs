@@ -4,25 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-[Flags]
-public enum GameMode
-{
-    Classic = 0,
-    Door = 1,
-    Ghost = 2
-}
-
-[Flags]
-public enum LevelState
-{
-    None = 0,
-    InProgress = 1,
-    Completed = 2,
-    Failed = 4,
-    InReplay = 8,
-    InReplayReversed = 16
-}
-
 public class GameManager : MonoBehaviour
 {
     private static GameManager _instance;
