@@ -106,7 +106,7 @@ public class GameManager : MonoBehaviour
         _timeLeft = levelTime;
 
         Maze.Instance.Initialize(_mazeWidth, _mazeHeight, new BranchedDFSGeneration());
-        Maze.Instance.Generate();
+        Maze.Instance.Generate(new List<ItemType> { ItemType.Key });
         Maze.Instance.Display();
 
         Player.Instance.ResetState();

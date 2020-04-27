@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public static class ListExtension
@@ -29,6 +30,32 @@ public enum ItemType
     Key
 }
 
+public class Item
+{
+    private ItemType _type;
+    private static GameObject _keyTemplate = Resources.Load<GameObject>("Key");
+
+    public Item(ItemType type = ItemType.None)
+    {
+        _type = type;
+    }
+
+    public void Display(Vector3 pos)
+    {
+        switch (_type)
+        {
+            case ItemType.None:
+                break;
+            case ItemType.Key:
+                Object.Instantiate(_keyTemplate, pos, Quaternion.identity);
+                break;
+            default:
+                break;
+        }
+    }
+
+}
+
 public class MazeCell : System.IDisposable
 {
     public const float CELL_WIDTH = 10;
@@ -36,15 +63,18 @@ public class MazeCell : System.IDisposable
 
     private Dictionary<Vector2Int, WallState> _wallState = new Dictionary<Vector2Int, WallState>();
     private Vector2Int _position;
-    private ItemType _item;
+    private Item _item;
     private List<GameObject> _walls;
-    static private GameObject _wallTemplate = Resources.Load<GameObject>("Wall");
+    private static GameObject _wallTemplate = Resources.Load<GameObject>("Wall");
 
     public readonly Vector2 cellCenter;
     public static List<Vector2Int> neighbours = new List<Vector2Int> { Vector2Int.up, 
                                                                        Vector2Int.left, 
                                                                        Vector2Int.down, 
                                                                        Vector2Int.right };
+
+    public Item Item { get => _item; set => _item = value; }
+    public Vector2Int Position => _position;
 
     public MazeCell(Vector2Int pos, WallState up, WallState left, WallState down, WallState right)
     {
@@ -54,6 +84,7 @@ public class MazeCell : System.IDisposable
         _wallState[Vector2Int.down] = down;
         _wallState[Vector2Int.right] = right;
         _walls = new List<GameObject>();
+        _item = new Item();
         cellCenter = new Vector2(CELL_WIDTH * (_position.x + 0.5f), CELL_WIDTH * (_position.y + 0.5f));
     }
 
@@ -113,8 +144,12 @@ public class MazeCell : System.IDisposable
         _walls.Add(wall);
     }
 
+    /// <summary>
+    /// Instantiates walls according to _wallState
+    /// </summary>
     public void Display()
     {
+        _item.Display(new Vector3(cellCenter.x, 0, cellCenter.y));
         if (WallExists(Vector2Int.right))
         {
             PutWall(new Vector3(CELL_WIDTH * (_position.x + 1), 0, CELL_WIDTH * (_position.y + 0.5f)), false);
@@ -192,6 +227,7 @@ public class Maze : MonoBehaviour
         _start = new Vector2Int(0, height - 1);
         _end = new Vector2Int(width - 1, 0);
 
+        // clear all walls from previous generation
         foreach (var kvPair in _grid)
         {
             kvPair.Value.Dispose();
@@ -214,9 +250,24 @@ public class Maze : MonoBehaviour
         }
     }
 
-    public void Generate()
+    public void Generate(List<ItemType>items)
     {
         _genAlgo.Generate();
+        List<MazeCell> cells = _grid.Values.ToList();
+        List<int> ind = new List<int>();
+        for (int i = 0; i < cells.Count; i++)
+        {
+            ind.Add(i);
+        }
+        ind.Shuffle();
+        for (int i = 0; i < items.Count; i++)
+        {
+            MazeCell cur = cells[ind[i]];
+            if (cur.Position != _start && cur.Position != _end)
+            {
+                cur.Item = new Item(items[i]);
+            }
+        }
     }
 
     /// <summary>
@@ -239,7 +290,7 @@ public class Maze : MonoBehaviour
     }
 
     /// <summary>
-    /// For each MazeCell in _grid creates an actual Wall in 3D space
+    /// Display each MazeCell in _grid 
     /// </summary>
     public void Display()
     {
