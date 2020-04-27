@@ -60,7 +60,7 @@ public class UIManager : MonoBehaviour
             Button newButton = Instantiate(ButtonTemplate);
             newButton.GetComponentInChildren<Text>().text = (i + 1).ToString();
             newButton.onClick.AddListener(StartGame);
-            newButton.interactable = i == 0 ? true : false;
+            newButton.interactable = (i == 0);
 
             buttonList.Add(newButton);
             buttonList[i].transform.SetParent(ButtonsPanel.transform, false);
@@ -82,6 +82,7 @@ public class UIManager : MonoBehaviour
     public void StartGame()
     {
         LevelSelect.SetActive(false);
+        MainMenu.SetActive(false);
         SceneManager.LoadScene("Maze");
     }
 
