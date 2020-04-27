@@ -23,7 +23,6 @@ public class GameManager : MonoBehaviour
     private int _mazeHeight;
     private float _timeLeft;
     private LevelState _levelState;
-    private bool _mazeCompleted;
     private float _finalPlayerLightAngle;      // the player light angle at the end of the level
 
     public int initialMazeWidth;
@@ -97,7 +96,6 @@ public class GameManager : MonoBehaviour
     public void StartNewLevel()
     {
         _levelState = LevelState.InProgress;
-        _mazeCompleted = false;
         _timeLeft = levelTime;
 
         Maze.Instance.Initialize(_mazeWidth, _mazeHeight, new BranchedDFSGeneration());
@@ -112,7 +110,6 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void EndLevel(bool mazeCompleted)
     {
-        _mazeCompleted = mazeCompleted;
         _levelState = mazeCompleted ? LevelState.Completed : LevelState.Failed;
         Player.Instance.CanBeMoved = Player.Instance.Moving = false;
         _finalPlayerLightAngle = Player.Instance.PlayerLight.spotAngle;
