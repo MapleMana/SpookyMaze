@@ -5,6 +5,14 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 [Flags]
+public enum GameMode
+{
+    Classic = 0,
+    Door = 1,
+    Ghost = 2
+}
+
+[Flags]
 public enum LevelState
 {
     None = 0,

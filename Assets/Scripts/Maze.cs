@@ -23,14 +23,24 @@ public enum WallState
     Exists
 }
 
-public class MazeCell
+public enum ItemType
 {
+    None,
+    Key
+}
+
+public class MazeCell : System.IDisposable
+{
+    public const float CELL_WIDTH = 10;
+    public const float WALL_WIDTH = 1.5f;
+
     private Dictionary<Vector2Int, WallState> _wallState = new Dictionary<Vector2Int, WallState>();
     private Vector2Int _position;
+    private ItemType _item;
+    private List<GameObject> _walls;
+    static private GameObject _wallTemplate = Resources.Load<GameObject>("Wall");
+
     public readonly Vector2 cellCenter;
-
-    public const float CELL_WIDTH = 10;
-
     public static List<Vector2Int> neighbours = new List<Vector2Int> { Vector2Int.up, 
                                                                        Vector2Int.left, 
                                                                        Vector2Int.down, 
@@ -43,6 +53,7 @@ public class MazeCell
         _wallState[Vector2Int.left] = left;
         _wallState[Vector2Int.down] = down;
         _wallState[Vector2Int.right] = right;
+        _walls = new List<GameObject>();
         cellCenter = new Vector2(CELL_WIDTH * (_position.x + 0.5f), CELL_WIDTH * (_position.y + 0.5f));
     }
 
@@ -83,11 +94,56 @@ public class MazeCell
         }
         return otherOpenings.Count == 1 ? otherOpenings[0] : Vector2Int.zero;
     }
+
+    /// <summary>
+    /// Creates a wall GameObject at the specified position
+    /// </summary>
+    /// <param name="pos">The position to place the wall at</param>
+    /// <param name="horizontal">Determines whether the wall is horizontal or vertical</param>
+    private void PutWall(Vector3 pos, bool horizontal = true)
+    {
+        GameObject wall = Object.Instantiate(_wallTemplate, pos, Quaternion.identity);
+        float wallX = horizontal ? CELL_WIDTH + WALL_WIDTH : WALL_WIDTH;
+        float wallY = horizontal ? WALL_WIDTH : CELL_WIDTH + WALL_WIDTH;
+
+        // a random value is added, so that the overlap is better rendered
+        float wallHeight = CELL_WIDTH + Random.value * 0.1f;
+
+        wall.transform.localScale = new Vector3(wallX, wallHeight, wallY);
+        _walls.Add(wall);
+    }
+
+    public void Display()
+    {
+        if (WallExists(Vector2Int.right))
+        {
+            PutWall(new Vector3(CELL_WIDTH * (_position.x + 1), 0, CELL_WIDTH * (_position.y + 0.5f)), false);
+        }
+        if (WallExists(Vector2Int.up))
+        {
+            PutWall(new Vector3(CELL_WIDTH * (_position.x + 0.5f), 0, CELL_WIDTH * (_position.y + 1)), true);
+        }
+        if (WallExists(Vector2Int.left))
+        {
+            PutWall(new Vector3(CELL_WIDTH * _position.x, 0, CELL_WIDTH * (_position.y + 0.5f)), false);
+        }
+        if (WallExists(Vector2Int.down))
+        {
+            PutWall(new Vector3(CELL_WIDTH * (_position.x + 0.5f), 0, CELL_WIDTH * _position.y), true);
+        }
+    }
+
+    public void Dispose()
+    {
+        foreach (GameObject child in _walls)
+        {
+            Object.Destroy(child);
+        }
+    }
 }
 
 public class Maze : MonoBehaviour
 {
-    const float WALL_WIDTH = 1.5f;
     private static Maze _instance;
 
     private int _width = 10;
@@ -97,9 +153,9 @@ public class Maze : MonoBehaviour
     private Dictionary<Vector2Int, MazeCell> _grid = new Dictionary<Vector2Int, MazeCell>();
     private static Random _generator = new Random();
     private GenerationStrategy _genAlgo;
-    private Transform _walls;
 
     public GameObject wallTemplate;
+    public GameObject keyTemplate;
 
     public Vector2Int StartPos => _start;
     public Vector2Int EndPos => _end;
@@ -121,11 +177,6 @@ public class Maze : MonoBehaviour
         }
     }
 
-    private void OnEnable()
-    {
-        _walls = transform.GetChild(0);
-    }
-
     /// <summary>
     /// Specifies the initial maze state
     /// </summary>
@@ -141,10 +192,9 @@ public class Maze : MonoBehaviour
         _start = new Vector2Int(0, height - 1);
         _end = new Vector2Int(width - 1, 0);
 
-        // clean up after previous level
-        foreach (Transform child in _walls)
+        foreach (var kvPair in _grid)
         {
-            Destroy(child.gameObject);
+            kvPair.Value.Dispose();
         }
     }
 
@@ -189,48 +239,13 @@ public class Maze : MonoBehaviour
     }
 
     /// <summary>
-    /// Creates a wall GameObject at the specified position
-    /// </summary>
-    /// <param name="pos">The position to place the wall at</param>
-    /// <param name="horizontal">Determines whether the wall is horizontal or vertical</param>
-    private void PutWall(Vector3 pos, bool horizontal=true)
-    {
-        GameObject wall = Instantiate(wallTemplate, pos, Quaternion.identity);
-        float wallX = horizontal ? MazeCell.CELL_WIDTH + WALL_WIDTH : WALL_WIDTH;
-        float wallY = horizontal ? WALL_WIDTH : MazeCell.CELL_WIDTH + WALL_WIDTH;
-
-        // a random value is added, so that the overlap is better rendered
-        float wallHeight = MazeCell.CELL_WIDTH + Random.value * 0.1f;
-
-        wall.transform.localScale = new Vector3(wallX, wallHeight, wallY);
-        wall.transform.SetParent(_walls);
-    }
-
-    /// <summary>
     /// For each MazeCell in _grid creates an actual Wall in 3D space
     /// </summary>
     public void Display()
     {
         foreach (var kvPair in _grid)
         {
-            Vector2Int pos = kvPair.Key;
-            MazeCell cell = kvPair.Value;
-            if (cell.WallExists(Vector2Int.right))
-            {
-                PutWall(new Vector3(MazeCell.CELL_WIDTH * (pos.x + 1), 0, MazeCell.CELL_WIDTH * (pos.y + 0.5f)), false);
-            }
-            if (cell.WallExists(Vector2Int.up))
-            {
-                PutWall(new Vector3(MazeCell.CELL_WIDTH * (pos.x + 0.5f), 0, MazeCell.CELL_WIDTH * (pos.y + 1)), true);
-            }
-            if (cell.WallExists(Vector2Int.left))
-            {
-                PutWall(new Vector3(MazeCell.CELL_WIDTH * pos.x, 0, MazeCell.CELL_WIDTH * (pos.y + 0.5f)), false);
-            }
-            if (cell.WallExists(Vector2Int.down))
-            {
-                PutWall(new Vector3(MazeCell.CELL_WIDTH * (pos.x + 0.5f), 0, MazeCell.CELL_WIDTH * pos.y), true);
-            }
+            kvPair.Value.Display();            
         }
     }
 }
