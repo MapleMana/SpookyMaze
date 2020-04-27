@@ -4,14 +4,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+[Flags]
 public enum LevelState
 {
-    None,
-    InProgress,
-    Completed,
-    Failed,
-    InReplay,
-    InReplayReversed
+    None = 0,
+    InProgress = 1,
+    Completed = 2,
+    Failed = 4,
+    InReplay = 8,
+    InReplayReversed = 16
 }
 
 public class GameManager : MonoBehaviour
@@ -52,8 +53,9 @@ public class GameManager : MonoBehaviour
         }
     }
     public static GameManager Instance => _instance;
-    public LevelState GameState => _levelState;
-    
+
+    public bool LevelIs(LevelState state) => (_levelState & state) != 0;
+
     private GameManager() { }
 
     private void Awake()
@@ -137,12 +139,15 @@ public class GameManager : MonoBehaviour
     /// <param name="onComplete">Action to perform when the replay is complete</param>
     public void WatchReplay(Action onComplete)
     {
-        _levelState = LevelState.InReplay;
+        _levelState |= LevelState.InReplay;
         _timeLeft = replayTime;
         StartCoroutine(Player.Instance.PlayCommands(
             initialPosition: Maze.Instance.StartPos,
             playTime: replayTime,
-            onComplete: onComplete
+            onComplete: () => {
+                _levelState ^= LevelState.InReplay;
+                onComplete();
+            }
         ));
     }
 
@@ -151,7 +156,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void GoToNextLevel()
     {
-        _levelState = LevelState.InReplayReversed;
+        _levelState |= LevelState.InReplayReversed;
         _timeLeft = 0;
         LightManager.Instance.TurnOff();
         StartCoroutine(Player.Instance.PlayCommands(
@@ -163,60 +168,58 @@ public class GameManager : MonoBehaviour
 
     public void Update()
     {
-        switch (_levelState)
+        if (LevelIs(LevelState.InProgress))
         {
-            case LevelState.InProgress:
-                if (_timeLeft < 0)
+            if (_timeLeft < 0)
+            {
+                EndLevel(mazeCompleted: false);
+            }
+            else
+            {
+                _timeLeft -= Time.deltaTime;
+                Player.Instance.LerpLightAngle(coef: _timeLeft / levelTime);
+                CameraManager.Instance.FocusOnPlayer();
+            }
+        }
+        else if (LevelIs(LevelState.InReplay))
+        {
+            if (_timeLeft > 0)
+            {
+                _timeLeft -= Time.deltaTime;
+                Player.Instance.LerpLightAngle(
+                    min: _finalPlayerLightAngle,
+                    coef: _timeLeft / replayTime
+                );
+
+                if (LevelIs(LevelState.Completed))
                 {
-                    EndLevel(mazeCompleted: false);
+                    CameraManager.Instance.FocusOnMaze(Maze.Instance);
                 }
                 else
                 {
-                    _timeLeft -= Time.deltaTime;
-                    Player.Instance.LerpLightAngle(coef: _timeLeft / levelTime);
                     CameraManager.Instance.FocusOnPlayer();
                 }
-                break;
-            case LevelState.InReplay:
-                if (_timeLeft > 0)
-                {
-                    _timeLeft -= Time.deltaTime;
-                    Player.Instance.LerpLightAngle(
-                        min: _finalPlayerLightAngle,
-                        coef: _timeLeft / replayTime
-                    );
+            }
+        }
+        else if (LevelIs(LevelState.InReplayReversed))
+        {
+            if (_timeLeft < reversedReplayTime)
+            {
+                _timeLeft += Time.deltaTime;
+                Player.Instance.LerpLightAngle(
+                    min: _finalPlayerLightAngle,
+                    coef: _timeLeft / reversedReplayTime
+                );
 
-                    if (_mazeCompleted)
-                    {
-                        CameraManager.Instance.FocusOnMaze(Maze.Instance);
-                    }
-                    else
-                    {
-                        CameraManager.Instance.FocusOnPlayer();
-                    }
-                }
-                break;
-            case LevelState.InReplayReversed:
-                if (_timeLeft < reversedReplayTime)
+                if (LevelIs(LevelState.Completed))
                 {
-                    _timeLeft += Time.deltaTime;
-                    Player.Instance.LerpLightAngle(
-                        min: _finalPlayerLightAngle,
-                        coef: _timeLeft / reversedReplayTime
-                    );
-
-                    if (_mazeCompleted)
-                    {
-                        CameraManager.Instance.FocusOnMaze(Maze.Instance);
-                    }
-                    else
-                    {
-                        CameraManager.Instance.FocusOnPlayer();
-                    }
+                    CameraManager.Instance.FocusOnMaze(Maze.Instance);
                 }
-                break;
-            default:
-                break;
+                else
+                {
+                    CameraManager.Instance.FocusOnPlayer();
+                }
+            }
         }
     }
 }
