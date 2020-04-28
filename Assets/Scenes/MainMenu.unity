@@ -5012,7 +5012,7 @@ MonoBehaviour:
   initialMazeHeight: 8
   mazeSizeIncrement: 2
   timeDecrement: 0
-  levelTime: 20
+  levelTime: 43
   replayTime: 5
   reversedReplayTime: 5
 --- !u!4 &1490064582
