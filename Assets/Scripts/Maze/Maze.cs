@@ -59,10 +59,17 @@ public class Maze : MonoBehaviour, System.IDisposable
     /// </summary>
     public void Restore()
     {
-        Dispose();
         MazeState state = JsonUtility.FromJson<MazeState>(_beforeStart);
         state.Load();
-        Display();
+    }
+
+    /// <summary>
+    /// Saves the state of the maze before the level starts
+    /// </summary>
+    public void SaveState()
+    {
+        MazeState state = new MazeState(this);
+        _beforeStart = JsonUtility.ToJson(state);
     }
 
     /// <summary>
@@ -112,8 +119,7 @@ public class Maze : MonoBehaviour, System.IDisposable
                 cell.Item = new Item(itemType);
             }
         }
-        MazeState state = new MazeState(this);
-        _beforeStart = JsonUtility.ToJson(state);
+        
     }
 
     /// <summary>

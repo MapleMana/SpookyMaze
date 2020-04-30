@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿/// This file contains serializables clones of some objects
+
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -50,6 +52,7 @@ public class MazeState
 
     public MazeState(Maze maze)
     {
+        // TODO: save level details (time)
         width = maze.Width;
         height = maze.Height;
         cells.Clear();
@@ -77,7 +80,7 @@ public class MazeState
     /// Reads the state from a local file
     /// </summary>
     /// <returns></returns>
-    public MazeState LoadFrom(string filePath)
+    public static MazeState LoadFrom(string filePath)
     {
         BinaryFormatter formatter = new BinaryFormatter();
         string path = Application.persistentDataPath + filePath;
