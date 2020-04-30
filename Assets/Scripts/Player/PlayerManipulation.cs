@@ -4,45 +4,47 @@ using UnityEngine;
 
 public class PlayerCommand
 {
-    private Vector2Int _direction;
+    public static readonly PlayerCommand Idle = new PlayerCommand((Player player) => false, (Player player) => false);
 
-    public static readonly PlayerCommand MoveUp = new PlayerCommand(Vector2Int.up);
-    public static readonly PlayerCommand MoveDown = new PlayerCommand(Vector2Int.down);
-    public static readonly PlayerCommand MoveLeft = new PlayerCommand(Vector2Int.left);
-    public static readonly PlayerCommand MoveRight = new PlayerCommand(Vector2Int.right);
-    public static readonly PlayerCommand Idle = new PlayerCommand((Player player) => false);
-
-    public static Dictionary<PlayerCommand, PlayerCommand> reverseCommand = new Dictionary<PlayerCommand, PlayerCommand>
-    {
-        [MoveUp] = MoveDown,
-        [MoveDown] = MoveUp,
-        [MoveRight] = MoveLeft,
-        [MoveLeft] = MoveRight,
-        [Idle] = Idle
-    };
-
+    /// <summary>
+    /// Actions to be performed on the player
+    /// </summary>
+    /// <param name="player">The target player</param>
+    /// <returns>true if the execution was successfull</returns>
     public delegate bool ExecuteCallback(Player player);
 
-    public PlayerCommand(ExecuteCallback executeMethod)
+    public ExecuteCallback Execute { get; internal set; }
+    public ExecuteCallback ExecuteReversed { get; internal set; }
+
+    public PlayerCommand(ExecuteCallback executeMethod, ExecuteCallback executeReversedMethod)
     {
         Execute = executeMethod;
+        ExecuteReversed = executeReversedMethod;
     }
+}
 
-    public PlayerCommand(Vector2Int direction)
+public class PlayerMovementCommand : PlayerCommand
+{
+    private Vector2Int _direction;
+
+    public Vector2Int Direction => _direction;
+
+    public static readonly PlayerMovementCommand MoveUp = new PlayerMovementCommand(Vector2Int.up);
+    public static readonly PlayerMovementCommand MoveDown = new PlayerMovementCommand(Vector2Int.down);
+    public static readonly PlayerMovementCommand MoveLeft = new PlayerMovementCommand(Vector2Int.left);
+    public static readonly PlayerMovementCommand MoveRight = new PlayerMovementCommand(Vector2Int.right);
+
+    public PlayerMovementCommand(Vector2Int direction) : base(player => player.Move(direction), player => player.Move(-1 * direction))
     {
-        Execute = player => player.Move(direction);
         _direction = direction;
     }
 
-    public ExecuteCallback Execute { get; internal set; }
-    public Vector2Int Direction => _direction;
-    
     /// <summary>
     /// Returns an appropriate command for the given direction
     /// </summary>
     /// <param name="direction">The direction to get the command for</param>
     /// <returns>Desired command or null if the mapping does not exist</returns>
-    public static PlayerCommand FromVector(Vector2Int direction)
+    public static PlayerMovementCommand FromVector(Vector2Int direction)
     {
         if (direction == Vector2Int.up) return MoveUp;
         if (direction == Vector2Int.down) return MoveDown;
@@ -82,11 +84,11 @@ static class PlayerActionDetector
                     // check which axis is more significant
                     if (Mathf.Abs(touchEnd.x - touchStart.x) > Mathf.Abs(touchEnd.y - touchStart.y))
                     {
-                        return (touchEnd.x > touchStart.x) ? PlayerCommand.MoveRight : PlayerCommand.MoveLeft;
+                        return (touchEnd.x > touchStart.x) ? PlayerMovementCommand.MoveRight : PlayerMovementCommand.MoveLeft;
                     }
                     else
                     {
-                        return (touchEnd.y > touchStart.y) ? PlayerCommand.MoveUp : PlayerCommand.MoveDown;
+                        return (touchEnd.y > touchStart.y) ? PlayerMovementCommand.MoveUp : PlayerMovementCommand.MoveDown;
                     }
                 }
             }
@@ -102,19 +104,19 @@ static class PlayerActionDetector
     {
         if (Input.GetKeyUp(KeyCode.UpArrow))
         {
-            return PlayerCommand.MoveUp;
+            return PlayerMovementCommand.MoveUp;
         }
         if (Input.GetKeyUp(KeyCode.DownArrow))
         {
-            return PlayerCommand.MoveDown;
+            return PlayerMovementCommand.MoveDown;
         }
         if (Input.GetKeyUp(KeyCode.LeftArrow))
         {
-            return PlayerCommand.MoveLeft;
+            return PlayerMovementCommand.MoveLeft;
         }
         if (Input.GetKeyUp(KeyCode.RightArrow))
         {
-            return PlayerCommand.MoveRight;
+            return PlayerMovementCommand.MoveRight;
         }
         return PlayerCommand.Idle;
     }

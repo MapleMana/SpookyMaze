@@ -15,7 +15,7 @@ public class Player : MonoBehaviour
     private bool _moving = false;
     private bool _canBeMoved= false;
     private float _lightIntensity;
-    private List<ItemType> _inventory;
+    private Stack<ItemType> _inventory;
 
     public float playerSpeed;
     [Range(0f, 180f)]
@@ -26,7 +26,7 @@ public class Player : MonoBehaviour
     public static Player Instance => _instance;
     public Light PlayerLight => _playerLight;
     public float LightIntensity => _lightIntensity;
-    public List<ItemType> Inventory => _inventory;
+    public Stack<ItemType> Inventory => _inventory;
     public bool Moving { get => _moving; set => _moving = value; }
     public bool CanBeMoved { get => _canBeMoved && !_moving; set => _canBeMoved = value; }
     public bool AtMazeEnd => _mazePosition == Maze.Instance.EndPos;
@@ -42,7 +42,7 @@ public class Player : MonoBehaviour
             Destroy(gameObject);
         }
         _commandHistory = new List<PlayerCommand>();
-        _inventory = new List<ItemType>();
+        _inventory = new Stack<ItemType>();
     }
 
     private void Start()
@@ -83,7 +83,7 @@ public class Player : MonoBehaviour
         {
             _commandHistory.Add(_command);
             SyncRealPosition();
-            MoveToDecisionPoint(incomingDirection: _command.Direction);
+            MoveToDecisionPoint(incomingDirection: ((PlayerMovementCommand)_command).Direction);
         }
     }
 
@@ -100,7 +100,7 @@ public class Player : MonoBehaviour
         for (int i = 0; i < movementSequence.Count; i++)
         {
             Vector2Int direction = movementSequence[i];
-            PlayerCommand newMovement = PlayerCommand.FromVector(direction);
+            PlayerMovementCommand newMovement = PlayerMovementCommand.FromVector(direction);
             commandSequence.Add(newMovement);
         }
 
@@ -115,6 +115,7 @@ public class Player : MonoBehaviour
     /// Move player in the chosen direction. If there is a wall on the way, player idles
     /// </summary>
     /// <param name="direction">The direction of movement</param>
+    /// <returns>true if the movement completed</returns>
     public bool Move(Vector2Int direction)
     {
         if (!Maze.Instance[_mazePosition].WallExists(direction))
@@ -162,11 +163,18 @@ public class Player : MonoBehaviour
             if (Moving)
             {
                 yield return new WaitForSeconds(pauseBetweenCommands);
-                PlayerCommand execution = reversed ? PlayerCommand.reverseCommand[command] : command;
-                execution.Execute(this);
+                if (reversed)
+                {
+                    command.ExecuteReversed(this);
+                }
+                else
+                {
+                    command.Execute(this);
+                }
+
                 if (saveToHistory)
                 {
-                    _commandHistory.Add(execution);
+                    _commandHistory.Add(command);
                 }
             }
         }
@@ -183,7 +191,7 @@ public class Player : MonoBehaviour
         MazeCell currentCell = Maze.Instance[_mazePosition];
         if (!currentCell.IsEmpty)
         {
-            _inventory.Add(currentCell.Item.Type);
+            _inventory.Push(currentCell.Item.Type);
             currentCell.ClearItem();
         }
     }
