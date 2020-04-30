@@ -87,8 +87,8 @@ public class GameManager : MonoBehaviour
         _levelState = LevelState.InProgress;
         _timeLeft = levelTime;
 
-        Maze.Instance.Initialize(_mazeWidth, _mazeHeight, new BranchedDFSGeneration());
-        Maze.Instance.Generate(_gameMode.GetItems());
+        Maze.Instance.Initialize(_mazeWidth, _mazeHeight);
+        Maze.Instance.Generate(new BranchedDFSGeneration(), _gameMode.GetItems());
         Maze.Instance.Display();
 
         Player.Instance.ResetState();
@@ -125,6 +125,7 @@ public class GameManager : MonoBehaviour
     /// <param name="onComplete">Action to perform when the replay is complete</param>
     public void WatchReplay(Action onComplete)
     {
+        Maze.Instance.Restore();
         _levelState |= LevelState.InReplay;
         _timeLeft = replayTime;
         StartCoroutine(Player.Instance.PlayCommands(

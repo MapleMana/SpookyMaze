@@ -1,7 +1,51 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
+
+[System.Serializable]
+class MazeState
+{
+    // TODO: make serializable
+    private Dictionary<Vector2Int, MazeCell> _grid = new Dictionary<Vector2Int, MazeCell>();
+
+    public Dictionary<Vector2Int, MazeCell> Grid { get => _grid; set => _grid = value; }
+
+    public MazeState()
+    {
+        _grid = new Dictionary<Vector2Int, MazeCell>();
+    }
+
+    /// <summary>
+    /// Saves the state to a local file
+    /// </summary>
+    /// <param name="filePath">The file path to save to</param>
+    public void SaveTo(string filePath)
+    {
+        BinaryFormatter formatter = new BinaryFormatter();
+        string path = Application.persistentDataPath + filePath;
+        using (FileStream stream = new FileStream(path, FileMode.OpenOrCreate))
+        {
+            formatter.Serialize(stream, this);
+        }
+    }
+
+    /// <summary>
+    /// Reads the state from a local file
+    /// </summary>
+    /// <returns></returns>
+    public MazeState LoadFrom(string filePath)
+    {
+        BinaryFormatter formatter = new BinaryFormatter();
+        string path = Application.persistentDataPath + filePath;
+        using (FileStream stream = new FileStream(path, FileMode.Open))
+        {
+            return formatter.Deserialize(stream) as MazeState;
+        }
+    }
+}
 
 public class Maze : MonoBehaviour
 {
@@ -11,9 +55,9 @@ public class Maze : MonoBehaviour
     private int _height = 10;
     private Vector2Int _start;
     private Vector2Int _end;
-    private Dictionary<Vector2Int, MazeCell> _grid = new Dictionary<Vector2Int, MazeCell>();
+    private MazeState _state;
+    private string  _beforeStart;
     private static Random _generator = new Random();
-    private GenerationStrategy _genAlgo;
 
     public GameObject wallTemplate;
     public GameObject keyTemplate;
@@ -24,7 +68,7 @@ public class Maze : MonoBehaviour
     public int Width => _width;
     public int Height => _height;
     public static Maze Instance => _instance;
-    public MazeCell this[Vector2Int pos] => _grid[pos];
+    public MazeCell this[Vector2Int pos] => _state.Grid[pos];
 
     private void Awake()
     {
@@ -43,21 +87,30 @@ public class Maze : MonoBehaviour
     /// </summary>
     /// <param name="width">The width (X) of the maze</param>
     /// <param name="height">The height (Z) of the maze</param>
-    /// <param name="algorithm">The algorithm to use for maze generation</param>
-    public void Initialize(int width, int height, GenerationStrategy algorithm)
+    public void Initialize(int width, int height)
     {
         _width = width;
         _height = height;
-        _genAlgo = algorithm;
 
         _start = new Vector2Int(0, height - 1);
         _end = new Vector2Int(width - 1, 0);
 
+
         // clear all walls from previous generation
-        foreach (var kvPair in _grid)
-        {
-            kvPair.Value.Dispose();
+        if (_state != null) {
+            foreach (var kvPair in _state.Grid)
+            {
+                kvPair.Value.Dispose();
+            }
         }
+
+        _state = new MazeState();
+    }
+
+    public void Restore()
+    {
+        _state = JsonUtility.FromJson<MazeState>(_beforeStart);
+        // TODO: redraw
     }
 
     /// <summary>
@@ -71,15 +124,20 @@ public class Maze : MonoBehaviour
             for (int y = 0; y < _height; y++)
             {
                 Vector2Int pos = new Vector2Int(x, y);
-                _grid[pos] = new MazeCell(pos, wallState, wallState, wallState, wallState);
+                _state.Grid[pos] = new MazeCell(pos, wallState, wallState, wallState, wallState);
             }
         }
     }
 
-    public void Generate(List<ItemType>items)
+    /// <summary>
+    /// Generates a new maze and places the specified items randomly
+    /// </summary>
+    /// <param name="algo">The algorithm to use for maze generation</param>
+    /// <param name="items">The items that should appear on the maze</param>
+    public void Generate(GenerationStrategy algo, List<ItemType>items)
     {
-        _genAlgo.Generate();
-        List<MazeCell> cells = _grid.Values.ToList();
+        algo.Generate();
+        List<MazeCell> cells = _state.Grid.Values.ToList();
         List<int> randInd = new List<int>();
         for (int i = 0; i < cells.Count; i++)
         {
@@ -102,6 +160,7 @@ public class Maze : MonoBehaviour
                 cell.Item = new Item(itemType);
             }
         }
+        _beforeStart = JsonUtility.ToJson(_state);
     }
 
     /// <summary>
@@ -113,22 +172,22 @@ public class Maze : MonoBehaviour
     public List<Vector2Int> GetSequenceToDicisionPoint(Vector2Int position, Vector2Int incomingDirection)
     {
         List<Vector2Int> sequence = new List<Vector2Int>();
-        incomingDirection = _grid[position].GetCorridorOpening(incomingDirection * -1);
+        incomingDirection = _state.Grid[position].GetCorridorOpening(incomingDirection * -1);
         while (incomingDirection != Vector2Int.zero)
         {
             sequence.Add(incomingDirection);
             position += incomingDirection;
-            incomingDirection = _grid[position].GetCorridorOpening(incomingDirection * -1);
+            incomingDirection = _state.Grid[position].GetCorridorOpening(incomingDirection * -1);
         }
         return sequence;
     }
 
     /// <summary>
-    /// Display each MazeCell in _grid 
+    /// Display each MazeCell of this maze
     /// </summary>
     public void Display()
     {
-        foreach (var kvPair in _grid)
+        foreach (var kvPair in _state.Grid)
         {
             kvPair.Value.Display();            
         }
