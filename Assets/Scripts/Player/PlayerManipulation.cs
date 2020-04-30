@@ -5,6 +5,10 @@ using UnityEngine;
 public class PlayerCommand
 {
     public static readonly PlayerCommand Idle = new PlayerCommand((Player player) => false, (Player player) => false);
+    public static readonly PlayerCommand PickUpItem = new PlayerCommand(
+        (Player player) => player.PickUpItem(), 
+        (Player player) => player.PlaceItem()
+    );
 
     /// <summary>
     /// Actions to be performed on the player

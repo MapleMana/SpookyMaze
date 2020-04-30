@@ -13,7 +13,7 @@ public class Player : MonoBehaviour
     private List<PlayerCommand> _commandHistory;
     private Light _playerLight;
     private bool _moving = false;
-    private bool _canBeMoved= false;
+    private bool _controllable= false;
     private float _lightIntensity;
     private Stack<ItemType> _inventory;
 
@@ -28,7 +28,7 @@ public class Player : MonoBehaviour
     public float LightIntensity => _lightIntensity;
     public Stack<ItemType> Inventory => _inventory;
     public bool Moving { get => _moving; set => _moving = value; }
-    public bool CanBeMoved { get => _canBeMoved && !_moving; set => _canBeMoved = value; }
+    public bool Controllable { get => _controllable; set => _controllable = value; }
     public bool AtMazeEnd => _mazePosition == Maze.Instance.EndPos;
 
     void Awake()
@@ -59,7 +59,7 @@ public class Player : MonoBehaviour
         _mazePosition = Maze.Instance.StartPos;
         SyncRealPosition();
         _commandHistory.Clear();
-        _canBeMoved = true;
+        _controllable = true;
         _moving = false;
     }
     
@@ -76,14 +76,21 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        PickUpItem();
-
-        PlayerCommand _command = PlayerActionDetector.DetectDesktop();
-        if (CanBeMoved && _command.Execute(this))
+        if (_controllable)
         {
-            _commandHistory.Add(_command);
-            SyncRealPosition();
-            MoveToDecisionPoint(incomingDirection: ((PlayerMovementCommand)_command).Direction);
+            PlayerCommand picking = PlayerCommand.PickUpItem;
+            if (picking.Execute(this))
+            {
+                _commandHistory.Add(picking);
+            }
+
+            PlayerCommand _command = PlayerActionDetector.DetectDesktop();
+            if (!_moving && _command.Execute(this))
+            {
+                _commandHistory.Add(_command);
+                SyncRealPosition();
+                MoveToDecisionPoint(incomingDirection: ((PlayerMovementCommand)_command).Direction);
+            }
         }
     }
 
@@ -186,14 +193,32 @@ public class Player : MonoBehaviour
     /// Picks any item from the cell the player is currently standing on 
     /// and places the item in the player's inventory
     /// </summary>
-    void PickUpItem()
+    /// <returns>true if the cell was not empty</returns>
+    public bool PickUpItem()
     {
         MazeCell currentCell = Maze.Instance[_mazePosition];
         if (!currentCell.IsEmpty)
         {
-            _inventory.Push(currentCell.Item.Type);
-            currentCell.ClearItem();
+            _inventory.Push(currentCell.ClearItem());
+            return true;
         }
+        return false;
+    }
+
+    /// <summary>
+    /// Places the last item that the player picked up on the ground
+    /// </summary>
+    /// <returns>true if the cell was empty and the inventory wasn't</returns>
+    public bool PlaceItem()
+    {
+        MazeCell currentCell = Maze.Instance[_mazePosition];
+        if (currentCell.IsEmpty && _inventory.Count > 0)
+        {
+            currentCell.Item = new Item(_inventory.Pop());
+            currentCell.Item.Display(currentCell.CellCenter(y: 0));
+            return true;
+        }
+        return false;
     }
 
     /// <summary>
@@ -202,7 +227,7 @@ public class Player : MonoBehaviour
     void SyncRealPosition()
     {
         MazeCell currentCell = Maze.Instance[_mazePosition];
-        transform.position = new Vector3(currentCell.cellCenter.x, transform.position.y, currentCell.cellCenter.y);
+        transform.position = currentCell.CellCenter(y: transform.position.y);
     }
 }
 

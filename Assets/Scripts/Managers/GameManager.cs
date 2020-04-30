@@ -100,7 +100,7 @@ public class GameManager : MonoBehaviour
     public void EndLevel(bool mazeCompleted)
     {
         _levelState = mazeCompleted ? LevelState.Completed : LevelState.Failed;
-        Player.Instance.CanBeMoved = Player.Instance.Moving = false;
+        Player.Instance.Controllable = Player.Instance.Moving = false;
         _finalPlayerLightAngle = Player.Instance.PlayerLight.spotAngle;
 
         // Might be used in complete version of our game
