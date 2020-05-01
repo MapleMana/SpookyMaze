@@ -29,15 +29,6 @@ public enum ItemType
     Key
 }
 
-//[System.Flags]
-//public enum GameMode
-//{
-//    Classic = 0,
-//    Key = 1,
-//    Oil = 2,
-//    Ghost = 3
-//}
-
 [System.Flags]
 public enum LevelState
 {

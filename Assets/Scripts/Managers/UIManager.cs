@@ -44,7 +44,7 @@ public class UIManager : MonoBehaviour
 
     private void Start()
     {
-        GameManager.Instance.GameMode = GameMode.Classic;
+        GameManager.Instance.GameMode = new ClassicGameMode();
         WidthChanged(GameManager.Instance.MazeWidth);
         HeightChanged(GameManager.Instance.MazeHeight);
         
@@ -160,11 +160,19 @@ public class UIManager : MonoBehaviour
     {
         if (Classic.isOn)
         {
-            GameManager.Instance.GameMode = GameMode.Classic;
+            GameManager.Instance.GameMode = new ClassicGameMode();
         }
-        if (Key.isOn)
+        else if (Key.isOn)
         {
-            GameManager.Instance.GameMode = GameMode.Key;
+            GameManager.Instance.GameMode = new DoorKeyGameMode();
         }
+        //else if (Oil.isOn)
+        //{
+        //    GameManager.Instance.GameMode = new OilGameMode();
+        //}
+        //else if (Ghost.isOn)
+        //{
+        //    GameManager.Instance.GameMode = new GhostGameMode();
+        //}
     }
 }
