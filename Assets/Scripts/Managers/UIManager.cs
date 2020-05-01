@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -11,12 +12,12 @@ public class UIManager : MonoBehaviour
 
     public Text Width;
     public Text Height;
+    public TextMeshProUGUI NextPlay;
 
     public GameObject MainMenu;
     public GameObject LevelSelect;
     public GameObject FinishMenu;
     public GameObject SettingsMenu;
-    public Button NextLevel;
 
     public GameObject ButtonsPanel;
     public Button ButtonTemplate;
@@ -109,7 +110,7 @@ public class UIManager : MonoBehaviour
     public void ShowFinishMenu(bool mazeCompleted)
     {
         FinishMenu.SetActive(true);
-        NextLevel.interactable = mazeCompleted;
+        NextPlay.text = mazeCompleted ? "Go to the Next Level" : "Play Again";
     }
 
     /// <summary>
@@ -124,21 +125,12 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Allows player replaying the level
-    /// </summary>
-    public void PlayAgain()
-    {
-        FinishMenu.SetActive(false);
-        GameManager.Instance.Replay();
-    }
-
-    /// <summary>
     /// Replays player's movements from finish to the start. Fired from FinishMenu.
     /// </summary>
     public void GoToNextLevel()
     {
         FinishMenu.SetActive(false);
-        GameManager.Instance.GoToNextLevel();
+        GameManager.Instance.NextPlay();
     }
 
     /// <summary>

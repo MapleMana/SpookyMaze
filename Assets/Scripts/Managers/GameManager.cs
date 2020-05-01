@@ -173,9 +173,10 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Replays the player movements reversely. Transitions to the next.
+    /// Replays the player movements reversely.
+    /// Either renders the same level or the next one.
     /// </summary>
-    public void GoToNextLevel()
+    public void NextPlay()
     {
         _levelState |= LevelState.InReplayReversed;
         _timeLeft = 0;
@@ -186,22 +187,7 @@ public class GameManager : MonoBehaviour
             onComplete: () => LoadLevel(_currentLevel)
         ));
     }
-
-    /// <summary>
-    /// Loads the same level
-    /// </summary>
-    public void Replay()
-    {
-        if (LevelIs(LevelState.Completed)) _loadLevel = _currentLevel - 1;
-        else if (LevelIs(LevelState.Failed)) _loadLevel = _currentLevel;
-        Player.Instance.Inventory.Clear();
-
-        _levelState |= LevelState.InProgress;
-        _timeLeft = 0;
-        LightManager.Instance.TurnOff();
-        LoadLevel(_loadLevel);
-    }
-
+    
     public void Update()
     {
         if (LevelIs(LevelState.InProgress))
