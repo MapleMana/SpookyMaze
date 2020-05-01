@@ -6,6 +6,15 @@ public interface IGameMode
 {
     bool GameEnded();
     List<ItemType> GetItems();
+
+}
+
+public class GameMode
+{
+    public static readonly IGameMode Classic = new ClassicGameMode();
+    public static readonly IGameMode Key = new DoorKeyGameMode();
+    //public static readonly IGameMode Oil = new OilGameMode();
+    //public static readonly IGameMode Ghost = new GhostGameMode();
 }
 
 public class ClassicGameMode : IGameMode

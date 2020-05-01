@@ -12,7 +12,7 @@ public class GameManager : MonoBehaviour
     private int _mazeHeight;
     private float _timeLeft;
     private LevelState _levelState;
-    private IGameMode _gameMode = new DoorKeyGameMode(); // this will be toggled in the settings (we'll make simultaneous game mode selection later)
+    private IGameMode _gameMode;
     private float _finalPlayerLightAngle;      // the player light angle at the end of the level
 
     public int initialMazeWidth;
@@ -42,6 +42,7 @@ public class GameManager : MonoBehaviour
         }
     }
     public static GameManager Instance => _instance;
+    public IGameMode GameMode { get => _gameMode; set => _gameMode = value; }
     public bool LevelIs(LevelState state) => (_levelState & state) != 0;
 
     private GameManager() { }

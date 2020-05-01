@@ -16,6 +16,10 @@ public class UIManager : MonoBehaviour
     public GameObject LevelSelect;
     public GameObject FinishMenu;
     public GameObject SettingsMenu;
+    public Toggle Classic;
+    public Toggle Key;
+    public Toggle Oil;
+    public Toggle Ghost;
 
     public GameObject ButtonsPanel;
     public Button ButtonTemplate;
@@ -40,9 +44,10 @@ public class UIManager : MonoBehaviour
 
     private void Start()
     {
+        GameManager.Instance.GameMode = GameMode.Classic;
         WidthChanged(GameManager.Instance.MazeWidth);
         HeightChanged(GameManager.Instance.MazeHeight);
-
+        
         LoadLevels();
     }
 
@@ -149,5 +154,17 @@ public class UIManager : MonoBehaviour
     {
         Height.text = height.ToString();
         GameManager.Instance.MazeHeight = (int) height;
+    }
+
+    public void ModeToggled()
+    {
+        if (Classic.isOn)
+        {
+            GameManager.Instance.GameMode = GameMode.Classic;
+        }
+        if (Key.isOn)
+        {
+            GameManager.Instance.GameMode = GameMode.Key;
+        }
     }
 }
