@@ -89,7 +89,7 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// This method is invoked when the "Play" button is pressed, loads the new maze
+    /// This method loads the new maze and starts the game
     /// </summary>
     public void StartGame()
     {
@@ -121,6 +121,15 @@ public class UIManager : MonoBehaviour
         GameManager.Instance.WatchReplay(
             onComplete: () => FinishMenu.SetActive(true)
         );
+    }
+
+    /// <summary>
+    /// Allows player replaying the level
+    /// </summary>
+    public void PlayAgain()
+    {
+        FinishMenu.SetActive(false);
+        GameManager.Instance.Replay();
     }
 
     /// <summary>

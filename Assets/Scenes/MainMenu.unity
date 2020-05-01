@@ -4031,7 +4031,7 @@ MonoBehaviour:
   initialMazeHeight: 8
   mazeSizeIncrement: 2
   timeDecrement: 0
-  levelTime: 43
+  levelTime: 25
   replayTime: 5
   reversedReplayTime: 5
 --- !u!4 &1490064582
@@ -5000,7 +5000,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1977626363}
-        m_MethodName: StartGame
+        m_MethodName: PlayAgain
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5713,7 +5713,6 @@ MonoBehaviour:
   ButtonTemplate: {fileID: 5192639569811241512, guid: 0a16d631d9cb55c4e8ab074d5b2d4131,
     type: 3}
   buttonList: []
-  levels: 10
 --- !u!4 &1977626364
 Transform:
   m_ObjectHideFlags: 0

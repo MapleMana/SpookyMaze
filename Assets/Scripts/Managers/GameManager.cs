@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
     private IGameMode _gameMode = new DoorKeyGameMode(); // this will be toggled in the settings (we'll make simultaneous game mode selection later)
     private float _finalPlayerLightAngle;      // the player light angle at the end of the level
     private int _currentLevel = 1;
+    private int _loadLevel;
 
     public int initialMazeWidth;
     public int initialMazeHeight;
@@ -184,6 +185,21 @@ public class GameManager : MonoBehaviour
             playTime: reversedReplayTime,
             onComplete: () => LoadLevel(_currentLevel)
         ));
+    }
+
+    /// <summary>
+    /// Loads the same level
+    /// </summary>
+    public void Replay()
+    {
+        if (LevelIs(LevelState.Completed)) _loadLevel = _currentLevel - 1;
+        else if (LevelIs(LevelState.Failed)) _loadLevel = _currentLevel;
+        Player.Instance.Inventory.Clear();
+
+        _levelState |= LevelState.InProgress;
+        _timeLeft = 0;
+        LightManager.Instance.TurnOff();
+        LoadLevel(_loadLevel);
     }
 
     public void Update()
