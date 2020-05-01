@@ -116,7 +116,7 @@ public class GameManager : MonoBehaviour
             // PlayerPrefs.SetInt("levelReached", levelReached + 1);
             UIManager.Instance.UnlockLevel(levelReached);   // unlocks next level
         }
-        UIManager.Instance.ShowFinishMenu();
+        UIManager.Instance.ShowFinishMenu(mazeCompleted);
     }
 
     /// <summary>

@@ -16,6 +16,7 @@ public class UIManager : MonoBehaviour
     public GameObject LevelSelect;
     public GameObject FinishMenu;
     public GameObject SettingsMenu;
+    public Button NextLevel;
 
     public GameObject ButtonsPanel;
     public Button ButtonTemplate;
@@ -94,9 +95,10 @@ public class UIManager : MonoBehaviour
     /// <summary>
     /// Displays the finish menu, when a player gets to the end point
     /// </summary>
-    public void ShowFinishMenu()
+    public void ShowFinishMenu(bool mazeCompleted)
     {
         FinishMenu.SetActive(true);
+        NextLevel.interactable = mazeCompleted;
     }
 
     /// <summary>
