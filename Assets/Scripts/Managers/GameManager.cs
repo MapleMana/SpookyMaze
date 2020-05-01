@@ -6,6 +6,8 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    public const int NUM_OF_LEVELS = 10;
+
     private static GameManager _instance;
 
     private int _mazeWidth;
@@ -14,6 +16,7 @@ public class GameManager : MonoBehaviour
     private LevelState _levelState;
     private IGameMode _gameMode = new DoorKeyGameMode(); // this will be toggled in the settings (we'll make simultaneous game mode selection later)
     private float _finalPlayerLightAngle;      // the player light angle at the end of the level
+    private int _currentLevel = 1;
 
     public int initialMazeWidth;
     public int initialMazeHeight;
@@ -23,7 +26,6 @@ public class GameManager : MonoBehaviour
     public float levelTime = 20;
     public float replayTime = 10;
     public float reversedReplayTime = 5;
-    private int levelReached = 0;
 
     public int MazeWidth
     {
@@ -42,6 +44,7 @@ public class GameManager : MonoBehaviour
         }
     }
     public static GameManager Instance => _instance;
+    public int CurrentLevel { get => _currentLevel; set => _currentLevel = value; }
     public bool LevelIs(LevelState state) => (_levelState & state) != 0;
 
     private GameManager() { }
@@ -71,24 +74,55 @@ public class GameManager : MonoBehaviour
         SceneManager.sceneLoaded -= OnFullLoad;
     }
 
+    private void Start()
+    {
+        Maze.Initialize();
+        int levelsGenerated = PlayerPrefs.GetInt("generated", 0);
+        if (levelsGenerated == 0)
+        {
+            GenerateLevels();
+            PlayerPrefs.SetInt("generated", 1);
+        }
+    }
+
     private void OnFullLoad(Scene scene, LoadSceneMode mode)
     {
         if (scene.name == "Maze")
         {
-            StartNewLevel();
+            LoadLevel(_currentLevel);
         }
     }
 
     /// <summary>
-    /// Initializes, loads and displays the new maze
+    /// Generates a new levels and saves them to a file. This method is for generation only and should not be used while gameplay.
     /// </summary>
-    public void StartNewLevel()
+    public void GenerateLevels()
+    {
+        for (int i = 0; i < NUM_OF_LEVELS; i++)
+        {
+            Maze.Instance.SetDimensions(_mazeWidth, _mazeHeight);
+            new BranchedDFSGeneration().Generate();
+            MazeState state = new MazeState(Maze.Instance);
+            state.SaveTo($"/{i}.maze");
+            _mazeHeight += mazeSizeIncrement;
+            _mazeWidth += mazeSizeIncrement;
+        }
+    }
+
+    /// <summary>
+    /// Loads the appropriate level from the file
+    /// </summary>
+    /// <param name="levelNumber">The level number to load</param>
+    public void LoadLevel(int levelNumber)
     {
         _levelState = LevelState.InProgress;
         _timeLeft = levelTime;
+        _currentLevel = levelNumber;
 
-        Maze.Instance.Initialize(_mazeWidth, _mazeHeight, new BranchedDFSGeneration());
-        Maze.Instance.Generate(_gameMode.GetItems());
+        MazeState state = MazeState.LoadFrom($"/{levelNumber}.maze");
+        state.Load();
+        Maze.Instance.GenerateItems(_gameMode.GetItems());
+        Maze.Instance.SaveState();
         Maze.Instance.Display();
 
         Player.Instance.ResetState();
@@ -100,7 +134,7 @@ public class GameManager : MonoBehaviour
     public void EndLevel(bool mazeCompleted)
     {
         _levelState = mazeCompleted ? LevelState.Completed : LevelState.Failed;
-        Player.Instance.CanBeMoved = Player.Instance.Moving = false;
+        Player.Instance.Controllable = Player.Instance.Moving = false;
         _finalPlayerLightAngle = Player.Instance.PlayerLight.spotAngle;
 
         // Might be used in complete version of our game
@@ -109,12 +143,10 @@ public class GameManager : MonoBehaviour
         if (mazeCompleted)
         {
             LightManager.Instance.TurnOn();
-            _mazeHeight += mazeSizeIncrement;
-            _mazeWidth += mazeSizeIncrement;
             levelTime -= timeDecrement;
-            levelReached += 1;
+            _currentLevel += 1;
             // PlayerPrefs.SetInt("levelReached", levelReached + 1);
-            UIManager.Instance.UnlockLevel(levelReached);   // unlocks next level
+            UIManager.Instance.UnlockLevel(_currentLevel);
         }
         UIManager.Instance.ShowFinishMenu(mazeCompleted);
     }
@@ -125,6 +157,8 @@ public class GameManager : MonoBehaviour
     /// <param name="onComplete">Action to perform when the replay is complete</param>
     public void WatchReplay(Action onComplete)
     {
+        Maze.Instance.Restore();
+        Maze.Instance.Display();
         _levelState |= LevelState.InReplay;
         _timeLeft = replayTime;
         StartCoroutine(Player.Instance.PlayCommands(
@@ -148,7 +182,7 @@ public class GameManager : MonoBehaviour
         StartCoroutine(Player.Instance.PlayCommands(
             reversed: true,
             playTime: reversedReplayTime,
-            onComplete: () => StartNewLevel()
+            onComplete: () => LoadLevel(_currentLevel)
         ));
     }
 
