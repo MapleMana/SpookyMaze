@@ -101,7 +101,7 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < NUM_OF_LEVELS; i++)
         {
             Maze.Instance.SetDimensions(_mazeWidth, _mazeHeight);
-            Maze.Instance.Generate(new BranchedDFSGeneration(), _gameMode.GetItems());
+            new BranchedDFSGeneration().Generate();
             MazeState state = new MazeState(Maze.Instance);
             state.SaveTo($"/{i}.maze");
             _mazeHeight += mazeSizeIncrement;
@@ -121,6 +121,7 @@ public class GameManager : MonoBehaviour
 
         MazeState state = MazeState.LoadFrom($"/{levelNumber}.maze");
         state.Load();
+        Maze.Instance.GenerateItems(_gameMode.GetItems());
         Maze.Instance.SaveState();
         Maze.Instance.Display();
 

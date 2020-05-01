@@ -87,13 +87,11 @@ public class Maze: System.IDisposable
     }
 
     /// <summary>
-    /// Generates a new maze and places the specified items randomly
+    /// Places the specified items randomly on this maze
     /// </summary>
-    /// <param name="algo">The algorithm to use for maze generation</param>
     /// <param name="items">The items that should appear on the maze</param>
-    public void Generate(GenerationStrategy algo, List<ItemType>items)
+    public void GenerateItems(List<ItemType>items)
     {
-        algo.Generate();
         List<MazeCell> cells = Grid.Values.ToList();
         List<int> randInd = new List<int>();
         for (int i = 0; i < cells.Count; i++)
