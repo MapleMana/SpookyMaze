@@ -104,6 +104,8 @@ public class GameManager : MonoBehaviour
             Maze.Instance.Generate(new BranchedDFSGeneration(), _gameMode.GetItems());
             MazeState state = new MazeState(Maze.Instance);
             state.SaveTo($"/{i}.maze");
+            _mazeHeight += mazeSizeIncrement;
+            _mazeWidth += mazeSizeIncrement;
         }
     }
 
@@ -140,12 +142,10 @@ public class GameManager : MonoBehaviour
         if (mazeCompleted)
         {
             LightManager.Instance.TurnOn();
-            _mazeHeight += mazeSizeIncrement;
-            _mazeWidth += mazeSizeIncrement;
             levelTime -= timeDecrement;
             _currentLevel += 1;
             // PlayerPrefs.SetInt("levelReached", levelReached + 1);
-            UIManager.Instance.UnlockLevel(_currentLevel);   // unlocks next level
+            UIManager.Instance.UnlockLevel(_currentLevel);
         }
         UIManager.Instance.ShowFinishMenu();
     }
