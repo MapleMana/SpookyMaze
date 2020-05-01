@@ -5,7 +5,7 @@ using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 
-public class Maze : MonoBehaviour, System.IDisposable
+public class Maze: System.IDisposable
 {
     private static Maze _instance;
 
@@ -26,24 +26,22 @@ public class Maze : MonoBehaviour, System.IDisposable
     public Dictionary<Vector2Int, MazeCell> Grid { get => _grid; set => _grid = value; }
     public MazeCell this[Vector2Int pos] => Grid[pos];
 
-    private void Awake()
+    private Maze() { }
+
+    /// <summary>
+    /// Initializes the singleton if the object didn't exist before
+    /// </summary>
+    public static void Initialize()
     {
-        if (_instance == null)
-        {
-            _instance = this;
-        }
-        else if (_instance != this)
-        {
-            Destroy(gameObject);
-        }
+        _instance = _instance ?? new Maze();
     }
 
     /// <summary>
-    /// Specifies the initial maze state
+    /// Specifies the initial maze dimensions
     /// </summary>
     /// <param name="width">The width (X) of the maze</param>
     /// <param name="height">The height (Z) of the maze</param>
-    public void Initialize(int width, int height)
+    public void SetDimensions(int width, int height)
     {
         Dispose();
 

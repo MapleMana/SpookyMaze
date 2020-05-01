@@ -20,8 +20,6 @@ public class UIManager : MonoBehaviour
     public GameObject ButtonsPanel;
     public Button ButtonTemplate;
     public List<Button> buttonList;
-    public int levels = 10;     // later levels will be loaded from a file and this variable
-                                // will be assigned to the number of the levels in the file
 
     public static UIManager Instance => _instance;
 
@@ -68,7 +66,7 @@ public class UIManager : MonoBehaviour
         buttonList = new List<Button>();
         int levelReached = PlayerPrefs.GetInt("levelReached", 1);
 
-        for (int i = 1; i <= levels; i++)
+        for (int i = 1; i <= GameManager.NUM_OF_LEVELS; i++)
         {
             Button newButton = Instantiate(ButtonTemplate);
             newButton.GetComponentInChildren<Text>().text = i.ToString();

@@ -6,6 +6,8 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    public const int NUM_OF_LEVELS = 10;
+
     private static GameManager _instance;
 
     private int _mazeWidth;
@@ -72,27 +74,37 @@ public class GameManager : MonoBehaviour
         SceneManager.sceneLoaded -= OnFullLoad;
     }
 
+    private void Start()
+    {
+        Maze.Initialize();
+        int levelsGenerated = PlayerPrefs.GetInt("generated", 0);
+        if (levelsGenerated == 0)
+        {
+            GenerateLevels();
+            PlayerPrefs.SetInt("generated", 1);
+        }
+    }
+
     private void OnFullLoad(Scene scene, LoadSceneMode mode)
     {
         if (scene.name == "Maze")
         {
             LoadLevel(_currentLevel);
-            //GenerateLevel();
         }
     }
 
     /// <summary>
-    /// Generates a new level and saves it to a file. This method is for generation only and should not be used while gameplay.
+    /// Generates a new levels and saves them to a file. This method is for generation only and should not be used while gameplay.
     /// </summary>
-    public void GenerateLevel()
+    public void GenerateLevels()
     {
-        Maze.Instance.Initialize(_mazeWidth, _mazeHeight);
-        Maze.Instance.Generate(new BranchedDFSGeneration(), _gameMode.GetItems());
-        MazeState state = new MazeState(Maze.Instance);
-        state.SaveTo("/3.maze");
-        Maze.Instance.Display();
-
-        Player.Instance.ResetState();
+        for (int i = 0; i < NUM_OF_LEVELS; i++)
+        {
+            Maze.Instance.SetDimensions(_mazeWidth, _mazeHeight);
+            Maze.Instance.Generate(new BranchedDFSGeneration(), _gameMode.GetItems());
+            MazeState state = new MazeState(Maze.Instance);
+            state.SaveTo($"/{i}.maze");
+        }
     }
 
     /// <summary>
