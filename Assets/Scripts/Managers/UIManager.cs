@@ -20,8 +20,6 @@ public class UIManager : MonoBehaviour
     public GameObject ButtonsPanel;
     public Button ButtonTemplate;
     public List<Button> buttonList;
-    public int levels = 10;     // later levels will be loaded from a file and this variable
-                                // will be assigned to the number of the levels in the file
 
     public static UIManager Instance => _instance;
 
@@ -47,23 +45,36 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Executed when one of the level select buttons is pressed
+    /// </summary>
+    /// <param name="levelNumber">The level number to load</param>
+    /// <returns></returns>
+    public UnityEngine.Events.UnityAction OnLevelOptionClick(int levelNumber)
+    {
+        return () =>
+            {
+                GameManager.Instance.CurrentLevel = levelNumber;
+                StartGame();
+            };
+    }
+
+    /// <summary>
     /// Invoked when the game starts and loads level buttons to the Level Select screen
     /// </summary>
     public void LoadLevels()
     {
         buttonList = new List<Button>();
-        // Might be used in complete version of our game
-        // int levelReached = PlayerPrefs.GetInt("levelReached", 1);
+        int levelReached = PlayerPrefs.GetInt("levelReached", 1);
 
-        for (int i = 0; i < levels; i++)
+        for (int i = 1; i <= GameManager.NUM_OF_LEVELS; i++)
         {
             Button newButton = Instantiate(ButtonTemplate);
-            newButton.GetComponentInChildren<Text>().text = (i + 1).ToString();
-            newButton.onClick.AddListener(StartGame);
-            newButton.interactable = (i == 0);
+            newButton.GetComponentInChildren<Text>().text = i.ToString();
+            newButton.onClick.AddListener(OnLevelOptionClick(i));
+            newButton.interactable = (i <= levelReached);
+            newButton.transform.SetParent(ButtonsPanel.transform, false);
 
             buttonList.Add(newButton);
-            buttonList[i].transform.SetParent(ButtonsPanel.transform, false);
         }
     }
 
@@ -73,7 +84,7 @@ public class UIManager : MonoBehaviour
     /// <param name="levelNumber">Level to be inlocked</param>
     public void UnlockLevel(int levelNumber)
     {
-        buttonList[levelNumber].interactable = true;
+        buttonList[levelNumber - 1].interactable = true;
     }
 
     /// <summary>

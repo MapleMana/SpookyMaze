@@ -13,7 +13,6 @@ public class MazeCell : System.IDisposable
     private List<GameObject> _walls;
     private static GameObject _wallTemplate = Resources.Load<GameObject>("Wall");
 
-    public readonly Vector2 cellCenter;
     public static List<Vector2Int> neighbours = new List<Vector2Int> { Vector2Int.up,
                                                                        Vector2Int.left,
                                                                        Vector2Int.down,
@@ -22,6 +21,7 @@ public class MazeCell : System.IDisposable
     public Item Item { get => _item; set => _item = value; }
     public bool IsEmpty => _item.Type == ItemType.None;
     public Vector2Int Position => _position;
+    public Vector3 CellCenter(float y) => new Vector3(CELL_WIDTH * (_position.x + 0.5f), y, CELL_WIDTH * (_position.y + 0.5f));
 
     public MazeCell(Vector2Int pos, WallState up, WallState left, WallState down, WallState right)
     {
@@ -32,7 +32,6 @@ public class MazeCell : System.IDisposable
         _wallState[Vector2Int.right] = right;
         _walls = new List<GameObject>();
         _item = new Item();
-        cellCenter = new Vector2(CELL_WIDTH * (_position.x + 0.5f), CELL_WIDTH * (_position.y + 0.5f));
     }
 
     /// <summary>
@@ -97,7 +96,7 @@ public class MazeCell : System.IDisposable
     /// </summary>
     public void Display()
     {
-        _item.Display(new Vector3(cellCenter.x, 0, cellCenter.y));
+        _item.Display(CellCenter(y: 0));
         if (WallExists(Vector2Int.right))
         {
             PutWall(new Vector3(CELL_WIDTH * (_position.x + 1), 0, CELL_WIDTH * (_position.y + 0.5f)), false);
@@ -119,10 +118,13 @@ public class MazeCell : System.IDisposable
     /// <summary>
     /// Removes the item from the cell
     /// </summary>
-    public void ClearItem()
+    /// <returns>The type of the deleted item</returns>
+    public ItemType ClearItem()
     {
+        ItemType deletedType = _item.Type;
         _item.Dispose();
         _item = new Item();
+        return deletedType;
     }
 
     public void Dispose()
