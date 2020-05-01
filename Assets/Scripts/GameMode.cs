@@ -6,6 +6,7 @@ public interface IGameMode
 {
     bool GameEnded();
     List<ItemType> GetItems();
+
 }
 
 public class ClassicGameMode : IGameMode

@@ -30,14 +30,6 @@ public enum ItemType
 }
 
 [System.Flags]
-public enum GameMode
-{
-    Classic = 0,
-    Door = 1,
-    Ghost = 2
-}
-
-[System.Flags]
 public enum LevelState
 {
     None = 0,
