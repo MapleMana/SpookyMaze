@@ -98,6 +98,28 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Adds the specified percentage of total time to current time
+    /// </summary>
+    /// <param name="ratio">The percentage of the total time to add</param>
+    public void AddTime(float ratio)
+    {
+        float timeToAdd = 0;
+        if (LevelIs(LevelState.InProgress))
+        {
+            timeToAdd = ratio * levelTime;
+        }
+        else if (LevelIs(LevelState.InReplay))
+        {
+            timeToAdd = ratio * replayTime;
+        }
+        else if (LevelIs(LevelState.InReplayReversed))
+        {
+            timeToAdd = ratio * reversedReplayTime;
+        }
+        _timeLeft += timeToAdd;
+    }
+
+    /// <summary>
     /// Generates a new levels and saves them to a file. This method is for generation only and should not be used while gameplay.
     /// </summary>
     public void GenerateLevels()

@@ -11,6 +11,7 @@ public abstract class Item : System.IDisposable
     public ItemType Type => _type;
 
     public abstract void Activate();
+    public abstract void Deactivate();
 
     public void Display(Vector3 pos)
     {
@@ -34,6 +35,7 @@ public class Key : Item
     }
 
     public override void Activate() {}
+    public override void Deactivate() {}
 }
 
 public class Oil : Item
@@ -47,7 +49,12 @@ public class Oil : Item
 
     public override void Activate()
     {
-        GameManager.Instance.TimeLeft += GameManager.Instance.levelTime * EFFECTIVENESS;
+        GameManager.Instance.AddTime(ratio: EFFECTIVENESS);
+    }
+
+    public override void Deactivate()
+    {
+        GameManager.Instance.AddTime(ratio: -EFFECTIVENESS);
     }
 }
 

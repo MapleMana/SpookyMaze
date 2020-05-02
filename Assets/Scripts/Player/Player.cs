@@ -199,6 +199,7 @@ public class Player : MonoBehaviour
         MazeCell currentCell = Maze.Instance[_mazePosition];
         if (!currentCell.IsEmpty)
         {
+            currentCell.Item.Activate();
             _inventory.Push(currentCell.ClearItem());
             return true;
         }

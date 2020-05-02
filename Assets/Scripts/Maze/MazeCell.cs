@@ -19,7 +19,7 @@ public class MazeCell : System.IDisposable
                                                                        Vector2Int.right };
 
     public Item Item { get => _item; set => _item = value; }
-    public bool IsEmpty => _item.Type == ItemType.None;
+    public bool IsEmpty => _item == null || _item.Type == ItemType.None;
     public Vector2Int Position => _position;
     public Vector3 CellCenter(float y) => new Vector3(CELL_WIDTH * (_position.x + 0.5f), y, CELL_WIDTH * (_position.y + 0.5f));
 
@@ -31,7 +31,6 @@ public class MazeCell : System.IDisposable
         _wallState[Vector2Int.down] = down;
         _wallState[Vector2Int.right] = right;
         _walls = new List<GameObject>();
-        _item = new Item();
     }
 
     /// <summary>
@@ -123,7 +122,7 @@ public class MazeCell : System.IDisposable
     {
         ItemType deletedType = _item.Type;
         _item.Dispose();
-        _item = new Item();
+        _item = null;
         return deletedType;
     }
 
