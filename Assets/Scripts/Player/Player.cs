@@ -214,7 +214,7 @@ public class Player : MonoBehaviour
         MazeCell currentCell = Maze.Instance[_mazePosition];
         if (currentCell.IsEmpty && _inventory.Count > 0)
         {
-            currentCell.Item = new Item(_inventory.Pop());
+            currentCell.Item = ItemFactory.GetItem(_inventory.Pop());
             currentCell.Item.Display(currentCell.CellCenter(y: 0));
             return true;
         }

@@ -5,8 +5,7 @@ using UnityEngine;
 public interface IGameMode
 {
     bool GameEnded();
-    List<ItemType> GetItems();
-
+    List<Item> GetItems();
 }
 
 public class ClassicGameMode : IGameMode
@@ -16,9 +15,9 @@ public class ClassicGameMode : IGameMode
         return Player.Instance.AtMazeEnd;
     }
 
-    public List<ItemType> GetItems()
+    public List<Item> GetItems()
     {
-        return new List<ItemType>();
+        return new List<Item>();
     }
 }
 
@@ -30,21 +29,22 @@ public class DoorKeyGameMode : IGameMode
                Player.Instance.Inventory.Contains(ItemType.Key);
     }
 
-    public List<ItemType> GetItems()
+    public List<Item> GetItems()
     {
-        return new List<ItemType> { ItemType.Key };
+        return ItemFactory.GetItems(ItemType.Key, 1);
     }
 }
 
 public class OilGameMode : IGameMode
 {
+    const int ITEM_QUANTITY = 2;
     public bool GameEnded()
     {
         return Player.Instance.AtMazeEnd;
     }
 
-    public List<ItemType> GetItems()
+    public List<Item> GetItems()
     {
-        return new List<ItemType> { /* oil item(s) */ };
+        return ItemFactory.GetItems(ItemType.Oil, ITEM_QUANTITY);
     }
 }

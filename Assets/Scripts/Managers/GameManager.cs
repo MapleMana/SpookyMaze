@@ -47,6 +47,8 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance => _instance;
     public IGameMode GameMode { get => _gameMode; set => _gameMode = value; }
     public int CurrentLevel { get => _currentLevel; set => _currentLevel = value; }
+    public float TimeLeft { get => _timeLeft; set => _timeLeft = value; }
+
     public bool LevelIs(LevelState state) => (_levelState & state) != 0;
 
     private GameManager() { }
