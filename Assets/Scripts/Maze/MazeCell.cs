@@ -95,7 +95,7 @@ public class MazeCell : System.IDisposable
     /// </summary>
     public void Display()
     {
-        _item.Display(CellCenter(y: 0));
+        _item?.Display(CellCenter(y: 0));
         if (WallExists(Vector2Int.right))
         {
             PutWall(new Vector3(CELL_WIDTH * (_position.x + 1), 0, CELL_WIDTH * (_position.y + 0.5f)), false);
@@ -120,8 +120,8 @@ public class MazeCell : System.IDisposable
     /// <returns>The type of the deleted item</returns>
     public ItemType ClearItem()
     {
-        ItemType deletedType = _item.Type;
-        _item.Dispose();
+        ItemType deletedType = _item?.Type ?? ItemType.None;
+        _item?.Dispose();
         _item = null;
         return deletedType;
     }
@@ -132,6 +132,6 @@ public class MazeCell : System.IDisposable
         {
             Object.Destroy(child);
         }
-        _item.Dispose();
+        _item?.Dispose();
     }
 }

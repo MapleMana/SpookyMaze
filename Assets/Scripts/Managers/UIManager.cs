@@ -176,15 +176,15 @@ public class UIManager : MonoBehaviour
         {
             GameManager.Instance.GameMode = new ClassicGameMode();
         }
-        else if (Key.isOn)
+        if (Key.isOn)
         {
             GameManager.Instance.GameMode = new DoorKeyGameMode();
         }
-        //else if (Oil.isOn)
-        //{
-        //    GameManager.Instance.GameMode = new OilGameMode();
-        //}
-        //else if (Ghost.isOn)
+        if (Oil.isOn)
+        {
+            GameManager.Instance.GameMode = new OilGameMode();
+        }
+        //if (Ghost.isOn)
         //{
         //    GameManager.Instance.GameMode = new GhostGameMode();
         //}

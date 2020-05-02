@@ -6,10 +6,8 @@ public abstract class Item : System.IDisposable
 {
     internal GameObject _template;
     private GameObject gameObject;
-    private ItemType _type;
 
-    public ItemType Type => _type;
-
+    public abstract ItemType Type { get; }
     public abstract void Activate();
     public abstract void Deactivate();
 
@@ -29,6 +27,8 @@ public abstract class Item : System.IDisposable
 
 public class Key : Item
 {
+    public override ItemType Type => ItemType.Key;
+
     public Key()
     {
         _template = Resources.Load<GameObject>("Key");
@@ -41,6 +41,8 @@ public class Key : Item
 public class Oil : Item
 {
     const float EFFECTIVENESS = 0.3f; // percentage of the total time to add
+
+    public override ItemType Type => ItemType.Oil;
 
     public Oil()
     {
