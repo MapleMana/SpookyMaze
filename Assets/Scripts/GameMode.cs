@@ -35,3 +35,16 @@ public class DoorKeyGameMode : IGameMode
         return new List<ItemType> { ItemType.Key };
     }
 }
+
+public class OilGameMode : IGameMode
+{
+    public bool GameEnded()
+    {
+        return Player.Instance.AtMazeEnd;
+    }
+
+    public List<ItemType> GetItems()
+    {
+        return new List<ItemType> { /* oil item(s) */ };
+    }
+}
