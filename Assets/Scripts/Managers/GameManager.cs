@@ -177,7 +177,7 @@ public class GameManager : MonoBehaviour
     /// Replays the player movements reversely.
     /// Either renders the same level or the next one.
     /// </summary>
-    public void NextPlay()
+    public void LoadCurrentLevel()
     {
         _levelState |= LevelState.InReplayReversed;
         _timeLeft = 0;

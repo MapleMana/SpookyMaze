@@ -135,7 +135,7 @@ public class UIManager : MonoBehaviour
     public void GoToNextLevel()
     {
         FinishMenu.SetActive(false);
-        GameManager.Instance.NextPlay();
+        GameManager.Instance.LoadCurrentLevel();
     }
 
     /// <summary>
