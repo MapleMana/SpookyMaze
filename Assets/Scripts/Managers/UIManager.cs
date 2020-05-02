@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -11,6 +12,7 @@ public class UIManager : MonoBehaviour
 
     public Text Width;
     public Text Height;
+    public TextMeshProUGUI NextPlay;
 
     public GameObject MainMenu;
     public GameObject LevelSelect;
@@ -93,7 +95,7 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// This method is invoked when the "Play" button is pressed, loads the new maze
+    /// This method loads the new maze and starts the game
     /// </summary>
     public void StartGame()
     {
@@ -110,9 +112,10 @@ public class UIManager : MonoBehaviour
     /// <summary>
     /// Displays the finish menu, when a player gets to the end point
     /// </summary>
-    public void ShowFinishMenu()
+    public void ShowFinishMenu(bool mazeCompleted)
     {
         FinishMenu.SetActive(true);
+        NextPlay.text = mazeCompleted ? "Go to the Next Level" : "Play Again";
     }
 
     /// <summary>
@@ -132,7 +135,7 @@ public class UIManager : MonoBehaviour
     public void GoToNextLevel()
     {
         FinishMenu.SetActive(false);
-        GameManager.Instance.GoToNextLevel();
+        GameManager.Instance.LoadCurrentLevel();
     }
 
     /// <summary>

@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
     private IGameMode _gameMode;
     private float _finalPlayerLightAngle;      // the player light angle at the end of the level
     private int _currentLevel = 1;
+    private int _loadLevel;
 
     public int initialMazeWidth;
     public int initialMazeHeight;
@@ -149,7 +150,7 @@ public class GameManager : MonoBehaviour
             // PlayerPrefs.SetInt("levelReached", levelReached + 1);
             UIManager.Instance.UnlockLevel(_currentLevel);
         }
-        UIManager.Instance.ShowFinishMenu();
+        UIManager.Instance.ShowFinishMenu(mazeCompleted);
     }
 
     /// <summary>
@@ -173,9 +174,10 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Replays the player movements reversely. Transitions to the next.
+    /// Replays the player movements reversely.
+    /// Either renders the same level or the next one.
     /// </summary>
-    public void GoToNextLevel()
+    public void LoadCurrentLevel()
     {
         _levelState |= LevelState.InReplayReversed;
         _timeLeft = 0;
@@ -186,7 +188,7 @@ public class GameManager : MonoBehaviour
             onComplete: () => LoadLevel(_currentLevel)
         ));
     }
-
+    
     public void Update()
     {
         if (LevelIs(LevelState.InProgress))
