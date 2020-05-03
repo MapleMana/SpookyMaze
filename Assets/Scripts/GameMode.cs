@@ -37,7 +37,6 @@ public class DoorKeyGameMode : IGameMode
 
 public class OilGameMode : IGameMode
 {
-    const int ITEM_QUANTITY = 2;
     public bool GameEnded()
     {
         return Player.Instance.AtMazeEnd;
@@ -45,6 +44,7 @@ public class OilGameMode : IGameMode
 
     public List<Item> GetItems()
     {
-        return ItemFactory.GetItems(ItemType.Oil, ITEM_QUANTITY);
+        int itemQuantity = (Maze.Instance.Height + Maze.Instance.Width) / 8; // magic formula - subject to change in the future
+        return ItemFactory.GetItems(ItemType.Oil, itemQuantity);
     }
 }
