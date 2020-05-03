@@ -26,7 +26,8 @@ public enum WallState
 public enum ItemType
 {
     None = 0,
-    Key = 1
+    Key = 1,
+    Oil = 2
 }
 
 [System.Flags]

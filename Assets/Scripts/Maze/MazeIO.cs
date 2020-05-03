@@ -26,7 +26,7 @@ public class SerCell
         up = cell.WallExists(Vector2Int.up);
         right = cell.WallExists(Vector2Int.right);
         down = cell.WallExists(Vector2Int.down);
-        item = (int)cell.Item.Type;
+        item = (int)(cell.Item?.Type ?? ItemType.None);
     }
 
     public MazeCell ToMazeCell()
@@ -38,7 +38,7 @@ public class SerCell
             down ? WallState.Exists : WallState.Destroyed,
             right ? WallState.Exists : WallState.Destroyed
         );
-        cell.Item = new Item((ItemType)item);
+        cell.Item = ItemFactory.GetItem((ItemType)item);
         return cell;
     }
 }

@@ -90,32 +90,24 @@ public class Maze: System.IDisposable
     /// Places the specified items randomly on this maze
     /// </summary>
     /// <param name="items">The items that should appear on the maze</param>
-    public void GenerateItems(List<ItemType>items)
+    public void GenerateItems(List<Item>items)
     {
         List<MazeCell> cells = Grid.Values.ToList();
         List<int> randInd = new List<int>();
         for (int i = 0; i < cells.Count; i++)
         {
-            if (cells[i].Position != _start && cells[i].Position != _end)
+            if (cells[i].Position != _start && 
+                cells[i].Position != _end)
             {
                 randInd.Add(i);
             }
         }
         randInd.Shuffle();
-        int cellInd = 0;
-        foreach (ItemType itemType in items)
+        for (int i = 0; i < Mathf.Min(randInd.Count, items.Count); i++)
         {
-            while (cellInd < randInd.Count && !cells[randInd[cellInd]].IsEmpty)
-            {
-                cellInd++;
-            }
-            if (cellInd < randInd.Count)
-            {
-                MazeCell cell = cells[randInd[cellInd]];
-                cell.Item = new Item(itemType);
-            }
+            MazeCell cell = cells[randInd[i]];
+            cell.Item = items[i];
         }
-        
     }
 
     /// <summary>

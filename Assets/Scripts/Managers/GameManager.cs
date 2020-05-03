@@ -47,6 +47,8 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance => _instance;
     public IGameMode GameMode { get => _gameMode; set => _gameMode = value; }
     public int CurrentLevel { get => _currentLevel; set => _currentLevel = value; }
+    public float TimeLeft { get => _timeLeft; set => _timeLeft = value; }
+
     public bool LevelIs(LevelState state) => (_levelState & state) != 0;
 
     private GameManager() { }
@@ -93,6 +95,28 @@ public class GameManager : MonoBehaviour
         {
             LoadLevel(_currentLevel);
         }
+    }
+
+    /// <summary>
+    /// Adds the specified percentage of total time to current time
+    /// </summary>
+    /// <param name="ratio">The percentage of the total time to add</param>
+    public void AddTime(float ratio)
+    {
+        float timeToAdd = 0;
+        if (LevelIs(LevelState.InProgress))
+        {
+            timeToAdd = ratio * levelTime;
+        }
+        else if (LevelIs(LevelState.InReplay))
+        {
+            timeToAdd = ratio * replayTime;
+        }
+        else if (LevelIs(LevelState.InReplayReversed))
+        {
+            timeToAdd = ratio * reversedReplayTime;
+        }
+        _timeLeft += timeToAdd;
     }
 
     /// <summary>
