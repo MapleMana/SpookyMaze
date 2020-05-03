@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour
     private int _mazeHeight;
     private float _timeLeft;
     private LevelState _levelState;
-    private IGameMode _gameMode;
+    private GameMode _gameMode;
     private float _finalPlayerLightAngle;      // the player light angle at the end of the level
     private int _currentLevel = 1;
     private int _loadLevel;
@@ -45,7 +45,7 @@ public class GameManager : MonoBehaviour
         }
     }
     public static GameManager Instance => _instance;
-    public IGameMode GameMode { get => _gameMode; set => _gameMode = value; }
+    public GameMode GameMode { get => _gameMode; set => _gameMode = value; }
     public int CurrentLevel { get => _currentLevel; set => _currentLevel = value; }
     public float TimeLeft { get => _timeLeft; set => _timeLeft = value; }
 
@@ -80,6 +80,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        _gameMode = new ClassicGameMode();
         Maze.Initialize();
         int levelsGenerated = PlayerPrefs.GetInt("generated", 0);
         if (levelsGenerated == 0)
@@ -152,6 +153,7 @@ public class GameManager : MonoBehaviour
         Maze.Instance.Display();
 
         Player.Instance.ResetState();
+        _gameMode.Initialize();
     }
 
     /// <summary>

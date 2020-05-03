@@ -2,49 +2,85 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IGameMode
+public abstract class GameMode
 {
-    bool GameEnded();
-    List<Item> GetItems();
+    abstract public bool GameEnded();
+    abstract public void Initialize();
+    abstract public List<Item> GetItems();
+
+    public void DefaultInitialize() { }
 }
 
-public class ClassicGameMode : IGameMode
+public class ClassicGameMode : GameMode
 {
-    public bool GameEnded()
+    override public bool GameEnded()
     {
         return Player.Instance.AtMazeEnd;
     }
 
-    public List<Item> GetItems()
+    override public void Initialize()
+    {
+        DefaultInitialize();
+    }
+
+    override public List<Item> GetItems()
     {
         return new List<Item>();
     }
 }
 
-public class DoorKeyGameMode : IGameMode
+public class DoorKeyGameMode : GameMode
 {
-    public bool GameEnded()
+    override public bool GameEnded()
     {
-        return Player.Instance.AtMazeEnd && 
-               Player.Instance.Inventory.Contains(ItemType.Key);
+        return Player.Instance.AtMazeEnd &&
+                Player.Instance.Inventory.Contains(ItemType.Key);
     }
 
-    public List<Item> GetItems()
+    override public List<Item> GetItems()
     {
         return ItemFactory.GetItems(ItemType.Key, 1);
     }
+
+    override public void Initialize()
+    {
+        DefaultInitialize();
+    }
 }
 
-public class OilGameMode : IGameMode
+public class OilGameMode : GameMode
 {
-    public bool GameEnded()
+    override public bool GameEnded()
     {
         return Player.Instance.AtMazeEnd;
     }
 
-    public List<Item> GetItems()
+    override public List<Item> GetItems()
     {
         int itemQuantity = (Maze.Instance.Height + Maze.Instance.Width) / 8; // magic formula - subject to change in the future
         return ItemFactory.GetItems(ItemType.Oil, itemQuantity);
+    }
+
+    override public void Initialize()
+    {
+        DefaultInitialize();
+    }
+}
+
+public class GhostGameMode : GameMode
+{
+    override public bool GameEnded()
+    {
+        return Player.Instance.AtMazeEnd;
+    }
+
+    override public void Initialize()
+    {
+        Ghost.CanBeMoved = true;
+    }
+
+    override public List<Item> GetItems()
+    {
+        return new List<Item>();
     }
 }

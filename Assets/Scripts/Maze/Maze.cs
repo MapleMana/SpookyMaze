@@ -35,6 +35,17 @@ public class Maze: System.IDisposable
     {
         _instance = _instance ?? new Maze();
     }
+    
+    /// <summary>
+    /// Checks if the position is in bounds of the maze
+    /// </summary>
+    /// <param name="pos">The position to check</param>
+    /// <returns></returns>
+    public bool InBounds(Vector2Int pos)
+    {
+        return pos.x >= 0 && pos.x < Width &&
+               pos.y >= 0 && pos.y < Height;
+    }
 
     /// <summary>
     /// Specifies the initial maze dimensions

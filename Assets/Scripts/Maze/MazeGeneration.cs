@@ -5,18 +5,7 @@ using UnityEngine;
 public abstract class GenerationStrategy
 {
     public abstract void Generate();
-
-    /// <summary>
-    /// Checks if the position is in bounds of the maze
-    /// </summary>
-    /// <param name="pos">The position to check</param>
-    /// <returns></returns>
-    internal bool InBounds(Vector2Int pos)
-    {
-        return pos.x >= 0 && pos.x < Maze.Instance.Width && 
-               pos.y >= 0 && pos.y < Maze.Instance.Height;
-    }
-
+    
     /// <summary>
     /// Changes the state of the specified wall
     /// </summary>
@@ -52,7 +41,7 @@ public class DFSGeneration : GenerationStrategy
         foreach (Vector2Int direction in neighboursOrder)
         {
             Vector2Int newPos = curPos + direction;
-            if (InBounds(newPos) && !visited.ContainsKey(newPos))
+            if (Maze.Instance.InBounds(newPos) && !visited.ContainsKey(newPos))
             {
                 ChangeWall(curPos, direction, WallState.Destroyed);
                 DFS(newPos);
@@ -96,7 +85,7 @@ public class BFSGeneration : GenerationStrategy
                 foreach (Vector2Int direction in MazeCell.neighbours)
                 {
                     Vector2Int newPos = curPos + direction;
-                    if (InBounds(newPos) && !visited.ContainsKey(newPos))
+                    if (Maze.Instance.InBounds(newPos) && !visited.ContainsKey(newPos))
                     {
                         visited[newPos] = true;
                         ChangeWall(curPos, direction, WallState.Destroyed);
@@ -147,7 +136,7 @@ public class BranchedDFSGeneration : GenerationStrategy
             foreach (Vector2Int direction in MazeCell.neighbours)
             {
                 Vector2Int newPos = curPos + direction;
-                if (InBounds(newPos) && !visited.ContainsKey(newPos))
+                if (Maze.Instance.InBounds(newPos) && !visited.ContainsKey(newPos))
                 {
                     path.Push(newPos);
                     ChangeWall(curPos, direction, WallState.Destroyed);

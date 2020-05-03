@@ -5,11 +5,10 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Player : Movable
 {
     private static Player _instance;
 
-    private Vector2Int _mazePosition;
     private List<PlayerCommand> _commandHistory;
     private Light _playerLight;
     private bool _moving = false;
@@ -29,7 +28,6 @@ public class Player : MonoBehaviour
     public Stack<ItemType> Inventory => _inventory;
     public bool Moving { get => _moving; set => _moving = value; }
     public bool Controllable { get => _controllable; set => _controllable = value; }
-    public bool AtMazeEnd => _mazePosition == Maze.Instance.EndPos;
 
     void Awake()
     {
@@ -123,7 +121,7 @@ public class Player : MonoBehaviour
     /// </summary>
     /// <param name="direction">The direction of movement</param>
     /// <returns>true if the movement completed</returns>
-    public bool Move(Vector2Int direction)
+    override public bool Move(Vector2Int direction)
     {
         if (!Maze.Instance[_mazePosition].WallExists(direction))
         {
@@ -221,15 +219,6 @@ public class Player : MonoBehaviour
             return true;
         }
         return false;
-    }
-
-    /// <summary>
-    /// Synchronizes maze position and physical player position
-    /// </summary>
-    void SyncRealPosition()
-    {
-        MazeCell currentCell = Maze.Instance[_mazePosition];
-        transform.position = currentCell.CellCenter(y: transform.position.y);
     }
 }
 

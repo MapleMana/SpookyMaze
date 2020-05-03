@@ -18,7 +18,6 @@ public class UIManager : MonoBehaviour
     public GameObject LevelSelect;
     public GameObject FinishMenu;
     public GameObject SettingsMenu;
-    public Toggle Classic;
     public Toggle Key;
     public Toggle Oil;
     public Toggle Ghost;
@@ -44,7 +43,6 @@ public class UIManager : MonoBehaviour
 
     private void Start()
     {
-        GameManager.Instance.GameMode = new ClassicGameMode();
         WidthChanged(GameManager.Instance.MazeWidth);
         HeightChanged(GameManager.Instance.MazeHeight);
         
@@ -172,10 +170,6 @@ public class UIManager : MonoBehaviour
 
     public void ModeToggled()
     {
-        if (Classic.isOn)
-        {
-            GameManager.Instance.GameMode = new ClassicGameMode();
-        }
         if (Key.isOn)
         {
             GameManager.Instance.GameMode = new DoorKeyGameMode();
@@ -184,9 +178,9 @@ public class UIManager : MonoBehaviour
         {
             GameManager.Instance.GameMode = new OilGameMode();
         }
-        //if (Ghost.isOn)
-        //{
-        //    GameManager.Instance.GameMode = new GhostGameMode();
-        //}
+        if (Ghost.isOn)
+        {
+            GameManager.Instance.GameMode = new GhostGameMode();
+        }
     }
 }
