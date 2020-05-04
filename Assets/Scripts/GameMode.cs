@@ -77,6 +77,11 @@ public class GhostGameMode : GameMode
     override public void Initialize()
     {
         Ghost.CanBeMoved = true;
+        GameObject _template = Resources.Load<GameObject>("Ghost");
+        Vector2Int _mazePosition = new Vector2Int(Maze.Instance.EndPos.x, Maze.Instance.EndPos.y);
+        MazeCell currentCell = Maze.Instance[_mazePosition];
+        Vector3 pos = currentCell.CellCenter(y: 0);
+        Object.Instantiate(_template, pos, Quaternion.identity);
     }
 
     override public List<Item> GetItems()

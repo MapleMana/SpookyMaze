@@ -11,7 +11,7 @@ public class Ghost : Movable
 
     private void Start()
     {
-        _mazePosition = new Vector2Int(Maze.Instance.EndPos.x, Maze.Instance.EndPos.y);
+        
     }
     
     void Update()
@@ -20,9 +20,10 @@ public class Ghost : Movable
         {
             MazeCell.neighbours.Shuffle();
             Move(MazeCell.neighbours[0]);
+            
         }
     }
-
+    
     override public bool Move(Vector2Int direction)
     {
         if (Maze.Instance.InBounds(_mazePosition + direction))
