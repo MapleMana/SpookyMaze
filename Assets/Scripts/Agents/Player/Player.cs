@@ -35,7 +35,7 @@ public class Player : Movable
         {
             Destroy(gameObject);
         }
-        _commandHistory = new List<ObjectCommand>();
+        _commandHistory = new List<PlayerCommand>();
         _inventory = new Stack<ItemType>();
     }
 
@@ -53,6 +53,7 @@ public class Player : Movable
         _mazePosition = Maze.Instance.StartPos;
         SyncRealPosition();
         _commandHistory.Clear();
+        _previousCommandTime = Time.time;
         _controllable = true;
         _moving = false;
     }
@@ -72,18 +73,18 @@ public class Player : Movable
     {
         if (_controllable)
         {
-            ObjectCommand picking = ObjectCommand.PickUpItem;
-            if (picking.Execute(this))
+            PlayerCommand picking = PlayerCommand.PickUpItem;
+            if (picking.Execute(this).Succeeded)
             {
-                _commandHistory.Add(picking);
+                AddToHistory(picking);
             }
 
-            ObjectCommand _command = PlayerActionDetector.DetectDesktop();
-            if (!_moving && _command.Execute(this))
+            PlayerCommand command = PlayerActionDetector.DetectDesktop();
+            if (!_moving && command != null && command.Execute(this).Succeeded)
             {
-                _commandHistory.Add(_command);
+                AddToHistory(command);
                 SyncRealPosition();
-                MoveToDecisionPoint(incomingDirection: ((PlayerMovementCommand)_command).Direction);
+                MoveToDecisionPoint(incomingDirection: ((PlayerMovementCommand)command).Direction);
             }
         }
     }
@@ -97,7 +98,7 @@ public class Player : Movable
             position: _mazePosition,
             incomingDirection: incomingDirection
         );
-        List<ObjectCommand> commandSequence = new List<ObjectCommand>();
+        List<PlayerCommand> commandSequence = new List<PlayerCommand>();
         for (int i = 0; i < movementSequence.Count; i++)
         {
             Vector2Int direction = movementSequence[i];
@@ -105,10 +106,9 @@ public class Player : Movable
             commandSequence.Add(newMovement);
         }
 
-        StartCoroutine(PlayCommands(
-            commands: commandSequence,
-            pauseBetween: 1 / playerSpeed,
-            saveToHistory: true
+        StartCoroutine(PlayCommandsInRealTime(
+            playerCommands: commandSequence,
+            pauseBetween: 1 / playerSpeed
        ));
     }
 
@@ -127,6 +127,7 @@ public class Player : Movable
         }
         return false;
     }
+
 
     /// <summary>
     /// Picks any item from the cell the player is currently standing on 

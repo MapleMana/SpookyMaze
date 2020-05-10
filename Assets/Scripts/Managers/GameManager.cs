@@ -17,16 +17,15 @@ public class GameManager : MonoBehaviour
     private GameMode _gameMode;
     private float _finalPlayerLightAngle;      // the player light angle at the end of the level
     private int _currentLevel = 1;
-    private int _loadLevel;
 
     public int initialMazeWidth;
     public int initialMazeHeight;
     public int mazeSizeIncrement;
     public float timeDecrement;
     [Range(0f, 500f)]
-    public float levelTime = 20;
-    public float replayTime = 10;
-    public float reversedReplayTime = 5;
+    public float levelTime;
+    public float replayMultiplier;
+    public float reversedReplayMultiplier;
 
     public int MazeWidth
     {
@@ -50,6 +49,8 @@ public class GameManager : MonoBehaviour
     public float TimeLeft { get => _timeLeft; set => _timeLeft = value; }
 
     public bool LevelIs(LevelState state) => (_levelState & state) != 0;
+    public float ReplayTime => (levelTime - _timeLeft) * replayMultiplier;
+    public float ReversedReplayTime => (levelTime - _timeLeft) * reversedReplayMultiplier;
 
     private GameManager() { }
 
@@ -111,11 +112,11 @@ public class GameManager : MonoBehaviour
         }
         else if (LevelIs(LevelState.InReplay))
         {
-            timeToAdd = ratio * replayTime;
+            timeToAdd = ratio * ReplayTime;
         }
         else if (LevelIs(LevelState.InReplayReversed))
         {
-            timeToAdd = ratio * reversedReplayTime;
+            timeToAdd = ratio * ReversedReplayTime;
         }
         _timeLeft += timeToAdd;
     }
@@ -171,6 +172,7 @@ public class GameManager : MonoBehaviour
         if (mazeCompleted)
         {
             LightManager.Instance.TurnOn();
+            CameraManager.Instance.FocusOnMaze(Maze.Instance);
             levelTime -= timeDecrement;
             _currentLevel += 1;
             // PlayerPrefs.SetInt("levelReached", levelReached + 1);
@@ -188,10 +190,10 @@ public class GameManager : MonoBehaviour
         Maze.Instance.Restore();
         Maze.Instance.Display();
         _levelState |= LevelState.InReplay;
-        _timeLeft = replayTime;
-        StartCoroutine(Player.Instance.PlayCommands(
+        _timeLeft = ReplayTime;
+        StartCoroutine(Player.Instance.ReplayCommands(
             initialPosition: Maze.Instance.StartPos,
-            playTime: replayTime,
+            timeMultiplier: replayMultiplier,
             onComplete: () => {
                 _levelState ^= LevelState.InReplay;
                 onComplete();
@@ -208,15 +210,21 @@ public class GameManager : MonoBehaviour
         _levelState |= LevelState.InReplayReversed;
         _timeLeft = 0;
         LightManager.Instance.TurnOff();
-        StartCoroutine(Player.Instance.PlayCommands(
+        StartCoroutine(Player.Instance.ReplayCommands(
             reversed: true,
-            playTime: reversedReplayTime,
+            timeMultiplier: reversedReplayMultiplier,
             onComplete: () => LoadLevel(_currentLevel)
         ));
     }
     
     public void Update()
     {
+        if (LevelIs(LevelState.InProgress) || 
+           (!LevelIs(LevelState.Completed) && LevelIs(LevelState.InReplay | LevelState.InReplayReversed)))
+        {
+            CameraManager.Instance.FocusOnPlayer();
+        }
+
         if (LevelIs(LevelState.InProgress))
         {
             if (_timeLeft < 0)
@@ -227,7 +235,6 @@ public class GameManager : MonoBehaviour
             {
                 _timeLeft -= Time.deltaTime;
                 Player.Instance.LerpLightAngle(coef: _timeLeft / levelTime);
-                CameraManager.Instance.FocusOnPlayer();
             }
 
             if (_gameMode.GameEnded())
@@ -239,40 +246,22 @@ public class GameManager : MonoBehaviour
         {
             if (_timeLeft > 0)
             {
-                _timeLeft -= Time.deltaTime;
+                _timeLeft -= Time.deltaTime;// / replayMultiplier;
                 Player.Instance.LerpLightAngle(
                     min: _finalPlayerLightAngle,
-                    coef: _timeLeft / replayTime
+                    coef: _timeLeft / ReplayTime
                 );
-
-                if (LevelIs(LevelState.Completed))
-                {
-                    CameraManager.Instance.FocusOnMaze(Maze.Instance);
-                }
-                else
-                {
-                    CameraManager.Instance.FocusOnPlayer();
-                }
             }
         }
         else if (LevelIs(LevelState.InReplayReversed))
         {
-            if (_timeLeft < reversedReplayTime)
+            if (_timeLeft < ReversedReplayTime)
             {
-                _timeLeft += Time.deltaTime;
+                _timeLeft += Time.deltaTime;// / reversedReplayMultiplier;
                 Player.Instance.LerpLightAngle(
                     min: _finalPlayerLightAngle,
-                    coef: _timeLeft / reversedReplayTime
+                    coef: _timeLeft / ReversedReplayTime
                 );
-
-                if (LevelIs(LevelState.Completed))
-                {
-                    CameraManager.Instance.FocusOnMaze(Maze.Instance);
-                }
-                else
-                {
-                    CameraManager.Instance.FocusOnPlayer();
-                }
             }
         }
     }

@@ -5,8 +5,10 @@ using UnityEngine;
 public class Ghost : Movable
 {
     private static bool _canBeMoved = false;
+    private PlayerCommand command;
+    private List<PlayerCommand> commandSequence = new List<PlayerCommand>();
 
-    public float Speed;
+    public float ghostSpeed;
     public static bool CanBeMoved { get => _canBeMoved; set => _canBeMoved = value; }
 
     private void Start()
@@ -19,8 +21,14 @@ public class Ghost : Movable
         if (_canBeMoved)
         {
             MazeCell.neighbours.Shuffle();
-            Move(MazeCell.neighbours[0]);
-            
+            if (Move(MazeCell.neighbours[0])) {
+                //AddToHistory(command);
+                SyncRealPosition();
+                StartCoroutine(PlayCommandsInRealTime(
+                    playerCommands: commandSequence,
+                    pauseBetween: 1 / ghostSpeed
+            ));
+            }
         }
     }
     
@@ -29,7 +37,6 @@ public class Ghost : Movable
         if (Maze.Instance.InBounds(_mazePosition + direction))
         {
             _mazePosition += direction;
-            SyncRealPosition();
             return true;
         }
         return false;

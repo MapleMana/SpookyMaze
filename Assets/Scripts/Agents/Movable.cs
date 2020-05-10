@@ -1,12 +1,14 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class Movable : MonoBehaviour
 {
     internal Vector2Int _mazePosition;
-    internal List<ObjectCommand> _commandHistory;
+    internal List<PlayerCommand> _commandHistory;
     internal bool _moving = false;
+    internal float _previousCommandTime;
 
     public bool Moving { get => _moving; set => _moving = value; }
     public bool AtMazeEnd => _mazePosition == Maze.Instance.EndPos;
@@ -22,59 +24,75 @@ public abstract class Movable : MonoBehaviour
         transform.position = currentCell.CellCenter(y: transform.position.y);
     }
 
+    public void AddToHistory(PlayerCommand command)
+    {
+        float timeDiff = Time.time - _previousCommandTime;
+        _previousCommandTime = Time.time;
+        _commandHistory.Add(PlayerCommand.CreateIdle(timeDiff));
+        _commandHistory.Add(command);
+    }
+
     /// <summary>
-    /// Performs a sequence of commands on the object
+    /// Replays player command history
     /// </summary>
-    /// <param name="commands">The sequence of commands to execute</param>
     /// <param name="reversed">Whether the execution should be reversed (both order and individual commands)</param>
     /// <param name="initialPosition">The starting position of the player. If null, current position is taken.</param>
-    /// <param name="playTime">The time the coroutine will take. If null, replay time is taken. This parameter is overriden by pauseBetween</param>
-    /// <param name="pauseBetween">Pause between each command. If null, play time is considered.</param>
+    /// <param name="timeMultiplier">The number of times the replay should be sped up</param>
     /// <param name="onComplete">Action to perform after the replay is comlete</param>
-    /// <param name="saveToHistory">Whether the command sequence should be added to player's history</param>
     /// <returns>A coroutine to execute</returns>
-    public IEnumerator PlayCommands(
-        List<ObjectCommand> commands = null,
+    internal IEnumerator ReplayCommands(
         bool reversed = false,
         Vector2Int? initialPosition = null,
-        float? playTime = null,
-        float? pauseBetween = null,
-        System.Action onComplete = null,
-        bool saveToHistory = false)
+        float timeMultiplier = 1,
+        Action onComplete = null)
     {
-        commands = commands ?? _commandHistory;
         if (reversed)
         {
-            commands.Reverse();
+            _commandHistory.Reverse();
         }
         _mazePosition = initialPosition ?? _mazePosition;
-        float pauseBetweenCommands = pauseBetween ?? ((playTime ?? 0) / commands.Count);
+        //pauseBetweenCommands -= Time.deltaTime;
 
         SyncRealPosition();
-        Moving = true;
 
-        foreach (ObjectCommand command in commands)
+        Moving = true;
+        foreach (PlayerCommand command in _commandHistory)
         {
             if (Moving)
             {
-                yield return new WaitForSeconds(pauseBetweenCommands);
-                if (reversed)
-                {
-                    command.ExecuteReversed(this);
-                }
-                else
-                {
-                    command.Execute(this);
-                }
-
-                if (saveToHistory)
-                {
-                    _commandHistory.Add(command);
-                }
+                float executionTime = reversed
+                    ? command.ExecuteReversed(this).Time
+                    : command.Execute(this).Time;
+                yield return new WaitForSeconds(executionTime * timeMultiplier);
             }
         }
         Moving = false;
         onComplete?.Invoke();
     }
 
+    /// <summary>
+    /// Executes commands to decision point and saves them to history
+    /// </summary>
+    /// <param name="playerCommands"></param>
+    /// <param name="pauseBetween"></param>
+    /// <returns></returns>
+    internal IEnumerator PlayCommandsInRealTime(
+        List<PlayerCommand> playerCommands,
+        float pauseBetween)
+    {
+        //pauseBetweenCommands -= Time.deltaTime;
+
+        Moving = true;
+        foreach (PlayerCommand command in playerCommands)
+        {
+            if (Moving)
+            {
+                yield return new WaitForSeconds(pauseBetween);
+
+                command.Execute(this);
+                AddToHistory(command);
+            }
+        }
+        Moving = false;
+    }
 }
