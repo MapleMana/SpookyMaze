@@ -85,7 +85,7 @@ public class Player : MonoBehaviour
             }
 
             PlayerCommand _command = PlayerActionDetector.DetectDesktop();
-            if (!_moving && _command.Execute(this).Succeeded)
+            if (!_moving && _command != null && _command.Execute(this).Succeeded)
             {
                 _commandHistory.Add(_command);
                 SyncRealPosition();

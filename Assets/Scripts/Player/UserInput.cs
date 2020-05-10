@@ -42,7 +42,7 @@ static class PlayerActionDetector
                 }
             }
         }
-        return PlayerCommand.Idle;
+        return null;
     }
 
     /// <summary>
@@ -67,6 +67,6 @@ static class PlayerActionDetector
         {
             return PlayerMovementCommand.MoveRight;
         }
-        return PlayerCommand.Idle;
+        return null;
     }
 }

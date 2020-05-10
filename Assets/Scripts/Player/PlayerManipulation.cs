@@ -18,7 +18,7 @@ public struct Verdict
 
 public class PlayerCommand
 {
-    public static readonly PlayerCommand Idle = new PlayerCommand((Player player) => new Verdict(false), (Player player) => new Verdict(false));
+    //public static readonly PlayerCommand Idle = new PlayerCommand((Player player) => new Verdict(false), (Player player) => new Verdict(false));
     public static readonly PlayerCommand PickUpItem = new PlayerCommand(
         (Player player) => new Verdict(player.PickUpItem()),
         (Player player) => new Verdict(player.PlaceItem())
@@ -38,6 +38,11 @@ public class PlayerCommand
     {
         Execute = executeMethod;
         ExecuteReversed = executeReversedMethod;
+    }
+
+    public static PlayerCommand CreateIdle(float time)
+    {
+        return new PlayerCommand((Player player) => new Verdict(false, time), (Player player) => new Verdict(false, time));
     }
 }
 
