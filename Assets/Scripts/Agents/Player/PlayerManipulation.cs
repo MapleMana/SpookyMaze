@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerCommand
+public class ObjectCommand
 {
-    public static readonly PlayerCommand Idle = new PlayerCommand((Player player) => false, (Player player) => false);
-    public static readonly PlayerCommand PickUpItem = new PlayerCommand(
-        (Player player) => player.PickUpItem(), 
-        (Player player) => player.PlaceItem()
+    public static readonly ObjectCommand Idle = new ObjectCommand(movable => false, movable => false);
+    public static readonly ObjectCommand PickUpItem = new ObjectCommand(
+        player => ((Player)player).PickUpItem(), 
+        player => ((Player)player).PlaceItem()
     );
 
     /// <summary>
@@ -15,19 +15,19 @@ public class PlayerCommand
     /// </summary>
     /// <param name="player">The target player</param>
     /// <returns>true if the execution was successfull</returns>
-    public delegate bool ExecuteCallback(Player player);
+    public delegate bool ExecuteCallback(Movable movable);
 
     public ExecuteCallback Execute { get; internal set; }
     public ExecuteCallback ExecuteReversed { get; internal set; }
 
-    public PlayerCommand(ExecuteCallback executeMethod, ExecuteCallback executeReversedMethod)
+    public ObjectCommand(ExecuteCallback executeMethod, ExecuteCallback executeReversedMethod)
     {
         Execute = executeMethod;
         ExecuteReversed = executeReversedMethod;
     }
 }
 
-public class PlayerMovementCommand : PlayerCommand
+public class PlayerMovementCommand : ObjectCommand
 {
     private Vector2Int _direction;
 
@@ -38,7 +38,8 @@ public class PlayerMovementCommand : PlayerCommand
     public static readonly PlayerMovementCommand MoveLeft = new PlayerMovementCommand(Vector2Int.left);
     public static readonly PlayerMovementCommand MoveRight = new PlayerMovementCommand(Vector2Int.right);
 
-    public PlayerMovementCommand(Vector2Int direction) : base(player => player.Move(direction), player => player.Move(-1 * direction))
+    public PlayerMovementCommand(Vector2Int direction) : 
+        base(player => player.Move(direction), player => player.Move(-1 * direction))
     {
         _direction = direction;
     }
@@ -70,7 +71,7 @@ static class PlayerActionDetector
     /// Detects swipes on mobile platforms
     /// </summary>
     /// <returns>Direction of movement</returns>
-    public static PlayerCommand DetectMobile()
+    public static ObjectCommand DetectMobile()
     {
         if (Input.touchCount == 1)
         {
@@ -97,14 +98,14 @@ static class PlayerActionDetector
                 }
             }
         }
-        return PlayerCommand.Idle;
+        return ObjectCommand.Idle;
     }
 
     /// <summary>
     /// Detects arrow key presses on desktop
     /// </summary>
     /// <returns>Direction of movement</returns>
-    public static PlayerCommand DetectDesktop()
+    public static ObjectCommand DetectDesktop()
     {
         if (Input.GetKeyUp(KeyCode.UpArrow))
         {
@@ -122,6 +123,6 @@ static class PlayerActionDetector
         {
             return PlayerMovementCommand.MoveRight;
         }
-        return PlayerCommand.Idle;
+        return ObjectCommand.Idle;
     }
 }

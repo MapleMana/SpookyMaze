@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -9,10 +8,8 @@ public class Player : Movable
 {
     private static Player _instance;
 
-    private List<PlayerCommand> _commandHistory;
     private Light _playerLight;
-    private bool _moving = false;
-    private bool _controllable= false;
+    private bool _controllable = false;
     private float _lightIntensity;
     private Stack<ItemType> _inventory;
 
@@ -26,7 +23,6 @@ public class Player : Movable
     public Light PlayerLight => _playerLight;
     public float LightIntensity => _lightIntensity;
     public Stack<ItemType> Inventory => _inventory;
-    public bool Moving { get => _moving; set => _moving = value; }
     public bool Controllable { get => _controllable; set => _controllable = value; }
 
     void Awake()
@@ -39,7 +35,7 @@ public class Player : Movable
         {
             Destroy(gameObject);
         }
-        _commandHistory = new List<PlayerCommand>();
+        _commandHistory = new List<ObjectCommand>();
         _inventory = new Stack<ItemType>();
     }
 
@@ -76,13 +72,13 @@ public class Player : Movable
     {
         if (_controllable)
         {
-            PlayerCommand picking = PlayerCommand.PickUpItem;
+            ObjectCommand picking = ObjectCommand.PickUpItem;
             if (picking.Execute(this))
             {
                 _commandHistory.Add(picking);
             }
 
-            PlayerCommand _command = PlayerActionDetector.DetectDesktop();
+            ObjectCommand _command = PlayerActionDetector.DetectDesktop();
             if (!_moving && _command.Execute(this))
             {
                 _commandHistory.Add(_command);
@@ -101,7 +97,7 @@ public class Player : Movable
             position: _mazePosition,
             incomingDirection: incomingDirection
         );
-        List<PlayerCommand> commandSequence = new List<PlayerCommand>();
+        List<ObjectCommand> commandSequence = new List<ObjectCommand>();
         for (int i = 0; i < movementSequence.Count; i++)
         {
             Vector2Int direction = movementSequence[i];
@@ -110,7 +106,7 @@ public class Player : Movable
         }
 
         StartCoroutine(PlayCommands(
-            playerCommands: commandSequence,
+            commands: commandSequence,
             pauseBetween: 1 / playerSpeed,
             saveToHistory: true
        ));
@@ -130,61 +126,6 @@ public class Player : Movable
             return true;
         }
         return false;
-    }
-
-    /// <summary>
-    /// Performs a sequence of commands on the player
-    /// </summary>
-    /// <param name="playerCommands">The sequence of commands to execute</param>
-    /// <param name="reversed">Whether the execution should be reversed (both order and individual commands)</param>
-    /// <param name="initialPosition">The starting position of the player. If null, current position is taken.</param>
-    /// <param name="playTime">The time the coroutine will take. If null, replay time is taken. This parameter is overriden by pauseBetween</param>
-    /// <param name="pauseBetween">Pause between each command. If null, play time is considered.</param>
-    /// <param name="onComplete">Action to perform after the replay is comlete</param>
-    /// <param name="saveToHistory">Whether the command sequence should be added to player's history</param>
-    /// <returns>A coroutine to execute</returns>
-    public IEnumerator PlayCommands(
-        List<PlayerCommand> playerCommands = null,
-        bool reversed = false,
-        Vector2Int? initialPosition = null,
-        float? playTime = null,
-        float? pauseBetween = null,
-        Action onComplete = null,
-        bool saveToHistory = false)
-    {
-        playerCommands = playerCommands ?? _commandHistory;
-        if (reversed)
-        {
-            playerCommands.Reverse();
-        }
-        _mazePosition = initialPosition ?? _mazePosition;
-        float pauseBetweenCommands = pauseBetween ?? ((playTime ?? 0) / playerCommands.Count);
-
-        SyncRealPosition();
-        Moving = true;
-
-        foreach (PlayerCommand command in playerCommands)
-        {
-            if (Moving)
-            {
-                yield return new WaitForSeconds(pauseBetweenCommands);
-                if (reversed)
-                {
-                    command.ExecuteReversed(this);
-                }
-                else
-                {
-                    command.Execute(this);
-                }
-
-                if (saveToHistory)
-                {
-                    _commandHistory.Add(command);
-                }
-            }
-        }
-        Moving = false;
-        onComplete?.Invoke();
     }
 
     /// <summary>
