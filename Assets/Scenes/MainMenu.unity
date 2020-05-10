@@ -4697,8 +4697,8 @@ MonoBehaviour:
   mazeSizeIncrement: 2
   timeDecrement: 0
   levelTime: 25
-  replayMultiplier: 2
-  reversedReplayMultiplier: 3
+  replayMultiplier: 0.5
+  reversedReplayMultiplier: 0.3
 --- !u!4 &1490064582
 Transform:
   m_ObjectHideFlags: 0

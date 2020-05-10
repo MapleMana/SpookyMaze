@@ -17,8 +17,6 @@ public class GameManager : MonoBehaviour
     private IGameMode _gameMode;
     private float _finalPlayerLightAngle;      // the player light angle at the end of the level
     private int _currentLevel = 1;
-    private float _replayTime;
-    private float _reversedReplayTime;
 
     public int initialMazeWidth;
     public int initialMazeHeight;
@@ -51,6 +49,8 @@ public class GameManager : MonoBehaviour
     public float TimeLeft { get => _timeLeft; set => _timeLeft = value; }
 
     public bool LevelIs(LevelState state) => (_levelState & state) != 0;
+    public float ReplayTime => (levelTime - _timeLeft) * replayMultiplier;
+    public float ReversedReplayTime => (levelTime - _timeLeft) * reversedReplayMultiplier;
 
     private GameManager() { }
 
@@ -99,16 +99,6 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Sets replay and reversed replay times based on the time it took the player to complete the maze
-    /// </summary>
-    public void SetReplayTimes()
-    {
-        float playTime = levelTime - _timeLeft;
-        _replayTime = playTime / replayMultiplier;
-        _reversedReplayTime = playTime / reversedReplayMultiplier;
-    }
-
-    /// <summary>
     /// Adds the specified percentage of total time to current time
     /// </summary>
     /// <param name="ratio">The percentage of the total time to add</param>
@@ -121,11 +111,11 @@ public class GameManager : MonoBehaviour
         }
         else if (LevelIs(LevelState.InReplay))
         {
-            timeToAdd = ratio * _replayTime;
+            timeToAdd = ratio * ReplayTime;
         }
         else if (LevelIs(LevelState.InReplayReversed))
         {
-            timeToAdd = ratio * _reversedReplayTime;
+            timeToAdd = ratio * ReversedReplayTime;
         }
         _timeLeft += timeToAdd;
     }
@@ -177,7 +167,6 @@ public class GameManager : MonoBehaviour
 
         // Might be used in complete version of our game
         // int levelReached = PlayerPrefs.GetInt("levelReached", 1);
-        SetReplayTimes();
 
         if (mazeCompleted)
         {
@@ -200,7 +189,7 @@ public class GameManager : MonoBehaviour
         Maze.Instance.Restore();
         Maze.Instance.Display();
         _levelState |= LevelState.InReplay;
-        _timeLeft = _replayTime;
+        _timeLeft = ReplayTime;
         StartCoroutine(Player.Instance.ReplayCommands(
             initialPosition: Maze.Instance.StartPos,
             timeMultiplier: replayMultiplier,
@@ -256,21 +245,21 @@ public class GameManager : MonoBehaviour
         {
             if (_timeLeft > 0)
             {
-                _timeLeft -= Time.deltaTime;
+                _timeLeft -= Time.deltaTime;// / replayMultiplier;
                 Player.Instance.LerpLightAngle(
                     min: _finalPlayerLightAngle,
-                    coef: _timeLeft / _replayTime
+                    coef: _timeLeft / ReplayTime
                 );
             }
         }
         else if (LevelIs(LevelState.InReplayReversed))
         {
-            if (_timeLeft < _reversedReplayTime)
+            if (_timeLeft < ReversedReplayTime)
             {
-                _timeLeft += Time.deltaTime;
+                _timeLeft += Time.deltaTime;// / reversedReplayMultiplier;
                 Player.Instance.LerpLightAngle(
                     min: _finalPlayerLightAngle,
-                    coef: _timeLeft / _reversedReplayTime
+                    coef: _timeLeft / ReversedReplayTime
                 );
             }
         }

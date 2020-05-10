@@ -174,7 +174,7 @@ public class Player : MonoBehaviour
                 float executionTime = reversed
                     ? command.ExecuteReversed(this).Time
                     : command.Execute(this).Time;
-                yield return new WaitForSeconds(executionTime / timeMultiplier);
+                yield return new WaitForSeconds(executionTime * timeMultiplier);
             }
         }
         Moving = false;
