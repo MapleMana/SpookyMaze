@@ -15,6 +15,7 @@ public class Player : MonoBehaviour
     private bool _moving = false;
     private bool _controllable= false;
     private float _lightIntensity;
+    private float _previousCommandTime;
     private Stack<ItemType> _inventory;
 
     public float playerSpeed;
@@ -59,6 +60,7 @@ public class Player : MonoBehaviour
         _mazePosition = Maze.Instance.StartPos;
         SyncRealPosition();
         _commandHistory.Clear();
+        _previousCommandTime = Time.time;
         _controllable = true;
         _moving = false;
     }
@@ -74,6 +76,14 @@ public class Player : MonoBehaviour
         _playerLight.spotAngle = Mathf.Lerp(min ?? minLightAngle, max ?? maxLightAngle, coef);
     }
 
+    public void AddToHistory(PlayerCommand command)
+    {
+        float timeDiff = Time.time - _previousCommandTime;
+        _previousCommandTime = Time.time;
+        _commandHistory.Add(PlayerCommand.CreateIdle(timeDiff));
+        _commandHistory.Add(command);
+    }
+
     void Update()
     {
         if (_controllable)
@@ -81,15 +91,15 @@ public class Player : MonoBehaviour
             PlayerCommand picking = PlayerCommand.PickUpItem;
             if (picking.Execute(this).Succeeded)
             {
-                _commandHistory.Add(picking);
+                AddToHistory(picking);
             }
 
-            PlayerCommand _command = PlayerActionDetector.DetectDesktop();
-            if (!_moving && _command != null && _command.Execute(this).Succeeded)
+            PlayerCommand command = PlayerActionDetector.DetectDesktop();
+            if (!_moving && command != null && command.Execute(this).Succeeded)
             {
-                _commandHistory.Add(_command);
+                AddToHistory(command);
                 SyncRealPosition();
-                MoveToDecisionPoint(incomingDirection: ((PlayerMovementCommand)_command).Direction);
+                MoveToDecisionPoint(incomingDirection: ((PlayerMovementCommand)command).Direction);
             }
         }
     }
@@ -178,11 +188,12 @@ public class Player : MonoBehaviour
                 else
                 {
                     command.Execute(this);
+                    // add verdict time
                 }
 
                 if (saveToHistory)
                 {
-                    _commandHistory.Add(command);
+                    AddToHistory(command);
                 }
             }
         }
