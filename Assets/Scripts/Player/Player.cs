@@ -79,13 +79,13 @@ public class Player : MonoBehaviour
         if (_controllable)
         {
             PlayerCommand picking = PlayerCommand.PickUpItem;
-            if (picking.Execute(this))
+            if (picking.Execute(this).Succeeded)
             {
                 _commandHistory.Add(picking);
             }
 
             PlayerCommand _command = PlayerActionDetector.DetectDesktop();
-            if (!_moving && _command.Execute(this))
+            if (!_moving && _command.Execute(this).Succeeded)
             {
                 _commandHistory.Add(_command);
                 SyncRealPosition();
