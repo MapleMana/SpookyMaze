@@ -201,9 +201,9 @@ public class GameManager : MonoBehaviour
         Maze.Instance.Display();
         _levelState |= LevelState.InReplay;
         _timeLeft = _replayTime;
-        StartCoroutine(Player.Instance.PlayCommands(
+        StartCoroutine(Player.Instance.ReplayCommands(
             initialPosition: Maze.Instance.StartPos,
-            playTime: _replayTime,
+            timeMultiplier: replayMultiplier,
             onComplete: () => {
                 _levelState ^= LevelState.InReplay;
                 onComplete();
@@ -220,9 +220,9 @@ public class GameManager : MonoBehaviour
         _levelState |= LevelState.InReplayReversed;
         _timeLeft = 0;
         LightManager.Instance.TurnOff();
-        StartCoroutine(Player.Instance.PlayCommands(
+        StartCoroutine(Player.Instance.ReplayCommands(
             reversed: true,
-            playTime: _reversedReplayTime,
+            timeMultiplier: reversedReplayMultiplier,
             onComplete: () => LoadLevel(_currentLevel)
         ));
     }
