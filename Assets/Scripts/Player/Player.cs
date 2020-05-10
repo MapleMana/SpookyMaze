@@ -15,6 +15,7 @@ public class Player : MonoBehaviour
     private bool _moving = false;
     private bool _controllable= false;
     private float _lightIntensity;
+    private float _previousCommandTime;
     private Stack<ItemType> _inventory;
 
     public float playerSpeed;
@@ -59,6 +60,7 @@ public class Player : MonoBehaviour
         _mazePosition = Maze.Instance.StartPos;
         SyncRealPosition();
         _commandHistory.Clear();
+        _previousCommandTime = Time.time;
         _controllable = true;
         _moving = false;
     }
@@ -74,22 +76,30 @@ public class Player : MonoBehaviour
         _playerLight.spotAngle = Mathf.Lerp(min ?? minLightAngle, max ?? maxLightAngle, coef);
     }
 
+    public void AddToHistory(PlayerCommand command)
+    {
+        float timeDiff = Time.time - _previousCommandTime;
+        _previousCommandTime = Time.time;
+        _commandHistory.Add(PlayerCommand.CreateIdle(timeDiff));
+        _commandHistory.Add(command);
+    }
+
     void Update()
     {
         if (_controllable)
         {
             PlayerCommand picking = PlayerCommand.PickUpItem;
-            if (picking.Execute(this))
+            if (picking.Execute(this).Succeeded)
             {
-                _commandHistory.Add(picking);
+                AddToHistory(picking);
             }
 
-            PlayerCommand _command = PlayerActionDetector.DetectDesktop();
-            if (!_moving && _command.Execute(this))
+            PlayerCommand command = PlayerActionDetector.DetectDesktop();
+            if (!_moving && command != null && command.Execute(this).Succeeded)
             {
-                _commandHistory.Add(_command);
+                AddToHistory(command);
                 SyncRealPosition();
-                MoveToDecisionPoint(incomingDirection: ((PlayerMovementCommand)_command).Direction);
+                MoveToDecisionPoint(incomingDirection: ((PlayerMovementCommand)command).Direction);
             }
         }
     }
@@ -111,10 +121,9 @@ public class Player : MonoBehaviour
             commandSequence.Add(newMovement);
         }
 
-        StartCoroutine(PlayCommands(
+        StartCoroutine(PlayCommandsInRealTime(
             playerCommands: commandSequence,
-            pauseBetween: 1 / playerSpeed,
-            saveToHistory: true
+            pauseBetween: 1 / playerSpeed
        ));
     }
 
@@ -135,59 +144,67 @@ public class Player : MonoBehaviour
     }
 
     /// <summary>
-    /// Performs a sequence of commands on the player
+    /// Replays player command history
     /// </summary>
-    /// <param name="playerCommands">The sequence of commands to execute</param>
     /// <param name="reversed">Whether the execution should be reversed (both order and individual commands)</param>
     /// <param name="initialPosition">The starting position of the player. If null, current position is taken.</param>
-    /// <param name="playTime">The time the coroutine will take. If null, replay time is taken. This parameter is overriden by pauseBetween</param>
-    /// <param name="pauseBetween">Pause between each command. If null, play time is considered.</param>
+    /// <param name="timeMultiplier">The number of times the replay should be sped up</param>
     /// <param name="onComplete">Action to perform after the replay is comlete</param>
-    /// <param name="saveToHistory">Whether the command sequence should be added to player's history</param>
     /// <returns>A coroutine to execute</returns>
-    public IEnumerator PlayCommands(
-        List<PlayerCommand> playerCommands = null,
+    public IEnumerator ReplayCommands(
         bool reversed = false,
         Vector2Int? initialPosition = null,
-        float? playTime = null,
-        float? pauseBetween = null,
-        Action onComplete = null,
-        bool saveToHistory = false)
+        float timeMultiplier = 1,
+        Action onComplete = null)
     {
-        playerCommands = playerCommands ?? _commandHistory;
         if (reversed)
         {
-            playerCommands.Reverse();
+            _commandHistory.Reverse();
         }
         _mazePosition = initialPosition ?? _mazePosition;
-        float pauseBetweenCommands = pauseBetween ?? ((playTime ?? 0) / playerCommands.Count);
-        pauseBetweenCommands -= Time.deltaTime;
+        //pauseBetweenCommands -= Time.deltaTime;
 
         SyncRealPosition();
-        Moving = true;
 
-        foreach (PlayerCommand command in playerCommands)
+        Moving = true;
+        foreach (PlayerCommand command in _commandHistory)
         {
             if (Moving)
             {
-                yield return new WaitForSeconds(pauseBetweenCommands);
-                if (reversed)
-                {
-                    command.ExecuteReversed(this);
-                }
-                else
-                {
-                    command.Execute(this);
-                }
-
-                if (saveToHistory)
-                {
-                    _commandHistory.Add(command);
-                }
+                float executionTime = reversed
+                    ? command.ExecuteReversed(this).Time
+                    : command.Execute(this).Time;
+                yield return new WaitForSeconds(executionTime * timeMultiplier);
             }
         }
         Moving = false;
         onComplete?.Invoke();
+    }
+
+    /// <summary>
+    /// Executes commands to decision point and saves them to history
+    /// </summary>
+    /// <param name="playerCommands"></param>
+    /// <param name="pauseBetween"></param>
+    /// <returns></returns>
+    public IEnumerator PlayCommandsInRealTime(
+        List<PlayerCommand> playerCommands,
+        float pauseBetween)
+    {
+        //pauseBetweenCommands -= Time.deltaTime;
+
+        Moving = true;
+        foreach (PlayerCommand command in playerCommands)
+        {
+            if (Moving)
+            {
+                yield return new WaitForSeconds(pauseBetween);
+                
+                command.Execute(this);
+                AddToHistory(command);
+            }
+        }
+        Moving = false;
     }
 
     /// <summary>

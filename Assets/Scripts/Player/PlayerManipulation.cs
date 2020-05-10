@@ -2,12 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public struct Verdict
+{
+    private bool _wasSuccessfull;
+    private float _executionTime;
+    public bool Succeeded => _wasSuccessfull;
+    public float Time => _executionTime;
+
+    public Verdict(bool succeeded, float time=0)
+    {
+        _wasSuccessfull = succeeded;
+        _executionTime = time;
+    }
+}
+
 public class PlayerCommand
 {
-    public static readonly PlayerCommand Idle = new PlayerCommand((Player player) => false, (Player player) => false);
     public static readonly PlayerCommand PickUpItem = new PlayerCommand(
-        (Player player) => player.PickUpItem(), 
-        (Player player) => player.PlaceItem()
+        (Player player) => new Verdict(player.PickUpItem()),
+        (Player player) => new Verdict(player.PlaceItem())
     );
 
     /// <summary>
@@ -15,7 +28,7 @@ public class PlayerCommand
     /// </summary>
     /// <param name="player">The target player</param>
     /// <returns>true if the execution was successfull</returns>
-    public delegate bool ExecuteCallback(Player player);
+    public delegate Verdict ExecuteCallback(Player player);
 
     public ExecuteCallback Execute { get; internal set; }
     public ExecuteCallback ExecuteReversed { get; internal set; }
@@ -24,6 +37,11 @@ public class PlayerCommand
     {
         Execute = executeMethod;
         ExecuteReversed = executeReversedMethod;
+    }
+
+    public static PlayerCommand CreateIdle(float time)
+    {
+        return new PlayerCommand((Player player) => new Verdict(false, time), (Player player) => new Verdict(false, time));
     }
 }
 
@@ -38,7 +56,7 @@ public class PlayerMovementCommand : PlayerCommand
     public static readonly PlayerMovementCommand MoveLeft = new PlayerMovementCommand(Vector2Int.left);
     public static readonly PlayerMovementCommand MoveRight = new PlayerMovementCommand(Vector2Int.right);
 
-    public PlayerMovementCommand(Vector2Int direction) : base(player => player.Move(direction), player => player.Move(-1 * direction))
+    public PlayerMovementCommand(Vector2Int direction) : base(player => new Verdict(player.Move(direction)), player => new Verdict(player.Move(-1 * direction)))
     {
         _direction = direction;
     }
@@ -58,70 +76,3 @@ public class PlayerMovementCommand : PlayerCommand
     }
 }
 
-/// <summary>
-/// Detects input for different platforms. Methods to be called on Update.
-/// </summary>
-static class PlayerActionDetector
-{
-    static private Vector3 touchStart;
-    const double minSwipeDistance = 0.1;  //minimum distance for a swipe to be registered (fraction of screen height)
-
-    /// <summary>
-    /// Detects swipes on mobile platforms
-    /// </summary>
-    /// <returns>Direction of movement</returns>
-    public static PlayerCommand DetectMobile()
-    {
-        if (Input.touchCount == 1)
-        {
-            Touch touch = Input.GetTouch(0);
-            if (touch.phase == TouchPhase.Began)
-            {
-                touchStart = touch.position;
-            }
-            else if (touch.phase == TouchPhase.Ended)
-            {
-                Vector3 touchEnd = touch.position;
-
-                if (Vector3.Distance(touchStart, touchEnd) > minSwipeDistance * Screen.height)
-                {
-                    // check which axis is more significant
-                    if (Mathf.Abs(touchEnd.x - touchStart.x) > Mathf.Abs(touchEnd.y - touchStart.y))
-                    {
-                        return (touchEnd.x > touchStart.x) ? PlayerMovementCommand.MoveRight : PlayerMovementCommand.MoveLeft;
-                    }
-                    else
-                    {
-                        return (touchEnd.y > touchStart.y) ? PlayerMovementCommand.MoveUp : PlayerMovementCommand.MoveDown;
-                    }
-                }
-            }
-        }
-        return PlayerCommand.Idle;
-    }
-
-    /// <summary>
-    /// Detects arrow key presses on desktop
-    /// </summary>
-    /// <returns>Direction of movement</returns>
-    public static PlayerCommand DetectDesktop()
-    {
-        if (Input.GetKeyUp(KeyCode.UpArrow))
-        {
-            return PlayerMovementCommand.MoveUp;
-        }
-        if (Input.GetKeyUp(KeyCode.DownArrow))
-        {
-            return PlayerMovementCommand.MoveDown;
-        }
-        if (Input.GetKeyUp(KeyCode.LeftArrow))
-        {
-            return PlayerMovementCommand.MoveLeft;
-        }
-        if (Input.GetKeyUp(KeyCode.RightArrow))
-        {
-            return PlayerMovementCommand.MoveRight;
-        }
-        return PlayerCommand.Idle;
-    }
-}
