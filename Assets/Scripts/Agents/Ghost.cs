@@ -21,11 +21,11 @@ public class Ghost : Movable
         if (_canBeMoved)
         {
             MazeCell.neighbours.Shuffle();
-            if (Move(MazeCell.neighbours[0])) {
-                //AddToHistory(command);
+            if (!_moving && Maze.Instance.InBounds(_mazePosition + MazeCell.neighbours[0])) {
                 SyncRealPosition();
+                
                 StartCoroutine(PlayCommandsInRealTime(
-                    playerCommands: commandSequence,
+                    playerCommands: new List<PlayerCommand> { PlayerMovementCommand.FromVector(MazeCell.neighbours[0]) },
                     pauseBetween: 1 / ghostSpeed
             ));
             }

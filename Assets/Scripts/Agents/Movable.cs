@@ -15,6 +15,11 @@ public abstract class Movable : MonoBehaviour
 
     public abstract bool Move(Vector2Int direction);
 
+    void Awake()
+    {
+        _commandHistory = new List<PlayerCommand>();
+    }
+
     /// <summary>
     /// Synchronizes maze position and physical player position
     /// </summary>

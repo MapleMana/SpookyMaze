@@ -88,7 +88,7 @@ Halo:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1453244821485857121}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Color:
     serializedVersion: 2
     rgba: 2999943296
@@ -105,4 +105,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8a06a3bdae951042a8fc324056733bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Speed: 7
+  ghostSpeed: 2
