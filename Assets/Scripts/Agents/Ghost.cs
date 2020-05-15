@@ -10,18 +10,12 @@ public class Ghost : Movable
 
     public float ghostSpeed;
     public static bool CanBeMoved { get => _canBeMoved; set => _canBeMoved = value; }
-
-    private void Start()
-    {
-        
-    }
     
     void Update()
     {
         if (_canBeMoved)
         {
-            MazeCell.neighbours.Shuffle();
-            if (!_moving && Maze.Instance.InBounds(_mazePosition + MazeCell.neighbours[0])) {
+            if (!_moving) {
                 SyncRealPosition();
                 
                 StartCoroutine(PlayCommandsInRealTime(
@@ -34,11 +28,21 @@ public class Ghost : Movable
     
     override public bool Move(Vector2Int direction)
     {
-        if (Maze.Instance.InBounds(_mazePosition + direction))
+        _mazePosition += direction;
+        return true;
+    }
+
+    private Vector2Int getRandomDirection()
+    {
+        MazeCell.neighbours.Shuffle();
+        foreach (Vector2Int possibleDirection in MazeCell.neighbours)
         {
-            _mazePosition += direction;
-            return true;
+            if (Maze.Instance.InBounds(_mazePosition + possibleDirection))
+            {
+                return possibleDirection;
+            }
         }
-        return false;
+        
+        return MazeCell.neighbours[0];
     }
 }
