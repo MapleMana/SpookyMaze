@@ -4,31 +4,29 @@ using UnityEngine;
 
 public class Ghost : Movable
 {
-    private static bool _canBeMoved = false;
+    private static bool _canMove = false;
     private PlayerCommand command;
     private List<PlayerCommand> commandSequence = new List<PlayerCommand>();
 
     public float ghostSpeed;
-    public static bool CanBeMoved { get => _canBeMoved; set => _canBeMoved = value; }
+    public static bool CanBeMoved { get => _canMove; set => _canMove = value; }
     
     void Update()
     {
-        if (_canBeMoved)
+        if (_canMove)
         {
             if (!_moving) {
-                SyncRealPosition();
-                
                 StartCoroutine(PlayCommandsInRealTime(
-                    playerCommands: new List<PlayerCommand> { PlayerMovementCommand.FromVector(MazeCell.neighbours[0]) },
+                    playerCommands: new List<PlayerCommand> { PlayerMovementCommand.FromVector(getRandomDirection()) },
                     pauseBetween: 1 / ghostSpeed
-            ));
+                    ));
             }
         }
     }
     
-    override public bool Move(Vector2Int direction)
+    public override bool Move(Vector2Int direction)
     {
-        _mazePosition += direction;
+        MazePosition += direction;
         return true;
     }
 
@@ -37,7 +35,7 @@ public class Ghost : Movable
         MazeCell.neighbours.Shuffle();
         foreach (Vector2Int possibleDirection in MazeCell.neighbours)
         {
-            if (Maze.Instance.InBounds(_mazePosition + possibleDirection))
+            if (Maze.Instance.InBounds(MazePosition + possibleDirection))
             {
                 return possibleDirection;
             }

@@ -6621,7 +6621,6 @@ MonoBehaviour:
   LevelSelect: {fileID: 502184691}
   FinishMenu: {fileID: 1602696790}
   SettingsMenu: {fileID: 1923088775}
-  Classic: {fileID: 0}
   Key: {fileID: 1782103085}
   Oil: {fileID: 171049365}
   Ghost: {fileID: 1417209838}

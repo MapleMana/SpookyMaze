@@ -5,36 +5,46 @@ using UnityEngine;
 
 public abstract class Movable : MonoBehaviour
 {
-    internal Vector2Int _mazePosition;
-    internal List<PlayerCommand> _commandHistory;
+    private Vector2Int _mazePosition;
+    internal static List<KeyValuePair<Movable, PlayerCommand>> _commandHistory;
     internal bool _moving = false;
-    internal float _previousCommandTime;
+    internal static float _previousCommandTime;
 
     public bool Moving { get => _moving; set => _moving = value; }
-    public bool AtMazeEnd => _mazePosition == Maze.Instance.EndPos;
+    public bool AtMazeEnd => MazePosition == Maze.Instance.EndPos;
+
+    internal Vector2Int MazePosition {
+        get => _mazePosition;
+        set
+        {
+            _mazePosition = value;
+            MazeCell currentCell = Maze.Instance[value];
+            transform.position = currentCell.CellCenter(y: transform.position.y);
+        }
+    }
 
     public abstract bool Move(Vector2Int direction);
 
     void Awake()
     {
-        _commandHistory = new List<PlayerCommand>();
+        Movable._commandHistory = new List<KeyValuePair<Movable, PlayerCommand>>();
     }
 
     /// <summary>
-    /// Synchronizes maze position and physical player position
+    /// Places movable at the start of the maze and inits movable's state
     /// </summary>
-    internal void SyncRealPosition()
+    public static void ResetState()
     {
-        MazeCell currentCell = Maze.Instance[_mazePosition];
-        transform.position = currentCell.CellCenter(y: transform.position.y);
+        Movable._commandHistory.Clear();
+        _previousCommandTime = Time.time;
     }
 
-    public void AddToHistory(PlayerCommand command)
+    public void AddToHistory(Movable movingObject, PlayerCommand command)
     {
         float timeDiff = Time.time - _previousCommandTime;
         _previousCommandTime = Time.time;
-        _commandHistory.Add(PlayerCommand.CreateIdle(timeDiff));
-        _commandHistory.Add(command);
+        Movable._commandHistory.Add(new KeyValuePair<Movable, PlayerCommand>(movingObject, PlayerCommand.CreateIdle(timeDiff)));
+        Movable._commandHistory.Add(new KeyValuePair<Movable, PlayerCommand>(movingObject, command));
     }
 
     /// <summary>
@@ -45,33 +55,23 @@ public abstract class Movable : MonoBehaviour
     /// <param name="timeMultiplier">The number of times the replay should be sped up</param>
     /// <param name="onComplete">Action to perform after the replay is comlete</param>
     /// <returns>A coroutine to execute</returns>
-    internal IEnumerator ReplayCommands(
+    public static IEnumerator ReplayCommands(
         bool reversed = false,
-        Vector2Int? initialPosition = null,
         float timeMultiplier = 1,
         Action onComplete = null)
     {
         if (reversed)
         {
-            _commandHistory.Reverse();
+            Movable._commandHistory.Reverse();
         }
-        _mazePosition = initialPosition ?? _mazePosition;
-        //pauseBetweenCommands -= Time.deltaTime;
-
-        SyncRealPosition();
-
-        Moving = true;
-        foreach (PlayerCommand command in _commandHistory)
+                
+        foreach (var command in _commandHistory)
         {
-            if (Moving)
-            {
-                float executionTime = reversed
-                    ? command.ExecuteReversed(this).Time
-                    : command.Execute(this).Time;
-                yield return new WaitForSeconds(executionTime * timeMultiplier);
-            }
+            float executionTime = reversed
+                ? command.Value.ExecuteReversed(command.Key).Time
+                : command.Value.Execute(command.Key).Time;
+            yield return new WaitForSeconds(executionTime * timeMultiplier);
         }
-        Moving = false;
         onComplete?.Invoke();
     }
 
@@ -95,7 +95,7 @@ public abstract class Movable : MonoBehaviour
                 yield return new WaitForSeconds(pauseBetween);
 
                 command.Execute(this);
-                AddToHistory(command);
+                AddToHistory(this, command);
             }
         }
         Moving = false;

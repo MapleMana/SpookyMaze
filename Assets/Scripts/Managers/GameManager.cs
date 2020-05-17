@@ -152,8 +152,9 @@ public class GameManager : MonoBehaviour
         Maze.Instance.GenerateItems(_gameMode.GetItems());
         Maze.Instance.SaveState();
         Maze.Instance.Display();
-
-        Player.Instance.ResetState();
+        
+        Player.Instance.Controllable = true;
+        Movable.ResetState();
         _gameMode.Initialize();
     }
 
@@ -164,18 +165,15 @@ public class GameManager : MonoBehaviour
     {
         _levelState = mazeCompleted ? LevelState.Completed : LevelState.Failed;
         Player.Instance.Controllable = Player.Instance.Moving = false;
+        Ghost.CanBeMoved = false;
         _finalPlayerLightAngle = Player.Instance.PlayerLight.spotAngle;
-
-        // Might be used in complete version of our game
-        // int levelReached = PlayerPrefs.GetInt("levelReached", 1);
-
+       
         if (mazeCompleted)
         {
             LightManager.Instance.TurnOn();
             CameraManager.Instance.FocusOnMaze(Maze.Instance);
             levelTime -= timeDecrement;
             _currentLevel += 1;
-            // PlayerPrefs.SetInt("levelReached", levelReached + 1);
             UIManager.Instance.UnlockLevel(_currentLevel);
         }
         UIManager.Instance.ShowFinishMenu(mazeCompleted);
@@ -191,8 +189,8 @@ public class GameManager : MonoBehaviour
         Maze.Instance.Display();
         _levelState |= LevelState.InReplay;
         _timeLeft = ReplayTime;
-        StartCoroutine(Player.Instance.ReplayCommands(
-            initialPosition: Maze.Instance.StartPos,
+        _gameMode.Reset();
+        StartCoroutine(Movable.ReplayCommands(
             timeMultiplier: replayMultiplier,
             onComplete: () => {
                 _levelState ^= LevelState.InReplay;
@@ -210,7 +208,7 @@ public class GameManager : MonoBehaviour
         _levelState |= LevelState.InReplayReversed;
         _timeLeft = 0;
         LightManager.Instance.TurnOff();
-        StartCoroutine(Player.Instance.ReplayCommands(
+        StartCoroutine(Movable.ReplayCommands(
             reversed: true,
             timeMultiplier: reversedReplayMultiplier,
             onComplete: () => LoadLevel(_currentLevel)

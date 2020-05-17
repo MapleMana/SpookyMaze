@@ -6,86 +6,130 @@ public abstract class GameMode
 {
     abstract public bool GameEnded();
     abstract public void Initialize();
+    abstract public void Reset();
     abstract public List<Item> GetItems();
 
-    public void DefaultInitialize() { }
+    public void DefaultInitialize()
+    {
+        Player.Instance.MazePosition = Maze.Instance.StartPos;
+    }
+    public void DefaultReset()
+    {
+        Player.Instance.MazePosition = Maze.Instance.StartPos;
+    }
 }
 
 public class ClassicGameMode : GameMode
 {
-    override public bool GameEnded()
+    public override bool GameEnded()
     {
         return Player.Instance.AtMazeEnd;
     }
 
-    override public void Initialize()
+    public override  void Initialize()
     {
         DefaultInitialize();
     }
 
-    override public List<Item> GetItems()
+    public override List<Item> GetItems()
     {
         return new List<Item>();
+    }
+
+    public override void Reset()
+    {
+        DefaultReset();
     }
 }
 
 public class DoorKeyGameMode : GameMode
 {
-    override public bool GameEnded()
+    public override bool GameEnded()
     {
         return Player.Instance.AtMazeEnd &&
                 Player.Instance.Inventory.Contains(ItemType.Key);
     }
 
-    override public List<Item> GetItems()
+    public override List<Item> GetItems()
     {
         return ItemFactory.GetItems(ItemType.Key, 1);
     }
 
-    override public void Initialize()
+    public override void Initialize()
     {
         DefaultInitialize();
+    }
+
+    public override void Reset()
+    {
+        DefaultReset();
     }
 }
 
 public class OilGameMode : GameMode
 {
-    override public bool GameEnded()
+    public override bool GameEnded()
     {
         return Player.Instance.AtMazeEnd;
     }
 
-    override public List<Item> GetItems()
+    public override List<Item> GetItems()
     {
         int itemQuantity = (Maze.Instance.Height + Maze.Instance.Width) / 8; // magic formula - subject to change in the future
         return ItemFactory.GetItems(ItemType.Oil, itemQuantity);
     }
 
-    override public void Initialize()
+    public override void Initialize()
     {
         DefaultInitialize();
+    }
+
+    public override void Reset()
+    {
+        DefaultReset();
     }
 }
 
 public class GhostGameMode : GameMode
 {
-    override public bool GameEnded()
+    List<Ghost> ghosts;
+    Vector2Int StartPosition => new Vector2Int(Maze.Instance.EndPos.x, Maze.Instance.EndPos.y);
+
+    public override bool GameEnded()
     {
         return Player.Instance.AtMazeEnd;
     }
 
-    override public void Initialize()
-    {
-        Ghost.CanBeMoved = true;
-        GameObject _template = Resources.Load<GameObject>("Ghost");
-        Vector2Int _mazePosition = new Vector2Int(Maze.Instance.EndPos.x, Maze.Instance.EndPos.y);
-        MazeCell currentCell = Maze.Instance[_mazePosition];
-        Vector3 pos = currentCell.CellCenter(y: 0);
-        Object.Instantiate(_template, pos, Quaternion.identity);
-    }
-
-    override public List<Item> GetItems()
+    public override List<Item> GetItems()
     {
         return new List<Item>();
+    }
+
+    public override void Initialize()
+    {
+        DefaultInitialize();
+        ghosts = ghosts ?? new List<Ghost>();
+        foreach (Ghost ghost in ghosts)
+        {
+            GameObject.Destroy(ghost.gameObject);
+        }
+        ghosts.Clear();
+        GameObject _template = Resources.Load<GameObject>("Ghost");
+        Ghost.CanBeMoved = true;
+        Vector2Int ghostPosition = StartPosition;
+        MazeCell currentCell = Maze.Instance[ghostPosition];
+        Vector3 pos = currentCell.CellCenter(y: 0);
+        GameObject ghostObject = Object.Instantiate(_template, pos, Quaternion.identity);
+        ghostObject.GetComponent<Ghost>().MazePosition = StartPosition;
+        ghosts.Add(ghostObject.GetComponent<Ghost>());
+    }
+
+    public override void Reset()
+    {
+        DefaultReset();
+        foreach (Ghost ghost in ghosts)
+        {
+            ghost.MazePosition = StartPosition;
+        }
     }
 }

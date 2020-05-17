@@ -35,7 +35,7 @@ public class Player : Movable
         {
             Destroy(gameObject);
         }
-        _commandHistory = new List<PlayerCommand>();
+        Movable._commandHistory = new List<KeyValuePair<Movable, PlayerCommand>>();
         _inventory = new Stack<ItemType>();
     }
 
@@ -44,20 +44,7 @@ public class Player : Movable
         _playerLight = GetComponentInChildren<Light>();
         _lightIntensity = _playerLight.intensity;
     }
-
-    /// <summary>
-    /// Places the player at the start of the maze and inits player's state
-    /// </summary>
-    public void ResetState()
-    {
-        _mazePosition = Maze.Instance.StartPos;
-        SyncRealPosition();
-        _commandHistory.Clear();
-        _previousCommandTime = Time.time;
-        _controllable = true;
-        _moving = false;
-    }
-    
+        
     /// <summary>
     /// Sets the angle of the light cone above the player
     /// </summary>
@@ -76,14 +63,13 @@ public class Player : Movable
             PlayerCommand picking = PlayerCommand.PickUpItem;
             if (picking.Execute(this).Succeeded)
             {
-                AddToHistory(picking);
+                AddToHistory(this, picking);
             }
 
             PlayerCommand command = PlayerActionDetector.DetectDesktop();
             if (!_moving && command != null && command.Execute(this).Succeeded)
             {
-                AddToHistory(command);
-                SyncRealPosition();
+                AddToHistory(this, command);
                 MoveToDecisionPoint(incomingDirection: ((PlayerMovementCommand)command).Direction);
             }
         }
@@ -95,7 +81,7 @@ public class Player : Movable
     private void MoveToDecisionPoint(Vector2Int incomingDirection)
     {
         List<Vector2Int> movementSequence = Maze.Instance.GetSequenceToDicisionPoint(
-            position: _mazePosition,
+            position: MazePosition,
             incomingDirection: incomingDirection
         );
         List<PlayerCommand> commandSequence = new List<PlayerCommand>();
@@ -117,17 +103,15 @@ public class Player : Movable
     /// </summary>
     /// <param name="direction">The direction of movement</param>
     /// <returns>true if the movement completed</returns>
-    override public bool Move(Vector2Int direction)
+    public override bool Move(Vector2Int direction)
     {
-        if (!Maze.Instance[_mazePosition].WallExists(direction))
+        if (!Maze.Instance[MazePosition].WallExists(direction))
         {
-            _mazePosition += direction;
-            SyncRealPosition();
+            MazePosition += direction;
             return true;
         }
         return false;
     }
-
 
     /// <summary>
     /// Picks any item from the cell the player is currently standing on 
@@ -136,7 +120,7 @@ public class Player : Movable
     /// <returns>true if the cell was not empty</returns>
     public bool PickUpItem()
     {
-        MazeCell currentCell = Maze.Instance[_mazePosition];
+        MazeCell currentCell = Maze.Instance[MazePosition];
         if (!currentCell.IsEmpty)
         {
             currentCell.Item.Activate();
@@ -152,7 +136,7 @@ public class Player : Movable
     /// <returns>true if the cell was empty and the inventory wasn't</returns>
     public bool PlaceItem()
     {
-        MazeCell currentCell = Maze.Instance[_mazePosition];
+        MazeCell currentCell = Maze.Instance[MazePosition];
         if (currentCell.IsEmpty && _inventory.Count > 0)
         {
             currentCell.Item = ItemFactory.GetItem(_inventory.Pop());
