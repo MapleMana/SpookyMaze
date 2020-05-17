@@ -19,8 +19,8 @@ public struct Verdict
 public class PlayerCommand
 {
     public static readonly PlayerCommand PickUpItem = new PlayerCommand(
-        (Player player) => new Verdict(player.PickUpItem()),
-        (Player player) => new Verdict(player.PlaceItem())
+        (Movable movable) => new Verdict(((Player)movable).PickUpItem()),
+        (Movable movable) => new Verdict(((Player)movable).PlaceItem())
     );
 
     /// <summary>
@@ -28,7 +28,7 @@ public class PlayerCommand
     /// </summary>
     /// <param name="player">The target player</param>
     /// <returns>true if the execution was successfull</returns>
-    public delegate Verdict ExecuteCallback(Player player);
+    public delegate Verdict ExecuteCallback(Movable movable);
 
     public ExecuteCallback Execute { get; internal set; }
     public ExecuteCallback ExecuteReversed { get; internal set; }
@@ -41,7 +41,7 @@ public class PlayerCommand
 
     public static PlayerCommand CreateIdle(float time)
     {
-        return new PlayerCommand((Player player) => new Verdict(false, time), (Player player) => new Verdict(false, time));
+        return new PlayerCommand((Movable movable) => new Verdict(false, time), (Movable movable) => new Verdict(false, time));
     }
 }
 
@@ -75,4 +75,3 @@ public class PlayerMovementCommand : PlayerCommand
         return null;
     }
 }
-

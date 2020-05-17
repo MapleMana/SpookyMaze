@@ -1,21 +1,16 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Player : Movable
 {
     private static Player _instance;
 
-    private Vector2Int _mazePosition;
-    private List<PlayerCommand> _commandHistory;
     private Light _playerLight;
-    private bool _moving = false;
-    private bool _controllable= false;
+    private bool _controllable = false;
     private float _lightIntensity;
-    private float _previousCommandTime;
     private Stack<ItemType> _inventory;
 
     public float playerSpeed;
@@ -28,9 +23,7 @@ public class Player : MonoBehaviour
     public Light PlayerLight => _playerLight;
     public float LightIntensity => _lightIntensity;
     public Stack<ItemType> Inventory => _inventory;
-    public bool Moving { get => _moving; set => _moving = value; }
     public bool Controllable { get => _controllable; set => _controllable = value; }
-    public bool AtMazeEnd => _mazePosition == Maze.Instance.EndPos;
 
     void Awake()
     {
@@ -42,7 +35,7 @@ public class Player : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        _commandHistory = new List<PlayerCommand>();
+        Movable._commandHistory = new List<KeyValuePair<Movable, PlayerCommand>>();
         _inventory = new Stack<ItemType>();
     }
 
@@ -51,20 +44,7 @@ public class Player : MonoBehaviour
         _playerLight = GetComponentInChildren<Light>();
         _lightIntensity = _playerLight.intensity;
     }
-
-    /// <summary>
-    /// Places the player at the start of the maze and inits player's state
-    /// </summary>
-    public void ResetState()
-    {
-        _mazePosition = Maze.Instance.StartPos;
-        SyncRealPosition();
-        _commandHistory.Clear();
-        _previousCommandTime = Time.time;
-        _controllable = true;
-        _moving = false;
-    }
-    
+        
     /// <summary>
     /// Sets the angle of the light cone above the player
     /// </summary>
@@ -76,14 +56,6 @@ public class Player : MonoBehaviour
         _playerLight.spotAngle = Mathf.Lerp(min ?? minLightAngle, max ?? maxLightAngle, coef);
     }
 
-    public void AddToHistory(PlayerCommand command)
-    {
-        float timeDiff = Time.time - _previousCommandTime;
-        _previousCommandTime = Time.time;
-        _commandHistory.Add(PlayerCommand.CreateIdle(timeDiff));
-        _commandHistory.Add(command);
-    }
-
     void Update()
     {
         if (_controllable)
@@ -91,14 +63,13 @@ public class Player : MonoBehaviour
             PlayerCommand picking = PlayerCommand.PickUpItem;
             if (picking.Execute(this).Succeeded)
             {
-                AddToHistory(picking);
+                AddToHistory(this, picking);
             }
 
             PlayerCommand command = PlayerActionDetector.DetectDesktop();
             if (!_moving && command != null && command.Execute(this).Succeeded)
             {
-                AddToHistory(command);
-                SyncRealPosition();
+                AddToHistory(this, command);
                 MoveToDecisionPoint(incomingDirection: ((PlayerMovementCommand)command).Direction);
             }
         }
@@ -110,7 +81,7 @@ public class Player : MonoBehaviour
     private void MoveToDecisionPoint(Vector2Int incomingDirection)
     {
         List<Vector2Int> movementSequence = Maze.Instance.GetSequenceToDicisionPoint(
-            position: _mazePosition,
+            position: MazePosition,
             incomingDirection: incomingDirection
         );
         List<PlayerCommand> commandSequence = new List<PlayerCommand>();
@@ -132,79 +103,14 @@ public class Player : MonoBehaviour
     /// </summary>
     /// <param name="direction">The direction of movement</param>
     /// <returns>true if the movement completed</returns>
-    public bool Move(Vector2Int direction)
+    public override bool Move(Vector2Int direction)
     {
-        if (!Maze.Instance[_mazePosition].WallExists(direction))
+        if (!Maze.Instance[MazePosition].WallExists(direction))
         {
-            _mazePosition += direction;
-            SyncRealPosition();
+            MazePosition += direction;
             return true;
         }
         return false;
-    }
-
-    /// <summary>
-    /// Replays player command history
-    /// </summary>
-    /// <param name="reversed">Whether the execution should be reversed (both order and individual commands)</param>
-    /// <param name="initialPosition">The starting position of the player. If null, current position is taken.</param>
-    /// <param name="timeMultiplier">The number of times the replay should be sped up</param>
-    /// <param name="onComplete">Action to perform after the replay is comlete</param>
-    /// <returns>A coroutine to execute</returns>
-    public IEnumerator ReplayCommands(
-        bool reversed = false,
-        Vector2Int? initialPosition = null,
-        float timeMultiplier = 1,
-        Action onComplete = null)
-    {
-        if (reversed)
-        {
-            _commandHistory.Reverse();
-        }
-        _mazePosition = initialPosition ?? _mazePosition;
-        //pauseBetweenCommands -= Time.deltaTime;
-
-        SyncRealPosition();
-
-        Moving = true;
-        foreach (PlayerCommand command in _commandHistory)
-        {
-            if (Moving)
-            {
-                float executionTime = reversed
-                    ? command.ExecuteReversed(this).Time
-                    : command.Execute(this).Time;
-                yield return new WaitForSeconds(executionTime * timeMultiplier);
-            }
-        }
-        Moving = false;
-        onComplete?.Invoke();
-    }
-
-    /// <summary>
-    /// Executes commands to decision point and saves them to history
-    /// </summary>
-    /// <param name="playerCommands"></param>
-    /// <param name="pauseBetween"></param>
-    /// <returns></returns>
-    public IEnumerator PlayCommandsInRealTime(
-        List<PlayerCommand> playerCommands,
-        float pauseBetween)
-    {
-        //pauseBetweenCommands -= Time.deltaTime;
-
-        Moving = true;
-        foreach (PlayerCommand command in playerCommands)
-        {
-            if (Moving)
-            {
-                yield return new WaitForSeconds(pauseBetween);
-                
-                command.Execute(this);
-                AddToHistory(command);
-            }
-        }
-        Moving = false;
     }
 
     /// <summary>
@@ -214,7 +120,7 @@ public class Player : MonoBehaviour
     /// <returns>true if the cell was not empty</returns>
     public bool PickUpItem()
     {
-        MazeCell currentCell = Maze.Instance[_mazePosition];
+        MazeCell currentCell = Maze.Instance[MazePosition];
         if (!currentCell.IsEmpty)
         {
             currentCell.Item.Activate();
@@ -230,7 +136,7 @@ public class Player : MonoBehaviour
     /// <returns>true if the cell was empty and the inventory wasn't</returns>
     public bool PlaceItem()
     {
-        MazeCell currentCell = Maze.Instance[_mazePosition];
+        MazeCell currentCell = Maze.Instance[MazePosition];
         if (currentCell.IsEmpty && _inventory.Count > 0)
         {
             currentCell.Item = ItemFactory.GetItem(_inventory.Pop());
@@ -239,15 +145,6 @@ public class Player : MonoBehaviour
             return true;
         }
         return false;
-    }
-
-    /// <summary>
-    /// Synchronizes maze position and physical player position
-    /// </summary>
-    void SyncRealPosition()
-    {
-        MazeCell currentCell = Maze.Instance[_mazePosition];
-        transform.position = currentCell.CellCenter(y: transform.position.y);
     }
 }
 
