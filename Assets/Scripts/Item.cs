@@ -8,8 +8,8 @@ public abstract class Item : System.IDisposable
     private GameObject gameObject;
 
     public abstract ItemType Type { get; }
-    public abstract void Activate(float ratio);
-    public abstract void Deactivate(float ratio);
+    public abstract void Activate();
+    public abstract void Deactivate();
 
     public void Display(Vector3 pos)
     {
@@ -34,12 +34,13 @@ public class Key : Item
         _template = Resources.Load<GameObject>("Key");
     }
 
-    public override void Activate(float ratio) {}
-    public override void Deactivate(float ratio) {}
+    public override void Activate() {}
+    public override void Deactivate() {}
 }
 
 public class Oil : Item
 {
+    const float EFFECTIVENESS = 0.3f; // percentage of the total time to add
     public override ItemType Type => ItemType.Oil;
 
     public Oil()
@@ -47,14 +48,14 @@ public class Oil : Item
         _template = Resources.Load<GameObject>("Oil");
     }
 
-    public override void Activate(float ratio)
+    public override void Activate()
     {
-        GameManager.Instance.AddTime(ratio: ratio);
+        GameManager.Instance.AddTime(ratio: EFFECTIVENESS);
     }
 
-    public override void Deactivate(float ratio)
+    public override void Deactivate()
     {
-        GameManager.Instance.AddTime(ratio: -ratio);
+        GameManager.Instance.AddTime(ratio: -EFFECTIVENESS);
     }
 }
 

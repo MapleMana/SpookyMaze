@@ -12,7 +12,7 @@ public class Player : Movable
     private bool _controllable = false;
     private float _lightIntensity;
     private Stack<ItemType> _inventory;
-    private const float EFFECTIVENESS = 0.3f; // percentage of the total time to add
+    private const float GHOST_EFFECTIVENESS = 0.3f; // percentage of the total time to add
 
 
     public float playerSpeed;
@@ -138,7 +138,7 @@ public class Player : Movable
         MazeCell currentCell = Maze.Instance[MazePosition];
         if (!currentCell.IsEmpty)
         {
-            currentCell.Item.Activate(EFFECTIVENESS);
+            currentCell.Item.Activate();
             _inventory.Push(currentCell.ClearItem());
             return true;
         }
@@ -155,7 +155,7 @@ public class Player : Movable
         if (currentCell.IsEmpty && _inventory.Count > 0)
         {
             currentCell.Item = ItemFactory.GetItem(_inventory.Pop());
-            currentCell.Item.Deactivate(EFFECTIVENESS);
+            currentCell.Item.Deactivate();
             currentCell.Item.Display(currentCell.CellCenter(y: 0));
             return true;
         }
@@ -166,9 +166,9 @@ public class Player : Movable
     /// Takes place when player incounters a ghost
     /// </summary>
     /// <returns></returns>
-    public bool IncounterGhost()
+    public bool EncounterGhost()
     {
-        GameManager.Instance.AddTime(ratio: -EFFECTIVENESS);
+        GameManager.Instance.AddTime(ratio: -GHOST_EFFECTIVENESS);
         return true;
     }
 
@@ -178,7 +178,7 @@ public class Player : Movable
     /// <returns></returns>
     public bool LeaveGhost()
     {
-        GameManager.Instance.AddTime(ratio: EFFECTIVENESS);
+        GameManager.Instance.AddTime(ratio: GHOST_EFFECTIVENESS);
         return true;
     }
 }
