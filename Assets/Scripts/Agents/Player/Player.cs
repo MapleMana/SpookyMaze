@@ -12,6 +12,8 @@ public class Player : Movable
     private bool _controllable = false;
     private float _lightIntensity;
     private Stack<ItemType> _inventory;
+    private const float EFFECTIVENESS = 0.3f; // percentage of the total time to add
+
 
     public float playerSpeed;
     [Range(0f, 180f)]
@@ -77,9 +79,14 @@ public class Player : Movable
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.name == "Ghost(Clone)")
+        if (collision.gameObject.name == "Ghost(Clone)" 
+            && GameManager.Instance.LevelIs(LevelState.InProgress))
         {
-            GameManager.Instance.AddTime(ratio: -0.3f);
+            PlayerCommand ghostIncounter = PlayerCommand.IncounterGhost;
+            if (ghostIncounter.Execute(this).Succeeded)
+            {
+                AddToHistory(this, ghostIncounter);
+            }
         }
     }
 
@@ -131,7 +138,7 @@ public class Player : Movable
         MazeCell currentCell = Maze.Instance[MazePosition];
         if (!currentCell.IsEmpty)
         {
-            currentCell.Item.Activate();
+            currentCell.Item.Activate(EFFECTIVENESS);
             _inventory.Push(currentCell.ClearItem());
             return true;
         }
@@ -148,11 +155,30 @@ public class Player : Movable
         if (currentCell.IsEmpty && _inventory.Count > 0)
         {
             currentCell.Item = ItemFactory.GetItem(_inventory.Pop());
-            currentCell.Item.Deactivate();
+            currentCell.Item.Deactivate(EFFECTIVENESS);
             currentCell.Item.Display(currentCell.CellCenter(y: 0));
             return true;
         }
         return false;
     }
-}
 
+    /// <summary>
+    /// Takes place when player incounters a ghost
+    /// </summary>
+    /// <returns></returns>
+    public bool IncounterGhost()
+    {
+        GameManager.Instance.AddTime(ratio: -EFFECTIVENESS);
+        return true;
+    }
+
+    /// <summary>
+    /// Reverts ghost reduction of the time
+    /// </summary>
+    /// <returns></returns>
+    public bool LeaveGhost()
+    {
+        GameManager.Instance.AddTime(ratio: EFFECTIVENESS);
+        return true;
+    }
+}
