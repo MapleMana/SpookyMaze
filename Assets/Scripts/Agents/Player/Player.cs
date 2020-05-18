@@ -75,6 +75,14 @@ public class Player : Movable
         }
     }
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.name == "Ghost(Clone)")
+        {
+            GameManager.Instance.AddTime(ratio: -0.3f);
+        }
+    }
+
     /// <summary>
     /// Moves the player to the next decision point in the maze (intersection or dead end)
     /// </summary>
