@@ -12,6 +12,8 @@ public class Player : Movable
     private bool _controllable = false;
     private float _lightIntensity;
     private Stack<ItemType> _inventory;
+    private const float GHOST_EFFECTIVENESS = 0.3f; // percentage of the total time to add
+
 
     public float playerSpeed;
     [Range(0f, 180f)]
@@ -71,6 +73,19 @@ public class Player : Movable
             {
                 AddToHistory(this, command);
                 MoveToDecisionPoint(incomingDirection: ((PlayerMovementCommand)command).Direction);
+            }
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.name == "Ghost(Clone)" 
+            && GameManager.Instance.LevelIs(LevelState.InProgress))
+        {
+            PlayerCommand ghostIncounter = PlayerCommand.IncounterGhost;
+            if (ghostIncounter.Execute(this).Succeeded)
+            {
+                AddToHistory(this, ghostIncounter);
             }
         }
     }
@@ -146,5 +161,24 @@ public class Player : Movable
         }
         return false;
     }
-}
 
+    /// <summary>
+    /// Takes place when player incounters a ghost
+    /// </summary>
+    /// <returns></returns>
+    public bool EncounterGhost()
+    {
+        GameManager.Instance.AddTime(ratio: -GHOST_EFFECTIVENESS);
+        return true;
+    }
+
+    /// <summary>
+    /// Reverts ghost reduction of the time
+    /// </summary>
+    /// <returns></returns>
+    public bool LeaveGhost()
+    {
+        GameManager.Instance.AddTime(ratio: GHOST_EFFECTIVENESS);
+        return true;
+    }
+}

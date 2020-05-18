@@ -41,7 +41,6 @@ public class Key : Item
 public class Oil : Item
 {
     const float EFFECTIVENESS = 0.3f; // percentage of the total time to add
-
     public override ItemType Type => ItemType.Oil;
 
     public Oil()
