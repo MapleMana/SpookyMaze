@@ -14,7 +14,6 @@ public class Player : Movable
     private Stack<ItemType> _inventory;
     private const float GHOST_EFFECTIVENESS = 0.3f; // percentage of the total time to add
 
-
     public float playerSpeed;
     [Range(0f, 180f)]
     public float maxLightAngle;

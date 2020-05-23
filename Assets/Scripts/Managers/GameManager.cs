@@ -4,11 +4,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GameManager : MonoBehaviour
+public class GameManager : Singleton<GameManager>
 {
     public const int NUM_OF_LEVELS = 10;
-
-    private static GameManager _instance;
 
     private int _mazeWidth;
     private int _mazeHeight;
@@ -43,7 +41,6 @@ public class GameManager : MonoBehaviour
             _mazeHeight = value > 0 ? value : _mazeHeight;
         }
     }
-    public static GameManager Instance => _instance;
     public GameMode GameMode { get => _gameMode; set => _gameMode = value; }
     public int CurrentLevel { get => _currentLevel; set => _currentLevel = value; }
     public float TimeLeft { get => _timeLeft; set => _timeLeft = value; }
@@ -54,16 +51,9 @@ public class GameManager : MonoBehaviour
 
     private GameManager() { }
 
-    private void Awake()
+    protected override void Awake()
     {
-        if (_instance == null)
-        {
-            _instance = this;
-        }
-        else if (_instance != this)
-        {
-            Destroy(gameObject);
-        }
+        base.Awake();
         DontDestroyOnLoad(gameObject);
     }
 

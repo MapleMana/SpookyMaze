@@ -2,23 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LightManager : MonoBehaviour
+public class LightManager : Singleton<LightManager>
 {
-    private static LightManager _instance;
     public new Light light;
 
-    public static LightManager Instance { get => _instance; }
-
-    private void Awake()
+    protected override void Awake()
     {
-        if (_instance == null)
-        {
-            _instance = this;
-        }
-        else if (_instance != this)
-        {
-            Destroy(gameObject);
-        }
+        base.Awake();
         DontDestroyOnLoad(gameObject);
     }
 

@@ -6,10 +6,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class UIManager : MonoBehaviour
+public class UIManager : Singleton<UIManager>
 {    
-    private static UIManager _instance;
-
     public Text Width;
     public Text Height;
     public TextMeshProUGUI NextPlay;
@@ -26,18 +24,9 @@ public class UIManager : MonoBehaviour
     public Button ButtonTemplate;
     public List<Button> buttonList;
 
-    public static UIManager Instance => _instance;
-
-    private void Awake()
+    protected override void Awake()
     {
-        if (_instance == null)
-        {
-            _instance = this;
-        }
-        else if (_instance != this)
-        {
-            Destroy(gameObject);
-        }
+        base.Awake();
         DontDestroyOnLoad(gameObject);
     }
 
