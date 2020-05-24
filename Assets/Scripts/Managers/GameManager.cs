@@ -8,13 +8,13 @@ public class GameManager : Singleton<GameManager>
 {
     public const int NUM_OF_LEVELS = 10;
 
+    [SerializeField]
     private int _mazeWidth;
+    [SerializeField]
     private int _mazeHeight;
     private LevelState _levelState;
     private float _finalPlayerLightAngle;      // the player light angle at the end of the level
 
-    public int initialMazeWidth;
-    public int initialMazeHeight;
     public int mazeSizeIncrement;
     public float timeDecrement;
     [Range(0f, 500f)]
@@ -50,8 +50,6 @@ public class GameManager : Singleton<GameManager>
 
     private void OnEnable()
     {
-        _mazeWidth = initialMazeWidth;
-        _mazeHeight = initialMazeHeight;
         SceneManager.sceneLoaded += OnFullLoad;
     }
 

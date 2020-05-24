@@ -72,6 +72,7 @@ public class Player : Movable
 
     private void OnCollisionEnter(Collision collision)
     {
+        // TODO: emit event
         if (collision.gameObject.name == "Ghost(Clone)" 
             && GameManager.Instance.LevelIs(LevelState.InProgress))
         {
