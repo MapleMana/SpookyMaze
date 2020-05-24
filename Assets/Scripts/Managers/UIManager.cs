@@ -26,9 +26,6 @@ public class UIManager : Singleton<UIManager>
 
     private void Start()
     {
-        WidthChanged(GameManager.Instance.MazeWidth);
-        HeightChanged(GameManager.Instance.MazeHeight);
-        
         LoadLevels();
     }
 
@@ -54,7 +51,7 @@ public class UIManager : Singleton<UIManager>
         buttonList = new List<Button>();
         int levelReached = PlayerPrefs.GetInt("levelReached", 1);
 
-        for (int i = 1; i <= GameManager.NUM_OF_LEVELS; i++)
+        for (int i = 1; i <= LevelGenerator.NUM_OF_LEVELS; i++)
         {
             Button newButton = Instantiate(ButtonTemplate);
             newButton.GetComponentInChildren<Text>().text = i.ToString();
@@ -129,26 +126,6 @@ public class UIManager : Singleton<UIManager>
         LightManager.Instance.TurnOff();
         SceneManager.UnloadSceneAsync("Maze");
         CameraManager.Instance.FocusOnMenu(MainMenu.transform.position);
-    }
-
-    /// <summary>
-    /// Called when slider value is changed and passes the new width to the GM
-    /// </summary>
-    /// <param name="width"></param>
-    public void WidthChanged(float width)
-    {
-        Width.text = width.ToString();
-        GameManager.Instance.MazeWidth = (int) width;
-    }
-
-    /// <summary>
-    /// Called when slider value is changed and passes the new height to the GM
-    /// </summary>
-    /// <param name="height"></param>
-    public void HeightChanged(float height)
-    {
-        Height.text = height.ToString();
-        GameManager.Instance.MazeHeight = (int) height;
     }
 
     public void ModeToggled()

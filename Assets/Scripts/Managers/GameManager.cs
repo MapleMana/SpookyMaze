@@ -6,38 +6,15 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : Singleton<GameManager>
 {
-    public const int NUM_OF_LEVELS = 10;
-
-    [SerializeField]
-    private int _mazeWidth;
-    [SerializeField]
-    private int _mazeHeight;
     private LevelState _levelState;
     private float _finalPlayerLightAngle;      // the player light angle at the end of the level
 
-    public int mazeSizeIncrement;
     public float timeDecrement;
     [Range(0f, 500f)]
     public float levelTime;
     public float replayMultiplier;
     public float reversedReplayMultiplier;
 
-    public int MazeWidth
-    {
-        get => _mazeWidth;
-        set
-        {
-            _mazeWidth = value > 0 ? value : _mazeWidth;
-        }
-    }
-    public int MazeHeight
-    {
-        get => _mazeHeight;
-        set
-        {
-            _mazeHeight = value > 0 ? value : _mazeHeight;
-        }
-    }
     public GameMode GameMode { get; set; }
     public int CurrentLevel { get; set; } = 1;
     public float TimeLeft { get; set; }
@@ -64,7 +41,7 @@ public class GameManager : Singleton<GameManager>
         int levelsGenerated = PlayerPrefs.GetInt("generated", 0);
         if (levelsGenerated == 0)
         {
-            GenerateLevels();
+            LevelGenerator.GenerateLevels();
             PlayerPrefs.SetInt("generated", 1);
         }
     }
@@ -97,22 +74,6 @@ public class GameManager : Singleton<GameManager>
             timeToAdd = ratio * ReversedReplayTime;
         }
         TimeLeft += timeToAdd;
-    }
-
-    /// <summary>
-    /// Generates a new levels and saves them to a file. This method is for generation only and should not be used while gameplay.
-    /// </summary>
-    public void GenerateLevels()
-    {
-        for (int i = 0; i < NUM_OF_LEVELS; i++)
-        {
-            Maze.Instance.SetDimensions(_mazeWidth, _mazeHeight);
-            new BranchedDFSGeneration().Generate();
-            MazeState state = new MazeState(Maze.Instance);
-            state.SaveTo($"/{i}.maze");
-            _mazeHeight += mazeSizeIncrement;
-            _mazeWidth += mazeSizeIncrement;
-        }
     }
 
     /// <summary>
