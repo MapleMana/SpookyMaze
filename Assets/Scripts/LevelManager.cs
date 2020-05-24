@@ -6,7 +6,7 @@ using UnityEngine;
 public class LevelManager : Singleton<LevelManager>
 {
     private LevelState _levelState;
-    const float LEVEL_TIME = 25;
+    const float LEVEL_TIME = 75;
     private float _finalPlayerLightAngle;      // the player light angle at the end of the level
 
     public GameMode GameMode { get; set; }
@@ -41,7 +41,13 @@ public class LevelManager : Singleton<LevelManager>
 
         Maze.Instance.Clear();
         Maze.Instance.Load(mazeState);
-        Maze.Instance.GenerateItems(GameMode.GetItems());
+
+        // FIXME: move item placement to MazeIO
+        if (GameMode.GetItems().Count > 0)
+        {
+            Maze.Instance[new Vector2Int(3, 7)].ItemType = GameMode.GetItems()[0];
+        }
+
         Maze.Instance.SaveState();
         Maze.Instance.Display();
 
@@ -115,13 +121,12 @@ public class LevelManager : Singleton<LevelManager>
         _levelState = mazeCompleted ? LevelState.Completed : LevelState.Failed;
         Ghost.CanBeMoved = false;
         _finalPlayerLightAngle = Player.Instance.Light.spotAngle;
-        LevelNumber++;
 
         if (mazeCompleted)
         {
             LightManager.Instance.TurnOn();
             CameraManager.Instance.FocusOnMaze(Maze.Instance);
-            UIManager.Instance.UnlockLevel(LevelNumber);
+            UIManager.Instance.UnlockLevel(++LevelNumber);
         }
         UIManager.Instance.ShowFinishMenu(mazeCompleted);
     }

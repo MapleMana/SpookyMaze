@@ -55,12 +55,6 @@ public class Player : Movable
     {
         if (LevelManager.Instance.LevelIs(LevelState.InProgress))
         {
-            PlayerCommand picking = PlayerCommand.PickUpItem;
-            if (picking.Execute(this).Succeeded)
-            {
-                AddToHistory(this, picking);
-            }
-
             PlayerCommand command = PlayerActionDetector.DetectDesktop();
             if (!_moving && command != null && command.Execute(this).Succeeded)
             {
@@ -108,6 +102,19 @@ public class Player : Movable
         return false;
     }
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.tag == "Item"
+            && LevelManager.Instance.LevelIs(LevelState.InProgress))
+        {
+            PlayerCommand keyPicking = PlayerCommand.PickUpItem;
+            if (keyPicking.Execute(this).Succeeded)
+            {
+                AddToHistory(this, keyPicking);
+            }
+        }
+    }
+
     /// <summary>
     /// Picks any item from the cell the player is currently standing on 
     /// and places the item in the player's inventory
@@ -115,14 +122,12 @@ public class Player : Movable
     /// <returns>true if the cell was not empty</returns>
     public bool PickUpItem()
     {
-        MazeCell currentCell = Maze.Instance[MazePosition];
-        if (!currentCell.IsEmpty)
-        {
-            currentCell.Item.Activate();
-            Inventory.Push(currentCell.ClearItem());
-            return true;
-        }
-        return false;
+        GameObject itemObject = Maze.Instance[MazePosition].Item;
+        Item item = itemObject.GetComponent<Item>();
+        item.Activate();
+        Inventory.Push(item.Type);
+        Destroy(itemObject);
+        return true;
     }
 
     /// <summary>
@@ -131,15 +136,11 @@ public class Player : Movable
     /// <returns>true if the cell was empty and the inventory wasn't</returns>
     public bool PlaceItem()
     {
-        MazeCell currentCell = Maze.Instance[MazePosition];
-        if (currentCell.IsEmpty && Inventory.Count > 0)
-        {
-            currentCell.Item = ItemFactory.GetItem(Inventory.Pop());
-            currentCell.Item.Deactivate();
-            currentCell.Item.Display(currentCell.CellCenter(y: 0));
-            return true;
-        }
-        return false;
+        GameObject itemObject = ItemFactory.SpawnItem(Inventory.Pop(), transform.position);
+        Item item = itemObject.GetComponent<Item>();
+        Maze.Instance[MazePosition].Item = itemObject;
+        item.Deactivate();
+        return true;
     }
 
     /// <summary>

@@ -18,8 +18,9 @@ public class MazeCell : System.IDisposable
                                                                        Vector2Int.down,
                                                                        Vector2Int.right };
 
-    public Item Item { get; set; }
-    public bool IsEmpty => Item == null || Item.Type == ItemType.None;
+    public ItemType ItemType { get; set; }
+    public GameObject Item { get; set; }
+    public bool IsEmpty => ItemType == ItemType.None;
     public Vector2Int Position => _position;
     public Vector3 CellCenter(float y) => new Vector3(CELL_WIDTH * (_position.x + 0.5f), y, CELL_WIDTH * (_position.y + 0.5f));
 
@@ -96,7 +97,7 @@ public class MazeCell : System.IDisposable
     /// </summary>
     public void Display()
     {
-        Item?.Display(CellCenter(y: 0));
+        Item = ItemFactory.SpawnItem(ItemType, CellCenter(y: 0));
         if (WallExists(Vector2Int.right))
         {
             PutWall(new Vector3(CELL_WIDTH * (_position.x + 1), 0, CELL_WIDTH * (_position.y + 0.5f)), false);
@@ -115,24 +116,13 @@ public class MazeCell : System.IDisposable
         }
     }
 
-    /// <summary>
-    /// Removes the item from the cell
-    /// </summary>
-    /// <returns>The type of the deleted item</returns>
-    public ItemType ClearItem()
-    {
-        ItemType deletedType = Item?.Type ?? ItemType.None;
-        Item?.Dispose();
-        Item = null;
-        return deletedType;
-    }
-
     public void Dispose()
     {
+        Object.Destroy(Item);
         foreach (GameObject child in _walls)
         {
             Object.Destroy(child);
         }
-        Item?.Dispose();
+        Object.Destroy(Item);
     }
 }

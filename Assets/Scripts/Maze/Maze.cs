@@ -101,30 +101,6 @@ public class Maze
     }
 
     /// <summary>
-    /// Places the specified items randomly on this maze
-    /// </summary>
-    /// <param name="items">The items that should appear on the maze</param>
-    public void GenerateItems(List<Item>items)
-    {
-        List<MazeCell> cells = Grid.Values.ToList();
-        List<int> randInd = new List<int>();
-        for (int i = 0; i < cells.Count; i++)
-        {
-            if (cells[i].Position != _start && 
-                cells[i].Position != _end)
-            {
-                randInd.Add(i);
-            }
-        }
-        randInd.Shuffle();
-        for (int i = 0; i < Mathf.Min(randInd.Count, items.Count); i++)
-        {
-            MazeCell cell = cells[randInd[i]];
-            cell.Item = items[i];
-        }
-    }
-
-    /// <summary>
     /// Returns a sequence of directions until the next decision point (eintersenction or dead end)
     /// </summary>
     /// <param name="position">The current position to start from</param>
