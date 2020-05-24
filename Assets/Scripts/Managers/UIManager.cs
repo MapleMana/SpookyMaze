@@ -102,7 +102,7 @@ public class UIManager : Singleton<UIManager>
     public void WatchReplay()
     {
         FinishMenu.SetActive(false);
-        GameManager.Instance.WatchReplay(
+        LevelManager.Instance.WatchReplay(
             onComplete: () => FinishMenu.SetActive(true)
         );
     }
@@ -113,7 +113,7 @@ public class UIManager : Singleton<UIManager>
     public void GoToNextLevel()
     {
         FinishMenu.SetActive(false);
-        GameManager.Instance.LoadCurrentLevel();
+        LevelManager.Instance.LoadCurrentLevel();
     }
 
     /// <summary>

@@ -4615,11 +4615,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fd2e831d02dea64986b02415359c866, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _mazeWidth: 8
-  _mazeHeight: 8
-  mazeSizeIncrement: 2
-  timeDecrement: 0
-  levelTime: 25
   replayMultiplier: 0.5
   reversedReplayMultiplier: 0.3
 --- !u!4 &1490064582

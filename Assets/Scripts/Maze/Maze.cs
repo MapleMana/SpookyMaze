@@ -152,10 +152,15 @@ public class Maze: Singleton<Maze>
 
     protected override void OnDestroy()
     {
+        Clear();
+        base.OnDestroy();
+    }
+
+    public void Clear()
+    {
         foreach (var kvPair in Grid)
         {
             kvPair.Value.Dispose();
         }
-        base.OnDestroy();
     }
 }

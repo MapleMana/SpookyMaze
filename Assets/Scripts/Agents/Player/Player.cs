@@ -74,7 +74,7 @@ public class Player : Movable
     {
         // TODO: emit event
         if (collision.gameObject.name == "Ghost(Clone)" 
-            && GameManager.Instance.LevelIs(LevelState.InProgress))
+            && LevelManager.Instance.LevelIs(LevelState.InProgress))
         {
             PlayerCommand ghostIncounter = PlayerCommand.IncounterGhost;
             if (ghostIncounter.Execute(this).Succeeded)
@@ -162,7 +162,7 @@ public class Player : Movable
     /// <returns></returns>
     public bool EncounterGhost()
     {
-        GameManager.Instance.AddTime(ratio: -GHOST_EFFECTIVENESS);
+        LevelManager.Instance.AddTime(ratio: -GHOST_EFFECTIVENESS);
         return true;
     }
 
@@ -172,7 +172,7 @@ public class Player : Movable
     /// <returns></returns>
     public bool LeaveGhost()
     {
-        GameManager.Instance.AddTime(ratio: GHOST_EFFECTIVENESS);
+        LevelManager.Instance.AddTime(ratio: GHOST_EFFECTIVENESS);
         return true;
     }
 }

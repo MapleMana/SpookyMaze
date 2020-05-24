@@ -3,18 +3,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Level : MonoBehaviour
+public class LevelManager : Singleton<LevelManager>
 {
     private LevelState _levelState;
-    private float _levelTime;
+    const float LEVEL_TIME = 25;
     private float _finalPlayerLightAngle;      // the player light angle at the end of the level
 
     public GameMode GameMode { get; set; }
     public int LevelNumber { get; set; } = 1;
     public float TimeLeft { get; set; }
     public bool LevelIs(LevelState state) => (_levelState & state) != 0;
-    public float ReplayTime => (_levelTime - TimeLeft) * GameManager.Instance.replayMultiplier;
-    public float ReversedReplayTime => (_levelTime - TimeLeft) * GameManager.Instance.reversedReplayMultiplier;
+    public float ReplayTime => (LEVEL_TIME - TimeLeft) * GameManager.Instance.replayMultiplier;
+    public float ReversedReplayTime => (LEVEL_TIME - TimeLeft) * GameManager.Instance.reversedReplayMultiplier;
 
 
     Maze maze;
@@ -32,12 +32,14 @@ public class Level : MonoBehaviour
     /// </summary>
     /// <param name="levelNumber"></param>
     /// <param name="levelTime"></param>
-    void Initialize(int levelNumber, float levelTime, MazeState mazeState)
+    public void Initialize(int levelNumber, MazeState mazeState, GameMode gameMode)
     {
         _levelState = LevelState.InProgress;
-        _levelTime = TimeLeft = levelTime;
+        TimeLeft = LEVEL_TIME;
         LevelNumber = levelNumber;
+        GameMode = gameMode;
 
+        Maze.Instance.Clear();
         Maze.Instance.Load(mazeState);
         Maze.Instance.GenerateItems(GameMode.GetItems());
         Maze.Instance.SaveState();
@@ -57,7 +59,7 @@ public class Level : MonoBehaviour
         float timeToAdd = 0;
         if (LevelIs(LevelState.InProgress))
         {
-            timeToAdd = ratio * _levelTime;
+            timeToAdd = ratio * LEVEL_TIME;
         }
         else if (LevelIs(LevelState.InReplay))
         {
@@ -117,8 +119,13 @@ public class Level : MonoBehaviour
         _finalPlayerLightAngle = Player.Instance.Light.spotAngle;
         LevelNumber++;
 
-        CameraManager.Instance.FocusOnMaze(Maze.Instance);
-        GameManager.Instance.EndLevel(mazeCompleted);
+        if (mazeCompleted)
+        {
+            LightManager.Instance.TurnOn();
+            CameraManager.Instance.FocusOnMaze(Maze.Instance);
+            UIManager.Instance.UnlockLevel(LevelNumber);
+        }
+        UIManager.Instance.ShowFinishMenu(mazeCompleted);
     }
 
     // Update is called once per frame
@@ -139,7 +146,7 @@ public class Level : MonoBehaviour
             else
             {
                 TimeLeft -= Time.deltaTime;
-                Player.Instance.LerpLightAngle(coef: TimeLeft / _levelTime);
+                Player.Instance.LerpLightAngle(coef: TimeLeft / LEVEL_TIME);
             }
 
             if (GameMode.GameEnded())

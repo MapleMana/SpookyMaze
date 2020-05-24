@@ -50,12 +50,12 @@ public class Oil : Item
 
     public override void Activate()
     {
-        GameManager.Instance.AddTime(ratio: EFFECTIVENESS);
+        LevelManager.Instance.AddTime(ratio: EFFECTIVENESS);
     }
 
     public override void Deactivate()
     {
-        GameManager.Instance.AddTime(ratio: -EFFECTIVENESS);
+        LevelManager.Instance.AddTime(ratio: -EFFECTIVENESS);
     }
 }
 
