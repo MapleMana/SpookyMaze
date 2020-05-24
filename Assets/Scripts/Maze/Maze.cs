@@ -8,19 +8,16 @@ using UnityEngine.SceneManagement;
 
 public class Maze: Singleton<Maze>
 {
-    private int _width = 10;
-    private int _height = 10;
     private Vector2Int _start;
     private Vector2Int _end;
     private string  _beforeStart;
-    private static Random _generator = new Random();
-    private Dictionary<Vector2Int, MazeCell> _grid = new Dictionary<Vector2Int, MazeCell>();
+    private static readonly Random _generator = new Random();
 
     public Vector2Int StartPos => _start;
     public Vector2Int EndPos => _end;
-    public int Width => _width;
-    public int Height => _height;
-    public Dictionary<Vector2Int, MazeCell> Grid { get => _grid; set => _grid = value; }
+    public int Width { get; private set; } = 10;
+    public int Height { get; private set; } = 10;
+    public Dictionary<Vector2Int, MazeCell> Grid { get; private set; } = new Dictionary<Vector2Int, MazeCell>();
     public MazeCell this[Vector2Int pos] => Grid[pos];
 
     protected override void Awake()
@@ -46,20 +43,32 @@ public class Maze: Singleton<Maze>
     /// <param name="height">The height (Z) of the maze</param>
     public void SetDimensions(int width, int height)
     {
-        _width = width;
-        _height = height;
+        Width = width;
+        Height = height;
 
         _start = new Vector2Int(0, height - 1);
         _end = new Vector2Int(width - 1, 0);
     }
 
+    // FIXME: move back to MazeIO when Maze is no longer a singleton
+    /// <summary>
+    /// Synchronize the Maze with this state
+    /// </summary>
+    public void Load(MazeState state)
+    {
+        SetDimensions(state.width, state.height);
+        foreach (SerCell cell in state.cells)
+        {
+            Grid[cell.Pos] = cell.ToMazeCell();
+        }
+    }
     /// <summary>
     /// Restores maze state before level start
     /// </summary>
     public void Restore()
     {
         MazeState state = JsonUtility.FromJson<MazeState>(_beforeStart);
-        state.Load();
+        Load(state);
     }
 
     /// <summary>
@@ -77,9 +86,9 @@ public class Maze: Singleton<Maze>
     /// <param name="wallState">The state of the walls to fill with</param>
     public void Fill(WallState wallState=WallState.Exists)
     {
-        for (int x = 0; x < _width; x++)
+        for (int x = 0; x < Width; x++)
         {
-            for (int y = 0; y < _height; y++)
+            for (int y = 0; y < Height; y++)
             {
                 Vector2Int pos = new Vector2Int(x, y);
                 Grid[pos] = new MazeCell(pos, wallState, wallState, wallState, wallState);

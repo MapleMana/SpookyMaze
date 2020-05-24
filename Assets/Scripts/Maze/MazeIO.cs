@@ -89,16 +89,4 @@ public class MazeState
             return formatter.Deserialize(stream) as MazeState;
         }
     }
-
-    /// <summary>
-    /// Synchronize the Maze with this state
-    /// </summary>
-    public void Load()
-    {
-        Maze.Instance.SetDimensions(width, height);
-        foreach (SerCell cell in cells)
-        {
-            Maze.Instance.Grid[cell.Pos] = cell.ToMazeCell();
-        }
-    }
 }

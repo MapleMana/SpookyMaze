@@ -6,12 +6,6 @@ using UnityEngine;
 
 public class Player : Movable
 {
-    private static Player _instance;
-
-    private Light _playerLight;
-    private bool _controllable = false;
-    private float _lightIntensity;
-    private Stack<ItemType> _inventory;
     private const float GHOST_EFFECTIVENESS = 0.3f; // percentage of the total time to add
 
     public float playerSpeed;
@@ -20,30 +14,30 @@ public class Player : Movable
     [Range(0f, 180f)]
     public float minLightAngle;
 
-    public static Player Instance => _instance;
-    public Light PlayerLight => _playerLight;
-    public float LightIntensity => _lightIntensity;
-    public Stack<ItemType> Inventory => _inventory;
-    public bool Controllable { get => _controllable; set => _controllable = value; }
+    public static Player Instance { get; private set; }
+    public Light Light { get; private set; }
+    public float DefaultLightIntensity { get; private set; }
+    public Stack<ItemType> Inventory { get; private set; }
+    public bool Controllable { get; set; } = false;
 
     void Awake()
     {
-        if (_instance == null)
+        if (Instance == null)
         {
-            _instance = this;
+            Instance = this;
         }
-        else if (_instance != this)
+        else if (Instance != this)
         {
             Destroy(gameObject);
         }
-        Movable._commandHistory = new List<KeyValuePair<Movable, PlayerCommand>>();
-        _inventory = new Stack<ItemType>();
+        _commandHistory = new List<KeyValuePair<Movable, PlayerCommand>>();
+        Inventory = new Stack<ItemType>();
     }
 
     private void Start()
     {
-        _playerLight = GetComponentInChildren<Light>();
-        _lightIntensity = _playerLight.intensity;
+        Light = GetComponentInChildren<Light>();
+        DefaultLightIntensity = Light.intensity;
     }
         
     /// <summary>
@@ -54,12 +48,12 @@ public class Player : Movable
     /// <param name="max">Maximal value to interpolate to</param>
     public void LerpLightAngle(float? min = null, float? max = null, float coef = 0)
     {
-        _playerLight.spotAngle = Mathf.Lerp(min ?? minLightAngle, max ?? maxLightAngle, coef);
+        Light.spotAngle = Mathf.Lerp(min ?? minLightAngle, max ?? maxLightAngle, coef);
     }
 
     void Update()
     {
-        if (_controllable)
+        if (Controllable)
         {
             PlayerCommand picking = PlayerCommand.PickUpItem;
             if (picking.Execute(this).Succeeded)
@@ -138,7 +132,7 @@ public class Player : Movable
         if (!currentCell.IsEmpty)
         {
             currentCell.Item.Activate();
-            _inventory.Push(currentCell.ClearItem());
+            Inventory.Push(currentCell.ClearItem());
             return true;
         }
         return false;
@@ -151,9 +145,9 @@ public class Player : Movable
     public bool PlaceItem()
     {
         MazeCell currentCell = Maze.Instance[MazePosition];
-        if (currentCell.IsEmpty && _inventory.Count > 0)
+        if (currentCell.IsEmpty && Inventory.Count > 0)
         {
-            currentCell.Item = ItemFactory.GetItem(_inventory.Pop());
+            currentCell.Item = ItemFactory.GetItem(Inventory.Pop());
             currentCell.Item.Deactivate();
             currentCell.Item.Display(currentCell.CellCenter(y: 0));
             return true;

@@ -4,15 +4,13 @@ using UnityEngine;
 
 public struct Verdict
 {
-    private bool _wasSuccessfull;
-    private float _executionTime;
-    public bool Succeeded => _wasSuccessfull;
-    public float Time => _executionTime;
+    public bool Succeeded { get; }
+    public float Time { get; }
 
     public Verdict(bool succeeded, float time=0)
     {
-        _wasSuccessfull = succeeded;
-        _executionTime = time;
+        Succeeded = succeeded;
+        Time = time;
     }
 }
 

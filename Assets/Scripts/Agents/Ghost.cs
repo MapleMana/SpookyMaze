@@ -4,16 +4,12 @@ using UnityEngine;
 
 public class Ghost : Movable
 {
-    private static bool _canMove = false;
-    private PlayerCommand command;
-    private List<PlayerCommand> commandSequence = new List<PlayerCommand>();
-
     public float ghostSpeed;
-    public static bool CanBeMoved { get => _canMove; set => _canMove = value; }
-    
+    public static bool CanBeMoved { get; set; } = false;
+
     void Update()
     {
-        if (_canMove)
+        if (CanBeMoved)
         {
             if (!_moving) {
                 StartCoroutine(PlayCommandsInRealTime(

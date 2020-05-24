@@ -9,7 +9,6 @@ public class MazeCell : System.IDisposable
 
     private Dictionary<Vector2Int, WallState> _wallState = new Dictionary<Vector2Int, WallState>();
     private Vector2Int _position;
-    private Item _item;
     private List<GameObject> _walls;
     private static GameObject _wallTemplate = Resources.Load<GameObject>("Wall");
 
@@ -18,8 +17,8 @@ public class MazeCell : System.IDisposable
                                                                        Vector2Int.down,
                                                                        Vector2Int.right };
 
-    public Item Item { get => _item; set => _item = value; }
-    public bool IsEmpty => _item == null || _item.Type == ItemType.None;
+    public Item Item { get; set; }
+    public bool IsEmpty => Item == null || Item.Type == ItemType.None;
     public Vector2Int Position => _position;
     public Vector3 CellCenter(float y) => new Vector3(CELL_WIDTH * (_position.x + 0.5f), y, CELL_WIDTH * (_position.y + 0.5f));
 
@@ -96,7 +95,7 @@ public class MazeCell : System.IDisposable
     /// </summary>
     public void Display(GameObject wallParent)
     {
-        _item?.Display(CellCenter(y: 0));
+        Item?.Display(CellCenter(y: 0));
         if (WallExists(Vector2Int.right))
         {
             PutWall(wallParent, new Vector3(CELL_WIDTH * (_position.x + 1), 0, CELL_WIDTH * (_position.y + 0.5f)), false);
@@ -121,9 +120,9 @@ public class MazeCell : System.IDisposable
     /// <returns>The type of the deleted item</returns>
     public ItemType ClearItem()
     {
-        ItemType deletedType = _item?.Type ?? ItemType.None;
-        _item?.Dispose();
-        _item = null;
+        ItemType deletedType = Item?.Type ?? ItemType.None;
+        Item?.Dispose();
+        Item = null;
         return deletedType;
     }
 
@@ -133,6 +132,6 @@ public class MazeCell : System.IDisposable
         {
             Object.Destroy(child);
         }
-        _item?.Dispose();
+        Item?.Dispose();
     }
 }

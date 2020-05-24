@@ -12,7 +12,7 @@ public class LightManager : Singleton<LightManager>
     public void TurnOn()
     {
         light.intensity = 1;
-        Player.Instance.PlayerLight.intensity = 0;
+        Player.Instance.Light.intensity = 0;
     }
 
     /// <summary>
@@ -21,6 +21,6 @@ public class LightManager : Singleton<LightManager>
     public void TurnOff()
     {
         light.intensity = 0;
-        Player.Instance.PlayerLight.intensity = Player.Instance.LightIntensity;
+        Player.Instance.Light.intensity = Player.Instance.DefaultLightIntensity;
     }
 }
