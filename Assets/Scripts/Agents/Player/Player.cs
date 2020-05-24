@@ -70,22 +70,6 @@ public class Player : Movable
         }
     }
 
-    private void OnCollisionEnter(Collision collision)
-    {
-        // TODO: emit event
-        UnityEvent onMetGhost = new UnityEvent();
-        if (collision.gameObject.name == "Ghost(Clone)" 
-            && LevelManager.Instance.LevelIs(LevelState.InProgress))
-        {
-            onMetGhost.Invoke();
-            PlayerCommand ghostIncounter = PlayerCommand.EncounterGhost;
-            if (ghostIncounter.Execute(this).Succeeded)
-            {
-                AddToHistory(this, ghostIncounter);
-            }
-        }
-    }
-
     /// <summary>
     /// Moves the player to the next decision point in the maze (intersection or dead end)
     /// </summary>

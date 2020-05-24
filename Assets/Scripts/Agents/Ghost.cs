@@ -39,4 +39,17 @@ public class Ghost : Movable
         
         return MazeCell.neighbours[0];
     }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.name == "Player"
+            && LevelManager.Instance.LevelIs(LevelState.InProgress))
+        {
+            PlayerCommand ghostEncounter = PlayerCommand.EncounterGhost;
+            if (ghostEncounter.Execute(this).Succeeded)
+            {
+                AddToHistory(this, ghostEncounter);
+            }
+        }
+    }
 }
