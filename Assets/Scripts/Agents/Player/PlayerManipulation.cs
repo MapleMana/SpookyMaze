@@ -21,7 +21,7 @@ public class PlayerCommand
         (Movable movable) => new Verdict(((Player)movable).PlaceItem())
     );
 
-    public static readonly PlayerCommand IncounterGhost = new PlayerCommand(
+    public static readonly PlayerCommand EncounterGhost = new PlayerCommand(
         (Movable movable) => new Verdict(((Player)movable).EncounterGhost()),
         (Movable movable) => new Verdict(((Player)movable).LeaveGhost())
     );

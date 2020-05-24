@@ -126,7 +126,6 @@ public class LevelManager : Singleton<LevelManager>
         UIManager.Instance.ShowFinishMenu(mazeCompleted);
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (LevelIs(LevelState.InProgress) ||

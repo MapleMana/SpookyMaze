@@ -15,14 +15,14 @@ public static class LevelGenerator
         int mazeWidth = INITIAL_MAZE_WIDTH;
         int mazeHeight = INITIAL_MAZE_HEIGHT;
         for (int i = 0; i < NUM_OF_LEVELS; i++)
-        { 
-            // FIXME: instantiate the maze when it's not a singleton
+        {
             Maze.Instance.SetDimensions(mazeWidth, mazeHeight);
             new BranchedDFSGeneration().Generate();
             MazeState state = new MazeState(Maze.Instance);
             state.SaveTo($"/{i}.maze");
             mazeWidth += MAZE_WIDTH_INCREMENT;
             mazeHeight += MAZE_HEIGHT_INCREMENT;
+            Maze.Instance.Clear();
         }
     }
 }

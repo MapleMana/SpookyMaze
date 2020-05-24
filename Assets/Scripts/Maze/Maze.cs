@@ -6,19 +6,28 @@ using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class Maze: Singleton<Maze>
+public class Maze
 {
     private Vector2Int _start;
     private Vector2Int _end;
     private string  _beforeStart;
     private static readonly Random _generator = new Random();
 
+    public static Maze Instance { get; private set; }
     public Vector2Int StartPos => _start;
     public Vector2Int EndPos => _end;
     public int Width { get; private set; } = 10;
     public int Height { get; private set; } = 10;
     public Dictionary<Vector2Int, MazeCell> Grid { get; private set; } = new Dictionary<Vector2Int, MazeCell>();
     public MazeCell this[Vector2Int pos] => Grid[pos];
+
+    /// <summary>
+    /// Initializes the singleton if the object didn't exist before
+    /// </summary>
+    public static void Initialize()
+    {
+        Instance = Instance ?? new Maze();
+    }
 
     /// <summary>
     /// Checks if the position is in bounds of the maze
@@ -141,14 +150,8 @@ public class Maze: Singleton<Maze>
     {
         foreach (var kvPair in Grid)
         {
-            kvPair.Value.Display(gameObject);            
+            kvPair.Value.Display();            
         }
-    }
-
-    protected override void OnDestroy()
-    {
-        Clear();
-        base.OnDestroy();
     }
 
     public void Clear()

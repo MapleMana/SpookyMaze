@@ -78,7 +78,7 @@ public class Player : Movable
             && LevelManager.Instance.LevelIs(LevelState.InProgress))
         {
             onMetGhost.Invoke();
-            PlayerCommand ghostIncounter = PlayerCommand.IncounterGhost;
+            PlayerCommand ghostIncounter = PlayerCommand.EncounterGhost;
             if (ghostIncounter.Execute(this).Succeeded)
             {
                 AddToHistory(this, ghostIncounter);

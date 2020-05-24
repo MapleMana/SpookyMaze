@@ -23,6 +23,7 @@ public class GameManager : Singleton<GameManager>
 
     private void Start()
     {
+        Maze.Initialize();
         GameMode = new ClassicGameMode();
         int levelsGenerated = PlayerPrefs.GetInt("generated", 0);
         if (levelsGenerated == 0)
