@@ -4,11 +4,10 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-public class Maze: System.IDisposable
+public class Maze: Singleton<Maze>
 {
-    private static Maze _instance;
-
     private int _width = 10;
     private int _height = 10;
     private Vector2Int _start;
@@ -17,8 +16,6 @@ public class Maze: System.IDisposable
     private static Random _generator = new Random();
     private Dictionary<Vector2Int, MazeCell> _grid = new Dictionary<Vector2Int, MazeCell>();
 
-
-    public static Maze Instance => _instance;
     public Vector2Int StartPos => _start;
     public Vector2Int EndPos => _end;
     public int Width => _width;
@@ -26,16 +23,11 @@ public class Maze: System.IDisposable
     public Dictionary<Vector2Int, MazeCell> Grid { get => _grid; set => _grid = value; }
     public MazeCell this[Vector2Int pos] => Grid[pos];
 
-    private Maze() { }
-
-    /// <summary>
-    /// Initializes the singleton if the object didn't exist before
-    /// </summary>
-    public static void Initialize()
+    protected override void Awake()
     {
-        _instance = _instance ?? new Maze();
+        base.Awake();
     }
-    
+
     /// <summary>
     /// Checks if the position is in bounds of the maze
     /// </summary>
@@ -54,8 +46,6 @@ public class Maze: System.IDisposable
     /// <param name="height">The height (Z) of the maze</param>
     public void SetDimensions(int width, int height)
     {
-        Dispose();
-
         _width = width;
         _height = height;
 
@@ -147,16 +137,16 @@ public class Maze: System.IDisposable
     {
         foreach (var kvPair in Grid)
         {
-            kvPair.Value.Display();            
+            kvPair.Value.Display(gameObject);            
         }
     }
 
-    public void Dispose()
+    protected override void OnDestroy()
     {
         foreach (var kvPair in Grid)
         {
             kvPair.Value.Dispose();
         }
-        Grid.Clear();
+        base.OnDestroy();
     }
 }

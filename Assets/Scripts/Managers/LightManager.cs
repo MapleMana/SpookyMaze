@@ -6,12 +6,6 @@ public class LightManager : Singleton<LightManager>
 {
     public new Light light;
 
-    protected override void Awake()
-    {
-        base.Awake();
-        DontDestroyOnLoad(gameObject);
-    }
-
     /// <summary>
     /// DirectionalLight turns on, all maze becomes visible 
     /// </summary>

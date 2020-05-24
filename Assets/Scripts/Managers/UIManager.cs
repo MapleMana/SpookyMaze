@@ -24,12 +24,6 @@ public class UIManager : Singleton<UIManager>
     public Button ButtonTemplate;
     public List<Button> buttonList;
 
-    protected override void Awake()
-    {
-        base.Awake();
-        DontDestroyOnLoad(gameObject);
-    }
-
     private void Start()
     {
         WidthChanged(GameManager.Instance.MazeWidth);
@@ -88,7 +82,7 @@ public class UIManager : Singleton<UIManager>
     {
         LevelSelect.SetActive(false);
         MainMenu.SetActive(false);
-        SceneManager.LoadScene("Maze");
+        SceneManager.LoadScene("Maze", LoadSceneMode.Additive);
     }
 
     public void QuitGame()
@@ -133,7 +127,7 @@ public class UIManager : Singleton<UIManager>
         FinishMenu.SetActive(false);
         MainMenu.SetActive(true);
         LightManager.Instance.TurnOff();
-        SceneManager.LoadScene("MainMenu");
+        SceneManager.UnloadSceneAsync("Maze");
         CameraManager.Instance.FocusOnMenu(MainMenu.transform.position);
     }
 

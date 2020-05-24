@@ -17,12 +17,6 @@ public class CameraManager : Singleton<CameraManager>
         _camera = GetComponent<Camera>();
     }
 
-    protected override void Awake()
-    {
-        base.Awake();
-        DontDestroyOnLoad(gameObject);
-    }
-
     public void FocusOnMaze(Maze maze)
     {
         float screenRatio = 1f * Screen.width / Screen.height;

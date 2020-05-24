@@ -51,12 +51,6 @@ public class GameManager : Singleton<GameManager>
 
     private GameManager() { }
 
-    protected override void Awake()
-    {
-        base.Awake();
-        DontDestroyOnLoad(gameObject);
-    }
-
     private void OnEnable()
     {
         _mazeWidth = initialMazeWidth;
@@ -72,7 +66,6 @@ public class GameManager : Singleton<GameManager>
     private void Start()
     {
         _gameMode = new ClassicGameMode();
-        Maze.Initialize();
         int levelsGenerated = PlayerPrefs.GetInt("generated", 0);
         if (levelsGenerated == 0)
         {

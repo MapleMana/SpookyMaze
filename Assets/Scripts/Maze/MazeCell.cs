@@ -77,7 +77,7 @@ public class MazeCell : System.IDisposable
     /// </summary>
     /// <param name="pos">The position to place the wall at</param>
     /// <param name="horizontal">Determines whether the wall is horizontal or vertical</param>
-    private void PutWall(Vector3 pos, bool horizontal = true)
+    private void PutWall(GameObject parent, Vector3 pos, bool horizontal = true)
     {
         GameObject wall = Object.Instantiate(_wallTemplate, pos, Quaternion.identity);
         float wallX = horizontal ? CELL_WIDTH + WALL_WIDTH : WALL_WIDTH;
@@ -87,30 +87,31 @@ public class MazeCell : System.IDisposable
         float wallHeight = CELL_WIDTH + Random.value * 0.1f;
 
         wall.transform.localScale = new Vector3(wallX, wallHeight, wallY);
+        wall.transform.parent = parent.transform;
         _walls.Add(wall);
     }
 
     /// <summary>
     /// Instantiates walls according to _wallState
     /// </summary>
-    public void Display()
+    public void Display(GameObject wallParent)
     {
         _item?.Display(CellCenter(y: 0));
         if (WallExists(Vector2Int.right))
         {
-            PutWall(new Vector3(CELL_WIDTH * (_position.x + 1), 0, CELL_WIDTH * (_position.y + 0.5f)), false);
+            PutWall(wallParent, new Vector3(CELL_WIDTH * (_position.x + 1), 0, CELL_WIDTH * (_position.y + 0.5f)), false);
         }
         if (WallExists(Vector2Int.up))
         {
-            PutWall(new Vector3(CELL_WIDTH * (_position.x + 0.5f), 0, CELL_WIDTH * (_position.y + 1)), true);
+            PutWall(wallParent, new Vector3(CELL_WIDTH * (_position.x + 0.5f), 0, CELL_WIDTH * (_position.y + 1)), true);
         }
         if (WallExists(Vector2Int.left))
         {
-            PutWall(new Vector3(CELL_WIDTH * _position.x, 0, CELL_WIDTH * (_position.y + 0.5f)), false);
+            PutWall(wallParent, new Vector3(CELL_WIDTH * _position.x, 0, CELL_WIDTH * (_position.y + 0.5f)), false);
         }
         if (WallExists(Vector2Int.down))
         {
-            PutWall(new Vector3(CELL_WIDTH * (_position.x + 0.5f), 0, CELL_WIDTH * _position.y), true);
+            PutWall(wallParent, new Vector3(CELL_WIDTH * (_position.x + 0.5f), 0, CELL_WIDTH * _position.y), true);
         }
     }
 
