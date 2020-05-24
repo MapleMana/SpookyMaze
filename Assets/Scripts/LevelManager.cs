@@ -45,7 +45,6 @@ public class LevelManager : Singleton<LevelManager>
         Maze.Instance.SaveState();
         Maze.Instance.Display();
 
-        Player.Instance.Controllable = true;
         Movable.ResetState();
         GameMode.Initialize();
     }
@@ -114,7 +113,6 @@ public class LevelManager : Singleton<LevelManager>
     public void EndLevel(bool mazeCompleted)
     {
         _levelState = mazeCompleted ? LevelState.Completed : LevelState.Failed;
-        Player.Instance.Controllable = Player.Instance.Moving = false;
         Ghost.CanBeMoved = false;
         _finalPlayerLightAngle = Player.Instance.Light.spotAngle;
         LevelNumber++;

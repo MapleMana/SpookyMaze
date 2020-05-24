@@ -20,11 +20,6 @@ public class Maze: Singleton<Maze>
     public Dictionary<Vector2Int, MazeCell> Grid { get; private set; } = new Dictionary<Vector2Int, MazeCell>();
     public MazeCell this[Vector2Int pos] => Grid[pos];
 
-    protected override void Awake()
-    {
-        base.Awake();
-    }
-
     /// <summary>
     /// Checks if the position is in bounds of the maze
     /// </summary>
@@ -162,5 +157,6 @@ public class Maze: Singleton<Maze>
         {
             kvPair.Value.Dispose();
         }
+        Grid.Clear();
     }
 }

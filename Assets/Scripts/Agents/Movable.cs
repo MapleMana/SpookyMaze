@@ -27,7 +27,7 @@ public abstract class Movable : MonoBehaviour
 
     void Awake()
     {
-        Movable._commandHistory = new List<KeyValuePair<Movable, PlayerCommand>>();
+        _commandHistory = new List<KeyValuePair<Movable, PlayerCommand>>();
     }
 
     /// <summary>
@@ -35,7 +35,7 @@ public abstract class Movable : MonoBehaviour
     /// </summary>
     public static void ResetState()
     {
-        Movable._commandHistory.Clear();
+        _commandHistory.Clear();
         _previousCommandTime = Time.time;
     }
 
@@ -43,8 +43,8 @@ public abstract class Movable : MonoBehaviour
     {
         float timeDiff = Time.time - _previousCommandTime;
         _previousCommandTime = Time.time;
-        Movable._commandHistory.Add(new KeyValuePair<Movable, PlayerCommand>(movingObject, PlayerCommand.CreateIdle(timeDiff)));
-        Movable._commandHistory.Add(new KeyValuePair<Movable, PlayerCommand>(movingObject, command));
+        _commandHistory.Add(new KeyValuePair<Movable, PlayerCommand>(movingObject, PlayerCommand.CreateIdle(timeDiff)));
+        _commandHistory.Add(new KeyValuePair<Movable, PlayerCommand>(movingObject, command));
     }
 
     /// <summary>
@@ -62,7 +62,7 @@ public abstract class Movable : MonoBehaviour
     {
         if (reversed)
         {
-            Movable._commandHistory.Reverse();
+            _commandHistory.Reverse();
         }
                 
         foreach (var command in _commandHistory)

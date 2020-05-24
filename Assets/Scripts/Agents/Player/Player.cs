@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Player : Movable
 {
@@ -18,7 +19,6 @@ public class Player : Movable
     public Light Light { get; private set; }
     public float DefaultLightIntensity { get; private set; }
     public Stack<ItemType> Inventory { get; private set; }
-    public bool Controllable { get; set; } = false;
 
     void Awake()
     {
@@ -53,7 +53,7 @@ public class Player : Movable
 
     void Update()
     {
-        if (Controllable)
+        if (LevelManager.Instance.LevelIs(LevelState.InProgress))
         {
             PlayerCommand picking = PlayerCommand.PickUpItem;
             if (picking.Execute(this).Succeeded)
@@ -73,9 +73,11 @@ public class Player : Movable
     private void OnCollisionEnter(Collision collision)
     {
         // TODO: emit event
+        UnityEvent onMetGhost = new UnityEvent();
         if (collision.gameObject.name == "Ghost(Clone)" 
             && LevelManager.Instance.LevelIs(LevelState.InProgress))
         {
+            onMetGhost.Invoke();
             PlayerCommand ghostIncounter = PlayerCommand.IncounterGhost;
             if (ghostIncounter.Execute(this).Succeeded)
             {
