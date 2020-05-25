@@ -7,8 +7,6 @@ using UnityEngine.Events;
 
 public class Player : Movable
 {
-    private const float GHOST_EFFECTIVENESS = 0.3f; // percentage of the total time to add
-
     public float playerSpeed;
     [Range(0f, 180f)]
     public float maxLightAngle;
@@ -56,7 +54,7 @@ public class Player : Movable
         if (LevelManager.Instance.LevelIs(LevelState.InProgress))
         {
             PlayerCommand command = PlayerActionDetector.DetectDesktop();
-            if (!_moving && command != null && command.Execute(this).Succeeded)
+            if (!Moving && command != null && command.Execute(this).Succeeded)
             {
                 AddToHistory(this, command);
                 MoveToDecisionPoint(incomingDirection: ((PlayerMovementCommand)command).Direction);
@@ -138,28 +136,8 @@ public class Player : Movable
     {
         GameObject itemObject = ItemFactory.SpawnItem(Inventory.Pop(), transform.position);
         Item item = itemObject.GetComponent<Item>();
-        Maze.Instance[MazePosition].Item = itemObject;
         item.Deactivate();
-        return true;
-    }
-
-    /// <summary>
-    /// Takes place when player incounters a ghost
-    /// </summary>
-    /// <returns></returns>
-    public bool EncounterGhost()
-    {
-        LevelManager.Instance.AddTime(ratio: -GHOST_EFFECTIVENESS);
-        return true;
-    }
-
-    /// <summary>
-    /// Reverts ghost reduction of the time
-    /// </summary>
-    /// <returns></returns>
-    public bool LeaveGhost()
-    {
-        LevelManager.Instance.AddTime(ratio: GHOST_EFFECTIVENESS);
+        Maze.Instance[MazePosition].Item = itemObject;
         return true;
     }
 }

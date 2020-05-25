@@ -7,10 +7,9 @@ public abstract class Movable : MonoBehaviour
 {
     private Vector2Int _mazePosition;
     internal static List<KeyValuePair<Movable, PlayerCommand>> _commandHistory;
-    internal bool _moving = false;
     internal static float _previousCommandTime;
 
-    public bool Moving { get => _moving; set => _moving = value; }
+    public bool Moving { get; set; } = false;
     public bool AtMazeEnd => MazePosition == Maze.Instance.EndPos;
 
     internal Vector2Int MazePosition {

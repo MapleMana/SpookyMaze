@@ -118,7 +118,6 @@ public class MazeCell : System.IDisposable
 
     public void Dispose()
     {
-        Object.Destroy(Item);
         foreach (GameObject child in _walls)
         {
             Object.Destroy(child);

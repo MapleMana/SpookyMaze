@@ -4,19 +4,19 @@ using UnityEngine;
 
 public class Ghost : Movable
 {
+    private const float EFFECTIVENESS = 0.3f; // percentage of the total time to remove
+
     public float ghostSpeed;
     public static bool CanBeMoved { get; set; } = false;
 
     void Update()
     {
-        if (CanBeMoved)
+        if (CanBeMoved && !Moving)
         {
-            if (!_moving) {
-                StartCoroutine(PlayCommandsInRealTime(
-                    playerCommands: new List<PlayerCommand> { PlayerMovementCommand.FromVector(getRandomDirection()) },
-                    pauseBetween: 1 / ghostSpeed
-                    ));
-            }
+            StartCoroutine(PlayCommandsInRealTime(
+                playerCommands: new List<PlayerCommand> { PlayerMovementCommand.FromVector(GetRandomDirection()) },
+                pauseBetween: 1 / ghostSpeed
+            ));
         }
     }
     
@@ -26,7 +26,7 @@ public class Ghost : Movable
         return true;
     }
 
-    private Vector2Int getRandomDirection()
+    private Vector2Int GetRandomDirection()
     {
         MazeCell.neighbours.Shuffle();
         foreach (Vector2Int possibleDirection in MazeCell.neighbours)
@@ -45,12 +45,31 @@ public class Ghost : Movable
         if (other.gameObject.name == "Player" && 
             LevelManager.Instance.LevelIs(LevelState.InProgress))
         {
-            PlayerCommand ghostEncounter = PlayerCommand.EncounterGhost;
-            Player player = other.gameObject.GetComponent<Player>();
-            if (ghostEncounter.Execute(player).Succeeded)
+            PlayerCommand playerEncounter = PlayerCommand.EncounterPlayer;
+            if (playerEncounter.Execute(this).Succeeded)
             {
-                AddToHistory(player, ghostEncounter);
+                AddToHistory(this, playerEncounter);
             }
         }
+    }
+
+    /// <summary>
+    /// Takes place when the ghost encounters the player
+    /// </summary>
+    /// <returns></returns>
+    public bool EncounterPlayer()
+    {
+        LevelManager.Instance.AddTime(ratio: -EFFECTIVENESS);
+        return true;
+    }
+
+    /// <summary>
+    /// Reverts ghost reduction of the time
+    /// </summary>
+    /// <returns></returns>
+    public bool LeavePlayer()
+    {
+        LevelManager.Instance.AddTime(ratio: EFFECTIVENESS);
+        return true;
     }
 }
