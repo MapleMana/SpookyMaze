@@ -102,10 +102,10 @@ public class Player : Movable
         return false;
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider other)
     {
-        if (collision.gameObject.tag == "Item"
-            && LevelManager.Instance.LevelIs(LevelState.InProgress))
+        if (other.gameObject.CompareTag("Item") && 
+            LevelManager.Instance.LevelIs(LevelState.InProgress))
         {
             PlayerCommand keyPicking = PlayerCommand.PickUpItem;
             if (keyPicking.Execute(this).Succeeded)
