@@ -1,48 +1,83 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class UIManager : MonoBehaviour
+public class UIManager : Singleton<UIManager>
 {    
-    private static UIManager _instance;
+    public TextMeshProUGUI NextPlay;
 
-    public Text Width;
-    public Text Height;
     public GameObject MainMenu;
+    public GameObject LevelSelect;
     public GameObject FinishMenu;
     public GameObject SettingsMenu;
+    public Toggle Key;
+    public Toggle Oil;
+    public Toggle Ghost;
 
-    public static UIManager Instance => _instance;
-
-    private void Awake()
-    {
-        if (_instance == null)
-        {
-            _instance = this;
-        }
-        else if (_instance != this)
-        {
-            Destroy(gameObject);
-        }
-        DontDestroyOnLoad(gameObject);
-    }
+    public GameObject ButtonsPanel;
+    public Button ButtonTemplate;
+    public List<Button> buttonList;
 
     private void Start()
     {
-        WidthChanged(GameManager.Instance.MazeWidth);
-        HeightChanged(GameManager.Instance.MazeHeight);
+        LoadLevels();
     }
 
     /// <summary>
-    /// This method is invoked when the "Play" button is pressed, loads the new maze
+    /// Executed when one of the level select buttons is pressed
+    /// </summary>
+    /// <param name="levelNumber">The level number to load</param>
+    /// <returns></returns>
+    public UnityEngine.Events.UnityAction OnLevelOptionClick(int levelNumber)
+    {
+        return () =>
+            {
+                GameManager.Instance.CurrentLevel = levelNumber;
+                StartGame();
+            };
+    }
+
+    /// <summary>
+    /// Invoked when the game starts and loads level buttons to the Level Select screen
+    /// </summary>
+    public void LoadLevels()
+    {
+        buttonList = new List<Button>();
+        int levelReached = PlayerPrefs.GetInt("levelReached", 1);
+
+        for (int i = 1; i <= LevelGenerator.NUM_OF_LEVELS; i++)
+        {
+            Button newButton = Instantiate(ButtonTemplate);
+            newButton.GetComponentInChildren<Text>().text = i.ToString();
+            newButton.onClick.AddListener(OnLevelOptionClick(i));
+            newButton.interactable = (i <= levelReached);
+            newButton.transform.SetParent(ButtonsPanel.transform, false);
+
+            buttonList.Add(newButton);
+        }
+    }
+
+    /// <summary>
+    /// Makes "levelNumber" button interactable
+    /// </summary>
+    /// <param name="levelNumber">Level to be inlocked</param>
+    public void UnlockLevel(int levelNumber)
+    {
+        buttonList[levelNumber - 1].interactable = true;
+    }
+
+    /// <summary>
+    /// This method loads the new maze and starts the game
     /// </summary>
     public void StartGame()
     {
+        LevelSelect.SetActive(false);
         MainMenu.SetActive(false);
-        GameManager.Instance.LoadLevel("Maze");
+        SceneManager.LoadScene("Maze", LoadSceneMode.Additive);
     }
 
     public void QuitGame()
@@ -53,40 +88,30 @@ public class UIManager : MonoBehaviour
     /// <summary>
     /// Displays the finish menu, when a player gets to the end point
     /// </summary>
-    public void ShowFinishMenu()
+    public void ShowFinishMenu(bool mazeCompleted)
     {
-        LightManager.Instance.TurnOn();
         FinishMenu.SetActive(true);
+        NextPlay.text = mazeCompleted ? "Go to the Next Level" : "Play Again";
     }
 
     /// <summary>
-    /// Replays player's movements from the start
+    /// Replays player's movements from the start. Fired from FinishMenu.
     /// </summary>
     public void WatchReplay()
     {
         FinishMenu.SetActive(false);
-        StartCoroutine(Player.Instance.PlayCommands(
-            initialPosition: Maze.Instance.Start,
-            playTime: Player.Instance.replayTime,
+        LevelManager.Instance.WatchReplay(
             onComplete: () => FinishMenu.SetActive(true)
-        ));
+        );
     }
 
     /// <summary>
-    /// Replays player's movements from finish to the start and reloads the maze
+    /// Replays player's movements from finish to the start. Fired from FinishMenu.
     /// </summary>
     public void GoToNextLevel()
     {
         FinishMenu.SetActive(false);
-        StartCoroutine(Player.Instance.PlayCommands(
-            reversed: true,
-            playTime: Player.Instance.reversedReplayTime,
-            onComplete: () =>
-            {
-                LightManager.Instance.TurnOff();
-                GameManager.Instance.LoadLevel("Maze");
-            }
-        ));
+        LevelManager.Instance.LoadCurrentLevel();
     }
 
     /// <summary>
@@ -97,27 +122,23 @@ public class UIManager : MonoBehaviour
         FinishMenu.SetActive(false);
         MainMenu.SetActive(true);
         LightManager.Instance.TurnOff();
+        SceneManager.UnloadSceneAsync("Maze");
         CameraManager.Instance.FocusOnMenu(MainMenu.transform.position);
-        GameManager.Instance.LoadLevel("MainMenu");
     }
 
-    /// <summary>
-    /// Called when slider value is changed and passes the new width to the GM
-    /// </summary>
-    /// <param name="width"></param>
-    public void WidthChanged(float width)
+    public void ModeToggled()
     {
-        Width.text = width.ToString();
-        GameManager.Instance.MazeWidth = (int) width;
-    }
-
-    /// <summary>
-    /// Called when slider value is changed and passes the new height to the GM
-    /// </summary>
-    /// <param name="height"></param>
-    public void HeightChanged(float height)
-    {
-        Height.text = height.ToString();
-        GameManager.Instance.MazeHeight = (int) height;
+        if (Key.isOn)
+        {
+            GameManager.Instance.GameMode = new DoorKeyGameMode();
+        }
+        if (Oil.isOn)
+        {
+            GameManager.Instance.GameMode = new OilGameMode();
+        }
+        if (Ghost.isOn)
+        {
+            GameManager.Instance.GameMode = new GhostGameMode();
+        }
     }
 }
