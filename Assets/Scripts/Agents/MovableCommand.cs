@@ -14,14 +14,14 @@ public struct Verdict
     }
 }
 
-public class PlayerCommand
+public class MovableCommand
 {
-    public static readonly PlayerCommand PickUpItem = new PlayerCommand(
+    public static readonly MovableCommand PickUpItem = new MovableCommand(
         (Movable movable) => new Verdict(((Player)movable).PickUpItem()),
         (Movable movable) => new Verdict(((Player)movable).PlaceItem())
     );
 
-    public static readonly PlayerCommand EncounterPlayer = new PlayerCommand(
+    public static readonly MovableCommand EncounterPlayer = new MovableCommand(
         (Movable movable) => new Verdict(((Ghost)movable).EncounterPlayer()),
         (Movable movable) => new Verdict(((Ghost)movable).LeavePlayer())
     );
@@ -36,30 +36,30 @@ public class PlayerCommand
     public ExecuteCallback Execute { get; internal set; }
     public ExecuteCallback ExecuteReversed { get; internal set; }
 
-    public PlayerCommand(ExecuteCallback executeMethod, ExecuteCallback executeReversedMethod)
+    public MovableCommand(ExecuteCallback executeMethod, ExecuteCallback executeReversedMethod)
     {
         Execute = executeMethod;
         ExecuteReversed = executeReversedMethod;
     }
 
-    public static PlayerCommand CreateIdle(float time)
+    public static MovableCommand CreateIdle(float time)
     {
-        return new PlayerCommand((Movable movable) => new Verdict(false, time), (Movable movable) => new Verdict(false, time));
+        return new MovableCommand((Movable movable) => new Verdict(false, time), (Movable movable) => new Verdict(false, time));
     }
 }
 
-public class PlayerMovementCommand : PlayerCommand
+public class MovableMovementCommand : MovableCommand
 {
     private Vector2Int _direction;
 
     public Vector2Int Direction => _direction;
 
-    public static readonly PlayerMovementCommand MoveUp = new PlayerMovementCommand(Vector2Int.up);
-    public static readonly PlayerMovementCommand MoveDown = new PlayerMovementCommand(Vector2Int.down);
-    public static readonly PlayerMovementCommand MoveLeft = new PlayerMovementCommand(Vector2Int.left);
-    public static readonly PlayerMovementCommand MoveRight = new PlayerMovementCommand(Vector2Int.right);
+    public static readonly MovableMovementCommand MoveUp = new MovableMovementCommand(Vector2Int.up);
+    public static readonly MovableMovementCommand MoveDown = new MovableMovementCommand(Vector2Int.down);
+    public static readonly MovableMovementCommand MoveLeft = new MovableMovementCommand(Vector2Int.left);
+    public static readonly MovableMovementCommand MoveRight = new MovableMovementCommand(Vector2Int.right);
 
-    public PlayerMovementCommand(Vector2Int direction) : base(player => new Verdict(player.Move(direction)), player => new Verdict(player.Move(-1 * direction)))
+    public MovableMovementCommand(Vector2Int direction) : base(player => new Verdict(player.Move(direction)), player => new Verdict(player.Move(-1 * direction)))
     {
         _direction = direction;
     }
@@ -69,7 +69,7 @@ public class PlayerMovementCommand : PlayerCommand
     /// </summary>
     /// <param name="direction">The direction to get the command for</param>
     /// <returns>Desired command or null if the mapping does not exist</returns>
-    public static PlayerMovementCommand FromVector(Vector2Int direction)
+    public static MovableMovementCommand FromVector(Vector2Int direction)
     {
         if (direction == Vector2Int.up) return MoveUp;
         if (direction == Vector2Int.down) return MoveDown;

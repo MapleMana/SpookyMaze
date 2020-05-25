@@ -14,7 +14,7 @@ public class Ghost : Movable
         if (CanBeMoved && !Moving)
         {
             StartCoroutine(PlayCommandsInRealTime(
-                playerCommands: new List<PlayerCommand> { PlayerMovementCommand.FromVector(GetRandomDirection()) },
+                playerCommands: new List<MovableCommand> { MovableMovementCommand.FromVector(GetRandomDirection()) },
                 pauseBetween: 1 / ghostSpeed
             ));
         }
@@ -45,7 +45,7 @@ public class Ghost : Movable
         if (other.gameObject.name == "Player" && 
             LevelManager.Instance.LevelIs(LevelState.InProgress))
         {
-            PlayerCommand playerEncounter = PlayerCommand.EncounterPlayer;
+            MovableCommand playerEncounter = MovableCommand.EncounterPlayer;
             if (playerEncounter.Execute(this).Succeeded)
             {
                 AddToHistory(this, playerEncounter);

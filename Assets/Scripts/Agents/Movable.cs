@@ -6,7 +6,7 @@ using UnityEngine;
 public abstract class Movable : MonoBehaviour
 {
     private Vector2Int _mazePosition;
-    internal static List<KeyValuePair<Movable, PlayerCommand>> _commandHistory;
+    internal static List<KeyValuePair<Movable, MovableCommand>> _commandHistory;
     internal static float _previousCommandTime;
 
     public bool Moving { get; set; } = false;
@@ -26,7 +26,7 @@ public abstract class Movable : MonoBehaviour
 
     void Awake()
     {
-        _commandHistory = new List<KeyValuePair<Movable, PlayerCommand>>();
+        _commandHistory = new List<KeyValuePair<Movable, MovableCommand>>();
     }
 
     /// <summary>
@@ -38,12 +38,12 @@ public abstract class Movable : MonoBehaviour
         _previousCommandTime = Time.time;
     }
 
-    public void AddToHistory(Movable movingObject, PlayerCommand command)
+    public void AddToHistory(Movable movingObject, MovableCommand command)
     {
         float timeDiff = Time.time - _previousCommandTime;
         _previousCommandTime = Time.time;
-        _commandHistory.Add(new KeyValuePair<Movable, PlayerCommand>(movingObject, PlayerCommand.CreateIdle(timeDiff)));
-        _commandHistory.Add(new KeyValuePair<Movable, PlayerCommand>(movingObject, command));
+        _commandHistory.Add(new KeyValuePair<Movable, MovableCommand>(movingObject, MovableCommand.CreateIdle(timeDiff)));
+        _commandHistory.Add(new KeyValuePair<Movable, MovableCommand>(movingObject, command));
     }
 
     /// <summary>
@@ -81,13 +81,13 @@ public abstract class Movable : MonoBehaviour
     /// <param name="pauseBetween"></param>
     /// <returns></returns>
     internal IEnumerator PlayCommandsInRealTime(
-        List<PlayerCommand> playerCommands,
+        List<MovableCommand> playerCommands,
         float pauseBetween)
     {
         //pauseBetweenCommands -= Time.deltaTime;
 
         Moving = true;
-        foreach (PlayerCommand command in playerCommands)
+        foreach (MovableCommand command in playerCommands)
         {
             if (Moving)
             {

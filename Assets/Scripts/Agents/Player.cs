@@ -28,7 +28,7 @@ public class Player : Movable
         {
             Destroy(gameObject);
         }
-        _commandHistory = new List<KeyValuePair<Movable, PlayerCommand>>();
+        _commandHistory = new List<KeyValuePair<Movable, MovableCommand>>();
         Inventory = new Stack<ItemType>();
     }
 
@@ -53,11 +53,11 @@ public class Player : Movable
     {
         if (LevelManager.Instance.LevelIs(LevelState.InProgress))
         {
-            PlayerCommand command = PlayerActionDetector.DetectDesktop();
+            MovableCommand command = PlayerActionDetector.DetectDesktop();
             if (!Moving && command != null && command.Execute(this).Succeeded)
             {
                 AddToHistory(this, command);
-                MoveToDecisionPoint(incomingDirection: ((PlayerMovementCommand)command).Direction);
+                MoveToDecisionPoint(incomingDirection: ((MovableMovementCommand)command).Direction);
             }
         }
     }
@@ -71,11 +71,11 @@ public class Player : Movable
             position: MazePosition,
             incomingDirection: incomingDirection
         );
-        List<PlayerCommand> commandSequence = new List<PlayerCommand>();
+        List<MovableCommand> commandSequence = new List<MovableCommand>();
         for (int i = 0; i < movementSequence.Count; i++)
         {
             Vector2Int direction = movementSequence[i];
-            PlayerMovementCommand newMovement = PlayerMovementCommand.FromVector(direction);
+            MovableMovementCommand newMovement = MovableMovementCommand.FromVector(direction);
             commandSequence.Add(newMovement);
         }
 
@@ -105,7 +105,7 @@ public class Player : Movable
         if (other.gameObject.CompareTag("Item") && 
             LevelManager.Instance.LevelIs(LevelState.InProgress))
         {
-            PlayerCommand keyPicking = PlayerCommand.PickUpItem;
+            MovableCommand keyPicking = MovableCommand.PickUpItem;
             if (keyPicking.Execute(this).Succeeded)
             {
                 AddToHistory(this, keyPicking);

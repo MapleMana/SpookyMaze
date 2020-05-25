@@ -15,7 +15,7 @@ static class PlayerActionDetector
     /// Detects swipes on mobile platforms
     /// </summary>
     /// <returns>Direction of movement</returns>
-    public static PlayerCommand DetectMobile()
+    public static MovableCommand DetectMobile()
     {
         if (Input.touchCount == 1)
         {
@@ -33,11 +33,11 @@ static class PlayerActionDetector
                     // check which axis is more significant
                     if (Mathf.Abs(touchEnd.x - touchStart.x) > Mathf.Abs(touchEnd.y - touchStart.y))
                     {
-                        return (touchEnd.x > touchStart.x) ? PlayerMovementCommand.MoveRight : PlayerMovementCommand.MoveLeft;
+                        return (touchEnd.x > touchStart.x) ? MovableMovementCommand.MoveRight : MovableMovementCommand.MoveLeft;
                     }
                     else
                     {
-                        return (touchEnd.y > touchStart.y) ? PlayerMovementCommand.MoveUp : PlayerMovementCommand.MoveDown;
+                        return (touchEnd.y > touchStart.y) ? MovableMovementCommand.MoveUp : MovableMovementCommand.MoveDown;
                     }
                 }
             }
@@ -49,23 +49,23 @@ static class PlayerActionDetector
     /// Detects arrow key presses on desktop
     /// </summary>
     /// <returns>Direction of movement</returns>
-    public static PlayerCommand DetectDesktop()
+    public static MovableCommand DetectDesktop()
     {
         if (Input.GetKeyUp(KeyCode.UpArrow))
         {
-            return PlayerMovementCommand.MoveUp;
+            return MovableMovementCommand.MoveUp;
         }
         if (Input.GetKeyUp(KeyCode.DownArrow))
         {
-            return PlayerMovementCommand.MoveDown;
+            return MovableMovementCommand.MoveDown;
         }
         if (Input.GetKeyUp(KeyCode.LeftArrow))
         {
-            return PlayerMovementCommand.MoveLeft;
+            return MovableMovementCommand.MoveLeft;
         }
         if (Input.GetKeyUp(KeyCode.RightArrow))
         {
-            return PlayerMovementCommand.MoveRight;
+            return MovableMovementCommand.MoveRight;
         }
         return null;
     }
