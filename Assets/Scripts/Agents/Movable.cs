@@ -6,11 +6,10 @@ using UnityEngine;
 public abstract class Movable : MonoBehaviour
 {
     private Vector2Int _mazePosition;
-    internal static List<KeyValuePair<Movable, PlayerCommand>> _commandHistory;
-    internal bool _moving = false;
+    internal static List<KeyValuePair<Movable, MovableCommand>> _commandHistory;
     internal static float _previousCommandTime;
 
-    public bool Moving { get => _moving; set => _moving = value; }
+    public bool Moving { get; set; } = false;
     public bool AtMazeEnd => MazePosition == Maze.Instance.EndPos;
 
     internal Vector2Int MazePosition {
@@ -27,7 +26,7 @@ public abstract class Movable : MonoBehaviour
 
     void Awake()
     {
-        Movable._commandHistory = new List<KeyValuePair<Movable, PlayerCommand>>();
+        _commandHistory = new List<KeyValuePair<Movable, MovableCommand>>();
     }
 
     /// <summary>
@@ -35,16 +34,16 @@ public abstract class Movable : MonoBehaviour
     /// </summary>
     public static void ResetState()
     {
-        Movable._commandHistory.Clear();
+        _commandHistory.Clear();
         _previousCommandTime = Time.time;
     }
 
-    public void AddToHistory(Movable movingObject, PlayerCommand command)
+    public void AddToHistory(Movable movingObject, MovableCommand command)
     {
         float timeDiff = Time.time - _previousCommandTime;
         _previousCommandTime = Time.time;
-        Movable._commandHistory.Add(new KeyValuePair<Movable, PlayerCommand>(movingObject, PlayerCommand.CreateIdle(timeDiff)));
-        Movable._commandHistory.Add(new KeyValuePair<Movable, PlayerCommand>(movingObject, command));
+        _commandHistory.Add(new KeyValuePair<Movable, MovableCommand>(movingObject, MovableCommand.CreateIdle(timeDiff)));
+        _commandHistory.Add(new KeyValuePair<Movable, MovableCommand>(movingObject, command));
     }
 
     /// <summary>
@@ -62,7 +61,7 @@ public abstract class Movable : MonoBehaviour
     {
         if (reversed)
         {
-            Movable._commandHistory.Reverse();
+            _commandHistory.Reverse();
         }
                 
         foreach (var command in _commandHistory)
@@ -82,13 +81,13 @@ public abstract class Movable : MonoBehaviour
     /// <param name="pauseBetween"></param>
     /// <returns></returns>
     internal IEnumerator PlayCommandsInRealTime(
-        List<PlayerCommand> playerCommands,
+        List<MovableCommand> playerCommands,
         float pauseBetween)
     {
         //pauseBetweenCommands -= Time.deltaTime;
 
         Moving = true;
-        foreach (PlayerCommand command in playerCommands)
+        foreach (MovableCommand command in playerCommands)
         {
             if (Moving)
             {

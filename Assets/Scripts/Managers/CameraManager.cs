@@ -3,9 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CameraManager : MonoBehaviour
+public class CameraManager : Singleton<CameraManager>
 {
-    private static CameraManager _instance;
     private Camera _camera;
     private const int MAIN_MENU_CAMERA_HEIGHT = 200;
 
@@ -13,24 +12,9 @@ public class CameraManager : MonoBehaviour
     public Vector3 playerOffset;
     public float mazeMargin;
 
-    public static CameraManager Instance { get => _instance; }
-
     private void Start()
     {
         _camera = GetComponent<Camera>();
-    }
-
-    private void Awake()
-    {
-        if (_instance == null)
-        {
-            _instance = this;
-        }
-        else if (_instance != this)
-        {
-            Destroy(gameObject);
-        }
-        DontDestroyOnLoad(gameObject);
     }
 
     public void FocusOnMaze(Maze maze)

@@ -4,38 +4,31 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-public class Maze: System.IDisposable
+public class Maze
 {
-    private static Maze _instance;
-
-    private int _width = 10;
-    private int _height = 10;
     private Vector2Int _start;
     private Vector2Int _end;
     private string  _beforeStart;
-    private static Random _generator = new Random();
-    private Dictionary<Vector2Int, MazeCell> _grid = new Dictionary<Vector2Int, MazeCell>();
+    private static readonly Random _generator = new Random();
 
-
-    public static Maze Instance => _instance;
+    public static Maze Instance { get; private set; }
     public Vector2Int StartPos => _start;
     public Vector2Int EndPos => _end;
-    public int Width => _width;
-    public int Height => _height;
-    public Dictionary<Vector2Int, MazeCell> Grid { get => _grid; set => _grid = value; }
+    public int Width { get; private set; } = 10;
+    public int Height { get; private set; } = 10;
+    public Dictionary<Vector2Int, MazeCell> Grid { get; private set; } = new Dictionary<Vector2Int, MazeCell>();
     public MazeCell this[Vector2Int pos] => Grid[pos];
-
-    private Maze() { }
 
     /// <summary>
     /// Initializes the singleton if the object didn't exist before
     /// </summary>
     public static void Initialize()
     {
-        _instance = _instance ?? new Maze();
+        Instance = Instance ?? new Maze();
     }
-    
+
     /// <summary>
     /// Checks if the position is in bounds of the maze
     /// </summary>
@@ -54,22 +47,32 @@ public class Maze: System.IDisposable
     /// <param name="height">The height (Z) of the maze</param>
     public void SetDimensions(int width, int height)
     {
-        Dispose();
-
-        _width = width;
-        _height = height;
+        Width = width;
+        Height = height;
 
         _start = new Vector2Int(0, height - 1);
         _end = new Vector2Int(width - 1, 0);
     }
 
+    // FIXME: move back to MazeIO when Maze is no longer a singleton
+    /// <summary>
+    /// Synchronize the Maze with this state
+    /// </summary>
+    public void Load(MazeState state)
+    {
+        SetDimensions(state.width, state.height);
+        foreach (SerCell cell in state.cells)
+        {
+            Grid[cell.Pos] = cell.ToMazeCell();
+        }
+    }
     /// <summary>
     /// Restores maze state before level start
     /// </summary>
     public void Restore()
     {
         MazeState state = JsonUtility.FromJson<MazeState>(_beforeStart);
-        state.Load();
+        Load(state);
     }
 
     /// <summary>
@@ -87,37 +90,13 @@ public class Maze: System.IDisposable
     /// <param name="wallState">The state of the walls to fill with</param>
     public void Fill(WallState wallState=WallState.Exists)
     {
-        for (int x = 0; x < _width; x++)
+        for (int x = 0; x < Width; x++)
         {
-            for (int y = 0; y < _height; y++)
+            for (int y = 0; y < Height; y++)
             {
                 Vector2Int pos = new Vector2Int(x, y);
                 Grid[pos] = new MazeCell(pos, wallState, wallState, wallState, wallState);
             }
-        }
-    }
-
-    /// <summary>
-    /// Places the specified items randomly on this maze
-    /// </summary>
-    /// <param name="items">The items that should appear on the maze</param>
-    public void GenerateItems(List<Item>items)
-    {
-        List<MazeCell> cells = Grid.Values.ToList();
-        List<int> randInd = new List<int>();
-        for (int i = 0; i < cells.Count; i++)
-        {
-            if (cells[i].Position != _start && 
-                cells[i].Position != _end)
-            {
-                randInd.Add(i);
-            }
-        }
-        randInd.Shuffle();
-        for (int i = 0; i < Mathf.Min(randInd.Count, items.Count); i++)
-        {
-            MazeCell cell = cells[randInd[i]];
-            cell.Item = items[i];
         }
     }
 
@@ -151,7 +130,7 @@ public class Maze: System.IDisposable
         }
     }
 
-    public void Dispose()
+    public void Clear()
     {
         foreach (var kvPair in Grid)
         {

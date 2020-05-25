@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class MazeCell : System.IDisposable
 {
@@ -9,7 +10,6 @@ public class MazeCell : System.IDisposable
 
     private Dictionary<Vector2Int, WallState> _wallState = new Dictionary<Vector2Int, WallState>();
     private Vector2Int _position;
-    private Item _item;
     private List<GameObject> _walls;
     private static GameObject _wallTemplate = Resources.Load<GameObject>("Wall");
 
@@ -18,8 +18,9 @@ public class MazeCell : System.IDisposable
                                                                        Vector2Int.down,
                                                                        Vector2Int.right };
 
-    public Item Item { get => _item; set => _item = value; }
-    public bool IsEmpty => _item == null || _item.Type == ItemType.None;
+    public ItemType ItemType { get; set; }
+    public GameObject Item { get; set; }
+    public bool IsEmpty => ItemType == ItemType.None;
     public Vector2Int Position => _position;
     public Vector3 CellCenter(float y) => new Vector3(CELL_WIDTH * (_position.x + 0.5f), y, CELL_WIDTH * (_position.y + 0.5f));
 
@@ -87,6 +88,7 @@ public class MazeCell : System.IDisposable
         float wallHeight = CELL_WIDTH + Random.value * 0.1f;
 
         wall.transform.localScale = new Vector3(wallX, wallHeight, wallY);
+        SceneManager.MoveGameObjectToScene(wall, SceneManager.GetSceneByName("Maze"));
         _walls.Add(wall);
     }
 
@@ -95,7 +97,7 @@ public class MazeCell : System.IDisposable
     /// </summary>
     public void Display()
     {
-        _item?.Display(CellCenter(y: 0));
+        Item = ItemFactory.SpawnItem(ItemType, CellCenter(y: 0));
         if (WallExists(Vector2Int.right))
         {
             PutWall(new Vector3(CELL_WIDTH * (_position.x + 1), 0, CELL_WIDTH * (_position.y + 0.5f)), false);
@@ -114,24 +116,12 @@ public class MazeCell : System.IDisposable
         }
     }
 
-    /// <summary>
-    /// Removes the item from the cell
-    /// </summary>
-    /// <returns>The type of the deleted item</returns>
-    public ItemType ClearItem()
-    {
-        ItemType deletedType = _item?.Type ?? ItemType.None;
-        _item?.Dispose();
-        _item = null;
-        return deletedType;
-    }
-
     public void Dispose()
     {
         foreach (GameObject child in _walls)
         {
             Object.Destroy(child);
         }
-        _item?.Dispose();
+        Object.Destroy(Item);
     }
 }

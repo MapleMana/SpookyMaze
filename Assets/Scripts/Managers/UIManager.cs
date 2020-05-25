@@ -6,12 +6,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class UIManager : MonoBehaviour
+public class UIManager : Singleton<UIManager>
 {    
-    private static UIManager _instance;
-
-    public Text Width;
-    public Text Height;
     public TextMeshProUGUI NextPlay;
 
     public GameObject MainMenu;
@@ -26,26 +22,8 @@ public class UIManager : MonoBehaviour
     public Button ButtonTemplate;
     public List<Button> buttonList;
 
-    public static UIManager Instance => _instance;
-
-    private void Awake()
-    {
-        if (_instance == null)
-        {
-            _instance = this;
-        }
-        else if (_instance != this)
-        {
-            Destroy(gameObject);
-        }
-        DontDestroyOnLoad(gameObject);
-    }
-
     private void Start()
     {
-        WidthChanged(GameManager.Instance.MazeWidth);
-        HeightChanged(GameManager.Instance.MazeHeight);
-        
         LoadLevels();
     }
 
@@ -71,7 +49,7 @@ public class UIManager : MonoBehaviour
         buttonList = new List<Button>();
         int levelReached = PlayerPrefs.GetInt("levelReached", 1);
 
-        for (int i = 1; i <= GameManager.NUM_OF_LEVELS; i++)
+        for (int i = 1; i <= LevelGenerator.NUM_OF_LEVELS; i++)
         {
             Button newButton = Instantiate(ButtonTemplate);
             newButton.GetComponentInChildren<Text>().text = i.ToString();
@@ -99,7 +77,7 @@ public class UIManager : MonoBehaviour
     {
         LevelSelect.SetActive(false);
         MainMenu.SetActive(false);
-        SceneManager.LoadScene("Maze");
+        SceneManager.LoadScene("Maze", LoadSceneMode.Additive);
     }
 
     public void QuitGame()
@@ -122,7 +100,7 @@ public class UIManager : MonoBehaviour
     public void WatchReplay()
     {
         FinishMenu.SetActive(false);
-        GameManager.Instance.WatchReplay(
+        LevelManager.Instance.WatchReplay(
             onComplete: () => FinishMenu.SetActive(true)
         );
     }
@@ -133,7 +111,7 @@ public class UIManager : MonoBehaviour
     public void GoToNextLevel()
     {
         FinishMenu.SetActive(false);
-        GameManager.Instance.LoadCurrentLevel();
+        LevelManager.Instance.LoadCurrentLevel();
     }
 
     /// <summary>
@@ -144,28 +122,8 @@ public class UIManager : MonoBehaviour
         FinishMenu.SetActive(false);
         MainMenu.SetActive(true);
         LightManager.Instance.TurnOff();
-        SceneManager.LoadScene("MainMenu");
+        SceneManager.UnloadSceneAsync("Maze");
         CameraManager.Instance.FocusOnMenu(MainMenu.transform.position);
-    }
-
-    /// <summary>
-    /// Called when slider value is changed and passes the new width to the GM
-    /// </summary>
-    /// <param name="width"></param>
-    public void WidthChanged(float width)
-    {
-        Width.text = width.ToString();
-        GameManager.Instance.MazeWidth = (int) width;
-    }
-
-    /// <summary>
-    /// Called when slider value is changed and passes the new height to the GM
-    /// </summary>
-    /// <param name="height"></param>
-    public void HeightChanged(float height)
-    {
-        Height.text = height.ToString();
-        GameManager.Instance.MazeHeight = (int) height;
     }
 
     public void ModeToggled()

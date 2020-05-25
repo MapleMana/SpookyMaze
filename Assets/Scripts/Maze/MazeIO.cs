@@ -15,7 +15,7 @@ public class SerCell
     public bool up;
     public bool right;
     public bool down;
-    public int item;
+    public int itemType;
 
     public Vector2Int Pos => new Vector2Int(pos[0], pos[1]);
 
@@ -26,7 +26,7 @@ public class SerCell
         up = cell.WallExists(Vector2Int.up);
         right = cell.WallExists(Vector2Int.right);
         down = cell.WallExists(Vector2Int.down);
-        item = (int)(cell.Item?.Type ?? ItemType.None);
+        itemType = (int)cell.ItemType;
     }
 
     public MazeCell ToMazeCell()
@@ -38,7 +38,7 @@ public class SerCell
             down ? WallState.Exists : WallState.Destroyed,
             right ? WallState.Exists : WallState.Destroyed
         );
-        cell.Item = ItemFactory.GetItem((ItemType)item);
+        cell.ItemType = (ItemType)itemType;
         return cell;
     }
 }
@@ -87,18 +87,6 @@ public class MazeState
         using (FileStream stream = new FileStream(path, FileMode.Open))
         {
             return formatter.Deserialize(stream) as MazeState;
-        }
-    }
-
-    /// <summary>
-    /// Synchronize the Maze with this state
-    /// </summary>
-    public void Load()
-    {
-        Maze.Instance.SetDimensions(width, height);
-        foreach (SerCell cell in cells)
-        {
-            Maze.Instance.Grid[cell.Pos] = cell.ToMazeCell();
         }
     }
 }

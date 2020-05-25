@@ -1,13 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public abstract class GameMode
 {
     abstract public bool GameEnded();
     abstract public void Initialize();
     abstract public void Reset();
-    abstract public List<Item> GetItems();
+    abstract public List<ItemType> GetItems();
 
     public void DefaultInitialize()
     {
@@ -31,9 +32,9 @@ public class ClassicGameMode : GameMode
         DefaultInitialize();
     }
 
-    public override List<Item> GetItems()
+    public override List<ItemType> GetItems()
     {
-        return new List<Item>();
+        return new List<ItemType>();
     }
 
     public override void Reset()
@@ -50,7 +51,7 @@ public class DoorKeyGameMode : GameMode
                 Player.Instance.Inventory.Contains(ItemType.Key);
     }
 
-    public override List<Item> GetItems()
+    public override List<ItemType> GetItems()
     {
         return ItemFactory.GetItems(ItemType.Key, 1);
     }
@@ -73,7 +74,7 @@ public class OilGameMode : GameMode
         return Player.Instance.AtMazeEnd;
     }
 
-    public override List<Item> GetItems()
+    public override List<ItemType> GetItems()
     {
         int itemQuantity = (Maze.Instance.Height + Maze.Instance.Width) / 8; // magic formula - subject to change in the future
         return ItemFactory.GetItems(ItemType.Oil, itemQuantity);
@@ -100,9 +101,9 @@ public class GhostGameMode : GameMode
         return Player.Instance.AtMazeEnd;
     }
 
-    public override List<Item> GetItems()
+    public override List<ItemType> GetItems()
     {
-        return new List<Item>();
+        return new List<ItemType>();
     }
 
     public override void Initialize()
@@ -120,6 +121,7 @@ public class GhostGameMode : GameMode
         MazeCell currentCell = Maze.Instance[ghostPosition];
         Vector3 pos = currentCell.CellCenter(y: 0);
         GameObject ghostObject = Object.Instantiate(_template, pos, Quaternion.identity);
+        SceneManager.MoveGameObjectToScene(ghostObject, SceneManager.GetSceneByName("Maze"));
         ghostObject.GetComponent<Ghost>().MazePosition = StartPosition;
         ghosts.Add(ghostObject.GetComponent<Ghost>());
     }

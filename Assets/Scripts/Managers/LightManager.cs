@@ -2,25 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LightManager : MonoBehaviour
+public class LightManager : Singleton<LightManager>
 {
-    private static LightManager _instance;
     public new Light light;
-
-    public static LightManager Instance { get => _instance; }
-
-    private void Awake()
-    {
-        if (_instance == null)
-        {
-            _instance = this;
-        }
-        else if (_instance != this)
-        {
-            Destroy(gameObject);
-        }
-        DontDestroyOnLoad(gameObject);
-    }
 
     /// <summary>
     /// DirectionalLight turns on, all maze becomes visible 
@@ -28,7 +12,7 @@ public class LightManager : MonoBehaviour
     public void TurnOn()
     {
         light.intensity = 1;
-        Player.Instance.PlayerLight.intensity = 0;
+        Player.Instance.Light.intensity = 0;
     }
 
     /// <summary>
@@ -37,6 +21,6 @@ public class LightManager : MonoBehaviour
     public void TurnOff()
     {
         light.intensity = 0;
-        Player.Instance.PlayerLight.intensity = Player.Instance.LightIntensity;
+        Player.Instance.Light.intensity = Player.Instance.DefaultLightIntensity;
     }
 }
