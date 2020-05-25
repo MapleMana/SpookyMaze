@@ -8,8 +8,6 @@ using UnityEngine.UI;
 
 public class UIManager : Singleton<UIManager>
 {    
-    public Text Width;
-    public Text Height;
     public TextMeshProUGUI NextPlay;
 
     public GameObject MainMenu;
