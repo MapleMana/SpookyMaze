@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public abstract class GameMode
 {
@@ -120,6 +121,7 @@ public class GhostGameMode : GameMode
         MazeCell currentCell = Maze.Instance[ghostPosition];
         Vector3 pos = currentCell.CellCenter(y: 0);
         GameObject ghostObject = Object.Instantiate(_template, pos, Quaternion.identity);
+        SceneManager.MoveGameObjectToScene(ghostObject, SceneManager.GetSceneByName("Maze"));
         ghostObject.GetComponent<Ghost>().MazePosition = StartPosition;
         ghosts.Add(ghostObject.GetComponent<Ghost>());
     }
