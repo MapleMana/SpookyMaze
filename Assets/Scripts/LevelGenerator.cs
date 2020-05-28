@@ -20,6 +20,7 @@ public static class LevelGenerator
             new BranchedDFSGeneration().Generate();
             MazeState state = new MazeState(Maze.Instance);
             state.SaveTo($"/{i}.maze");
+
             mazeWidth += MAZE_WIDTH_INCREMENT;
             mazeHeight += MAZE_HEIGHT_INCREMENT;
             Maze.Instance.Clear();

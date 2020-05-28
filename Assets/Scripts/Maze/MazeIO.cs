@@ -1,6 +1,7 @@
 ﻿/// This file contains serializables clones of some objects
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 
@@ -51,11 +52,9 @@ public class MazeState
     {
         width = maze.Width;
         height = maze.Height;
-        cells.Clear();
-        foreach (MazeCell cell in maze.Grid.Values)
-        {
-            cells.Add(new SerCell(cell));
-        }
+        cells = maze.Grid.Values
+            .Select(cell => new SerCell(cell))
+            .ToList();
     }
 
     /// <summary>
@@ -88,30 +87,63 @@ public class MazeState
 }
 
 [System.Serializable()]
-public struct LevelStatus
+public class LevelStatus
 {
     MazeState mazeState;
     float time;
+    string gameMode;
     List<int[]> ghostPositions;
+
+    public LevelStatus(Maze maze, float levelTime, string mode, List<Vector2Int> ghostStartVectors)
+    {
+        mazeState = new MazeState(maze);
+        time = levelTime;
+        gameMode = mode;
+        ghostPositions = ghostStartVectors
+            .Select(pos => new int[2] { pos.x, pos.y })
+            .ToList();
+    }
+}
+
+public struct LevelSettings
+{
+    public readonly int id;
+    public readonly string gameMode;
+    public readonly Vector2Int dimensions;
+
+    public LevelSettings(int id, string gameMode, Vector2Int dimensions)
+    {
+        this.id = id;
+        this.gameMode = gameMode;
+        this.dimensions = dimensions;
+    }
+
+    public override string ToString()
+    {
+        return $"{gameMode}/{dimensions.x}x{dimensions.y}/{id}";
+    }
 }
 
 public static class LevelIO
 {
-    private static string GetFilePath(LevelStatus levelStatus)
+    private static string GetFilePath(LevelSettings levelSettings)
     {
-        return Application.persistentDataPath;
+        return $"{Application.persistentDataPath}/{levelSettings}";
     }
 
-    public static void SaveLevel(LevelStatus levelStatus)
+    public static void SaveLevel(LevelSettings levelSettings, LevelStatus levelStatus)
     {
         BinaryFormatter formatter = new BinaryFormatter();
-        string path = GetFilePath(levelStatus);
+        string path = GetFilePath(levelSettings);
         using FileStream stream = new FileStream(path, FileMode.OpenOrCreate);
         formatter.Serialize(stream, levelStatus);
     }
 
-    public static LevelStatus LoadLevel<GM>(Vector2Int dimensions, int id) where GM : GameMode
+    public static LevelStatus LoadLevel(LevelSettings levelSettings)
     {
-        return new LevelStatus();
+        BinaryFormatter formatter = new BinaryFormatter();
+        string path = GetFilePath(levelSettings);
+        using FileStream stream = new FileStream(path, FileMode.Open);
+        return formatter.Deserialize(stream) as LevelStatus;
     }
 }
