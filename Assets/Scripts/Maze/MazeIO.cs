@@ -1,9 +1,6 @@
 ﻿/// This file contains serializables clones of some objects
-
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 
@@ -52,7 +49,6 @@ public class MazeState
 
     public MazeState(Maze maze)
     {
-        // TODO: save level details (time)
         width = maze.Width;
         height = maze.Height;
         cells.Clear();
@@ -88,5 +84,34 @@ public class MazeState
         {
             return formatter.Deserialize(stream) as MazeState;
         }
+    }
+}
+
+[System.Serializable()]
+public struct LevelStatus
+{
+    MazeState mazeState;
+    float time;
+    List<int[]> ghostPositions;
+}
+
+public static class LevelIO
+{
+    private static string GetFilePath(LevelStatus levelStatus)
+    {
+        return Application.persistentDataPath;
+    }
+
+    public static void SaveLevel(LevelStatus levelStatus)
+    {
+        BinaryFormatter formatter = new BinaryFormatter();
+        string path = GetFilePath(levelStatus);
+        using FileStream stream = new FileStream(path, FileMode.OpenOrCreate);
+        formatter.Serialize(stream, levelStatus);
+    }
+
+    public static LevelStatus LoadLevel<GM>(Vector2Int dimensions, int id) where GM : GameMode
+    {
+        return new LevelStatus();
     }
 }

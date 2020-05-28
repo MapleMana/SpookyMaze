@@ -16,17 +16,6 @@ public class LevelManager : Singleton<LevelManager>
     public float ReplayTime => (LEVEL_TIME - TimeLeft) * GameManager.Instance.replayMultiplier;
     public float ReversedReplayTime => (LEVEL_TIME - TimeLeft) * GameManager.Instance.reversedReplayMultiplier;
 
-
-    Maze maze;
-    Player player;
-    List<Movable> mobs;
-    List<Item> items;
-
-    /// <summary>
-    /// Initializes the level from a saved state
-    /// </summary>
-    void Initialize() { }
-
     /// <summary>
     /// Temporary copy of the above method
     /// </summary>
