@@ -25,7 +25,8 @@ public class GameManager : Singleton<GameManager>
     {
         Maze.Initialize();
         GameMode = new ClassicGameMode();
-        int levelsGenerated = PlayerPrefs.GetInt("generated", 0);
+        // FIXME: restore after testing
+        int levelsGenerated = 0; // PlayerPrefs.GetInt("generated", 0);
         if (levelsGenerated == 0)
         {
             LevelGenerator.GenerateLevels();

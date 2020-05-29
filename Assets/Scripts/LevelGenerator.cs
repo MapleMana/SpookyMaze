@@ -17,6 +17,7 @@ public static class LevelGenerator
 
     public static void GenerateLevels()
     {
+        LevelIO.ClearAll();
         Dimensions mazeDimentions = new Dimensions(INITIAL_MAZE_WIDTH, INITIAL_MAZE_HEIGHT);
         for (int id = 1; id <= NUM_OF_LEVELS; id++)
         {
@@ -24,10 +25,10 @@ public static class LevelGenerator
             new BranchedDFSGeneration().Generate();
             MazeState state = new MazeState(Maze.Instance);
             string gameMode = "Classic";
-            //LevelIO.SaveLevel(
-            //    new LevelSettings(id, gameMode, mazeDimentions),
-            //    new LevelStatus(Maze.Instance, GetLevelTime(mazeDimentions), gameMode, Maze.Instance.GetRandomPositions(3))
-            //);
+            LevelIO.SaveLevel(
+                new LevelSettings(id, gameMode, mazeDimentions),
+                new LevelStatus(Maze.Instance, GetLevelTime(mazeDimentions), gameMode, Maze.Instance.GetRandomPositions(3))
+            );
             state.SaveTo($"/{id}.maze");
 
             mazeDimentions.Width += MAZE_WIDTH_INCREMENT;

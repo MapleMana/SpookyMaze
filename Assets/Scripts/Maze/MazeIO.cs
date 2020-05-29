@@ -1,5 +1,6 @@
 ﻿/// This file contains serializables clones of some objects
 using System.Collections.Generic;
+using System.ComponentModel.Design.Serialization;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -124,15 +125,30 @@ public struct LevelSettings
 
 public static class LevelIO
 {
+    private static readonly string Root = Application.persistentDataPath;
+
     private static string GetFilePath(LevelSettings levelSettings)
     {
-        return $"{Application.persistentDataPath}/{levelSettings}";
+        return $"{Root}/{levelSettings}.maze";
+    }
+
+    public static void ClearAll()
+    {
+        foreach (string subDir in Directory.GetDirectories(Root))
+        {
+            Directory.Delete(subDir, recursive: true);
+        }
     }
 
     public static void SaveLevel(LevelSettings levelSettings, LevelStatus levelStatus)
     {
         BinaryFormatter formatter = new BinaryFormatter();
         string path = GetFilePath(levelSettings);
+        string dir = Path.GetDirectoryName(path);
+        if (!Directory.Exists(dir))
+        {
+            Directory.CreateDirectory(dir);
+        }
         using (FileStream stream = new FileStream(path, FileMode.OpenOrCreate))
         {
             formatter.Serialize(stream, levelStatus);
