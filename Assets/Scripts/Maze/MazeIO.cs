@@ -88,10 +88,10 @@ public class MazeState
 [System.Serializable()]
 public class LevelStatus
 {
-    MazeState mazeState;
-    float time;
-    string gameMode;
-    List<int[]> ghostPositions;
+    public MazeState mazeState;
+    public float time;
+    public string gameMode;
+    public List<int[]> ghostPositions;
 
     public LevelStatus(Maze maze, float levelTime, string mode, List<Vector2Int> ghostStartVectors)
     {

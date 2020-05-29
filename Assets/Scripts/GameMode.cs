@@ -20,7 +20,7 @@ public abstract class GameMode
     }
 }
 
-public class ClassicGameMode : GameMode
+public class ClassicGM : GameMode
 {
     public override bool GameEnded()
     {
@@ -43,7 +43,7 @@ public class ClassicGameMode : GameMode
     }
 }
 
-public class DoorKeyGameMode : GameMode
+public class DoorKeyGM : GameMode
 {
     public override bool GameEnded()
     {
@@ -67,7 +67,7 @@ public class DoorKeyGameMode : GameMode
     }
 }
 
-public class OilGameMode : GameMode
+public class OilGM : GameMode
 {
     public override bool GameEnded()
     {
@@ -91,7 +91,7 @@ public class OilGameMode : GameMode
     }
 }
 
-public class GhostGameMode : GameMode
+public class GhostGM : GameMode
 {
     List<Ghost> ghosts;
     Vector2Int StartPosition => new Vector2Int(Maze.Instance.EndPos.x, Maze.Instance.EndPos.y);

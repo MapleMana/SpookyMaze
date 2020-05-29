@@ -6,30 +6,30 @@ using UnityEngine;
 public class LevelManager : Singleton<LevelManager>
 {
     private LevelState _levelState;
-    const float LEVEL_TIME = 75;
+    private float LevelTime;
     private float _finalPlayerLightAngle;      // the player light angle at the end of the level
 
     public GameMode GameMode { get; set; }
     public int LevelNumber { get; set; } = 1;
     public float TimeLeft { get; set; }
     public bool LevelIs(LevelState state) => (_levelState & state) != 0;
-    public float ReplayTime => (LEVEL_TIME - TimeLeft) * GameManager.Instance.replayMultiplier;
-    public float ReversedReplayTime => (LEVEL_TIME - TimeLeft) * GameManager.Instance.reversedReplayMultiplier;
+    public float ReplayTime => (LevelTime - TimeLeft) * GameManager.Instance.replayMultiplier;
+    public float ReversedReplayTime => (LevelTime - TimeLeft) * GameManager.Instance.reversedReplayMultiplier;
 
     /// <summary>
     /// Temporary copy of the above method
     /// </summary>
     /// <param name="levelNumber"></param>
     /// <param name="levelTime"></param>
-    public void Initialize(int levelNumber, MazeState mazeState, GameMode gameMode)
+    public void Initialize(int levelNumber, LevelStatus levelStatus, GameMode gameMode)
     {
         _levelState = LevelState.InProgress;
-        TimeLeft = LEVEL_TIME;
+        TimeLeft = LevelTime = levelStatus.time;
         LevelNumber = levelNumber;
         GameMode = gameMode;
 
         Maze.Instance.Clear();
-        Maze.Instance.Load(mazeState);
+        Maze.Instance.Load(levelStatus.mazeState);
 
         // FIXME: move item placement to MazeIO
         if (GameMode.GetItems().Count > 0)
@@ -53,7 +53,7 @@ public class LevelManager : Singleton<LevelManager>
         float timeToAdd = 0;
         if (LevelIs(LevelState.InProgress))
         {
-            timeToAdd = ratio * LEVEL_TIME;
+            timeToAdd = ratio * LevelTime;
         }
         else if (LevelIs(LevelState.InReplay))
         {
@@ -137,7 +137,7 @@ public class LevelManager : Singleton<LevelManager>
             else
             {
                 TimeLeft -= Time.deltaTime;
-                Player.Instance.LerpLightAngle(coef: TimeLeft / LEVEL_TIME);
+                Player.Instance.LerpLightAngle(coef: TimeLeft / LevelTime);
             }
 
             if (GameMode.GameEnded())
