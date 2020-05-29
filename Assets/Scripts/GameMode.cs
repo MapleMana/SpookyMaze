@@ -76,7 +76,7 @@ public class OilGameMode : GameMode
 
     public override List<ItemType> GetItems()
     {
-        int itemQuantity = (Maze.Instance.Height + Maze.Instance.Width) / 8; // magic formula - subject to change in the future
+        int itemQuantity = (Maze.Instance.Dimensions.Height + Maze.Instance.Dimensions.Width) / 8; // magic formula - subject to change in the future
         return ItemFactory.GetItems(ItemType.Oil, itemQuantity);
     }
 

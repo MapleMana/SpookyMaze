@@ -8,16 +8,22 @@ using UnityEngine.SceneManagement;
 
 public class Maze
 {
-    private Vector2Int _start;
-    private Vector2Int _end;
+    private Dimensions _dimensions;
     private string  _beforeStart;
     private static readonly Random _generator = new Random();
 
     public static Maze Instance { get; private set; }
-    public Vector2Int StartPos => _start;
-    public Vector2Int EndPos => _end;
-    public int Width { get; private set; } = 10;
-    public int Height { get; private set; } = 10;
+    public Vector2Int StartPos { get; private set; }
+    public Vector2Int EndPos { get; private set; }
+    public Dimensions Dimensions
+    {
+        get => _dimensions;
+        private set {
+            _dimensions = value;
+            StartPos = new Vector2Int(0, value.Height - 1);
+            EndPos = new Vector2Int(value.Width - 1, 0);
+        } 
+    }
     public Dictionary<Vector2Int, MazeCell> Grid { get; private set; } = new Dictionary<Vector2Int, MazeCell>();
     public MazeCell this[Vector2Int pos] => Grid[pos];
 
@@ -36,8 +42,8 @@ public class Maze
     /// <returns></returns>
     public bool InBounds(Vector2Int pos)
     {
-        return pos.x >= 0 && pos.x < Width &&
-               pos.y >= 0 && pos.y < Height;
+        return pos.x >= 0 && pos.x < Dimensions.Width &&
+               pos.y >= 0 && pos.y < Dimensions.Height;
     }
 
     /// <summary>
@@ -45,13 +51,10 @@ public class Maze
     /// </summary>
     /// <param name="width">The width (X) of the maze</param>
     /// <param name="height">The height (Z) of the maze</param>
-    public void SetDimensions(int width, int height)
+    public void SetDimensions(Dimensions newDimensions)
     {
-        Width = width;
-        Height = height;
+        Dimensions = newDimensions;
 
-        _start = new Vector2Int(0, height - 1);
-        _end = new Vector2Int(width - 1, 0);
     }
 
     // FIXME: move back to MazeIO when Maze is no longer a singleton
@@ -60,7 +63,7 @@ public class Maze
     /// </summary>
     public void Load(MazeState state)
     {
-        SetDimensions(state.width, state.height);
+        Dimensions = state.dimensions;
         foreach (SerCell cell in state.cells)
         {
             Grid[cell.Pos] = cell.ToMazeCell();
@@ -90,9 +93,9 @@ public class Maze
     /// <param name="wallState">The state of the walls to fill with</param>
     public void Fill(WallState wallState=WallState.Exists)
     {
-        for (int x = 0; x < Width; x++)
+        for (int x = 0; x < Dimensions.Width; x++)
         {
-            for (int y = 0; y < Height; y++)
+            for (int y = 0; y < Dimensions.Height; y++)
             {
                 Vector2Int pos = new Vector2Int(x, y);
                 Grid[pos] = new MazeCell(pos, wallState, wallState, wallState, wallState);
@@ -117,6 +120,12 @@ public class Maze
             incomingDirection = Grid[position].GetCorridorOpening(incomingDirection * -1);
         }
         return sequence;
+    }
+
+    public List<Vector2Int> GetRandomPositions(int quantity)
+    {
+        // FIXME: return {quantity} random positions 
+        return new List<Vector2Int>() { EndPos };
     }
 
     /// <summary>

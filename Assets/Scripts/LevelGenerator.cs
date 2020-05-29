@@ -10,19 +10,28 @@ public static class LevelGenerator
     const int INITIAL_MAZE_WIDTH = 8;
     const int INITIAL_MAZE_HEIGHT = 8;
 
+    private static int GetLevelTime(Dimensions dimensions)
+    {
+        return Mathf.FloorToInt(dimensions.Width * dimensions.Height / 2);
+    }
+
     public static void GenerateLevels()
     {
-        int mazeWidth = INITIAL_MAZE_WIDTH;
-        int mazeHeight = INITIAL_MAZE_HEIGHT;
-        for (int i = 0; i < NUM_OF_LEVELS; i++)
+        Dimensions mazeDimentions = new Dimensions(INITIAL_MAZE_WIDTH, INITIAL_MAZE_HEIGHT);
+        for (int id = 1; id <= NUM_OF_LEVELS; id++)
         {
-            Maze.Instance.SetDimensions(mazeWidth, mazeHeight);
+            Maze.Instance.SetDimensions(mazeDimentions);
             new BranchedDFSGeneration().Generate();
             MazeState state = new MazeState(Maze.Instance);
-            state.SaveTo($"/{i}.maze");
+            string gameMode = "Classic";
+            //LevelIO.SaveLevel(
+            //    new LevelSettings(id, gameMode, mazeDimentions),
+            //    new LevelStatus(Maze.Instance, GetLevelTime(mazeDimentions), gameMode, Maze.Instance.GetRandomPositions(3))
+            //);
+            state.SaveTo($"/{id}.maze");
 
-            mazeWidth += MAZE_WIDTH_INCREMENT;
-            mazeHeight += MAZE_HEIGHT_INCREMENT;
+            mazeDimentions.Width += MAZE_WIDTH_INCREMENT;
+            mazeDimentions.Height += MAZE_HEIGHT_INCREMENT;
             Maze.Instance.Clear();
         }
     }

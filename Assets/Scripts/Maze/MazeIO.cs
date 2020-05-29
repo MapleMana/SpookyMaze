@@ -44,14 +44,12 @@ public class SerCell
 [System.Serializable()]
 public class MazeState
 {
-    public int width;
-    public int height;
+    public Dimensions dimensions;
     public List<SerCell> cells = new List<SerCell>();
 
     public MazeState(Maze maze)
     {
-        width = maze.Width;
-        height = maze.Height;
+        dimensions = maze.Dimensions;
         cells = maze.Grid.Values
             .Select(cell => new SerCell(cell))
             .ToList();
@@ -109,9 +107,9 @@ public struct LevelSettings
 {
     public readonly int id;
     public readonly string gameMode;
-    public readonly Vector2Int dimensions;
+    public readonly Dimensions dimensions;
 
-    public LevelSettings(int id, string gameMode, Vector2Int dimensions)
+    public LevelSettings(int id, string gameMode, Dimensions dimensions)
     {
         this.id = id;
         this.gameMode = gameMode;
@@ -120,7 +118,7 @@ public struct LevelSettings
 
     public override string ToString()
     {
-        return $"{gameMode}/{dimensions.x}x{dimensions.y}/{id}";
+        return $"{gameMode}/{dimensions.Width}x{dimensions.Height}/{id}";
     }
 }
 
@@ -135,15 +133,19 @@ public static class LevelIO
     {
         BinaryFormatter formatter = new BinaryFormatter();
         string path = GetFilePath(levelSettings);
-        using FileStream stream = new FileStream(path, FileMode.OpenOrCreate);
-        formatter.Serialize(stream, levelStatus);
+        using (FileStream stream = new FileStream(path, FileMode.OpenOrCreate))
+        {
+            formatter.Serialize(stream, levelStatus);
+        }
     }
 
     public static LevelStatus LoadLevel(LevelSettings levelSettings)
     {
         BinaryFormatter formatter = new BinaryFormatter();
         string path = GetFilePath(levelSettings);
-        using FileStream stream = new FileStream(path, FileMode.Open);
-        return formatter.Deserialize(stream) as LevelStatus;
+        using (FileStream stream = new FileStream(path, FileMode.Open)) 
+        {
+            return formatter.Deserialize(stream) as LevelStatus;
+        }
     }
 }
