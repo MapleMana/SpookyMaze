@@ -4,6 +4,7 @@ using System.ComponentModel.Design.Serialization;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
+using UnityEditorInternal;
 using UnityEngine;
 
 [System.Serializable()]
@@ -106,20 +107,20 @@ public class LevelStatus
 
 public struct LevelSettings
 {
-    public readonly int id;
     public readonly string gameMode;
     public readonly Dimensions dimensions;
+    public readonly int id;
 
-    public LevelSettings(int id, string gameMode, Dimensions dimensions)
+    public LevelSettings(string gameMode, Dimensions dimensions, int id)
     {
-        this.id = id;
         this.gameMode = gameMode;
         this.dimensions = dimensions;
+        this.id = id;
     }
 
     public override string ToString()
     {
-        return $"{gameMode}/{dimensions.Width}x{dimensions.Height}/{id}";
+        return $"{gameMode}/{dimensions}/{id}";
     }
 }
 
@@ -163,5 +164,28 @@ public static class LevelIO
         {
             return formatter.Deserialize(stream) as LevelStatus;
         }
+    }
+
+    private static List<string> GetSubdirectoryNames(string dir)
+    {
+        return Directory.GetFileSystemEntries(dir)
+            .Select(path => Path.GetFileNameWithoutExtension(path))
+            .ToList();
+    }
+
+    public static List<Dimensions> GetPossibleDimensions(LevelSettings levelSettings)
+    {
+        List<string> dimensionNames = GetSubdirectoryNames($"{Root}/{levelSettings.gameMode}");
+        return dimensionNames
+            .Select(dimensionName => new Dimensions(dimensionName))
+            .ToList();
+    }
+
+    public static List<int> GetPossibleIds(LevelSettings levelSettings)
+    {
+        List<string> mazeFiles = GetSubdirectoryNames($"{Root}/{levelSettings.gameMode}/{levelSettings.dimensions}");
+        return mazeFiles
+            .Select(mazeFile => int.Parse(mazeFile))
+            .ToList();
     }
 }

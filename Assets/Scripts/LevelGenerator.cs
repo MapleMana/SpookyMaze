@@ -33,7 +33,7 @@ public static class LevelGenerator
                 new BranchedDFSGeneration().Generate();
                 MazeState state = new MazeState(Maze.Instance);
                 LevelIO.SaveLevel(
-                    new LevelSettings(id, gameModeName, mazeDimentions),
+                    new LevelSettings(gameModeName, mazeDimentions, id),
                     new LevelStatus(Maze.Instance, GetLevelTime(mazeDimentions, id), gameModeName, Maze.Instance.GetRandomPositions(3))
                 );
                 state.SaveTo($"/{id}.maze");
