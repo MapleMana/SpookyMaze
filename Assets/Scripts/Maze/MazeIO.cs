@@ -56,34 +56,6 @@ public class MazeState
             .Select(cell => new SerCell(cell))
             .ToList();
     }
-
-    /// <summary>
-    /// Saves the state to a local file
-    /// </summary>
-    /// <param name="filePath">The file path to save to</param>
-    public void SaveTo(string filePath)
-    {
-        BinaryFormatter formatter = new BinaryFormatter();
-        string path = Application.persistentDataPath + filePath;
-        using (FileStream stream = new FileStream(path, FileMode.OpenOrCreate))
-        {
-            formatter.Serialize(stream, this);
-        }
-    }
-
-    /// <summary>
-    /// Reads the state from a local file
-    /// </summary>
-    /// <returns></returns>
-    public static MazeState LoadFrom(string filePath)
-    {
-        BinaryFormatter formatter = new BinaryFormatter();
-        string path = Application.persistentDataPath + filePath;
-        using (FileStream stream = new FileStream(path, FileMode.Open))
-        {
-            return formatter.Deserialize(stream) as MazeState;
-        }
-    }
 }
 
 [System.Serializable()]
