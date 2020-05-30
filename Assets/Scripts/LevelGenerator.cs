@@ -19,6 +19,11 @@ public static class LevelGenerator
         return Mathf.FloorToInt(dimensions.Width * dimensions.Height / 2) - 3 * id;
     }
 
+    private static int GetNumberOfItems(Dimensions mazeDimensions)
+    {
+        return (Maze.Instance.Dimensions.Height + Maze.Instance.Dimensions.Width) / 8;
+    }
+
     public static void GenerateLevels()
     {
         LevelIO.ClearAll();
@@ -31,9 +36,19 @@ public static class LevelGenerator
             {
                 Maze.Instance.SetDimensions(mazeDimentions);
                 new BranchedDFSGeneration().Generate();
+                int numberOfGhosts = gameMode == "Ghost" ? 0 : 1;
+                int numberOfItems = GetNumberOfItems(Maze.Instance.Dimensions);
+                List<Vector2Int> itemPositions = Maze.Instance.GetRandomPositions(numberOfItems);
+                foreach (Vector2Int itemPosition in itemPositions)
+                {
+                    Maze.Instance[itemPosition].ItemType = ItemType.Oil;
+                }
                 LevelIO.SaveLevel(
                     new LevelSettings(gameModeName, mazeDimentions, id),
-                    new LevelStatus(Maze.Instance, GetLevelTime(mazeDimentions, id), gameModeName, Maze.Instance.GetRandomPositions(3))
+                    new LevelStatus(maze: Maze.Instance, 
+                                    levelTime: GetLevelTime(mazeDimentions, id), 
+                                    mode: gameModeName, 
+                                    ghostStartVectors: Maze.Instance.GetRandomPositions(numberOfGhosts))
                 );
 
                 mazeDimentions.Width += MAZE_WIDTH_INCREMENT;

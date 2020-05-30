@@ -31,12 +31,6 @@ public class LevelManager : Singleton<LevelManager>
         Maze.Instance.Clear();
         Maze.Instance.Load(levelStatus.mazeState);
 
-        // FIXME: move item placement to MazeIO
-        if (GameMode.GetItems().Count > 0)
-        {
-            Maze.Instance[new Vector2Int(3, 7)].ItemType = GameMode.GetItems()[0];
-        }
-
         Maze.Instance.SaveState();
         Maze.Instance.Display();
 

@@ -48,7 +48,6 @@ public class GameManager : Singleton<GameManager>
     /// <param name="levelNumber">The level number to load</param>
     public void LoadLevel(int levelNumber)
     {
-        //MazeState state = MazeState.LoadFrom($"/{levelNumber}.maze");
         string gameModeName = GameMode.GetType().Name;
         LevelStatus levelStatus = LevelIO.LoadLevel(new LevelSettings(gameModeName, new Dimensions(8, 8), levelNumber));
         Type GMType = Type.GetType(levelStatus.gameMode);
