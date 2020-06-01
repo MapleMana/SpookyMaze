@@ -21,12 +21,14 @@ public class LevelManager : Singleton<LevelManager>
     /// </summary>
     /// <param name="levelNumber"></param>
     /// <param name="levelTime"></param>
-    public void Initialize(int levelNumber, LevelStatus levelStatus, GameMode gameMode)
+    public void Initialize(int levelNumber, LevelStatus levelStatus)
     {
         _levelState = LevelState.InProgress;
         TimeLeft = LevelTime = levelStatus.time;
         LevelNumber = levelNumber;
-        GameMode = gameMode;
+
+        Type GMType = Type.GetType(levelStatus.gameMode);
+        GameMode = (GameMode)Activator.CreateInstance(GMType);
 
         Maze.Instance.Clear();
         Maze.Instance.Load(levelStatus.mazeState);

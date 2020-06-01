@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,9 +10,12 @@ public static class LevelGenerator
     const int MAZE_HEIGHT_INCREMENT = 0;
     const int INITIAL_MAZE_WIDTH = 8;
     const int INITIAL_MAZE_HEIGHT = 8;
-    private static readonly List<string> gameModes = new List<string>()
+    private static readonly List<GameMode> gameModes = new List<GameMode>()
     {
-        "Classic", "DoorKey", "Oil", "Ghost"
+        new ClassicGM(),
+        new DoorKeyGM(),
+        new OilGM(),
+        new GhostGM()
     };
 
     private static int GetLevelTime(Dimensions dimensions, int id)
@@ -29,14 +33,14 @@ public static class LevelGenerator
         LevelIO.ClearAll();
         Dimensions mazeDimentions = new Dimensions(INITIAL_MAZE_WIDTH, INITIAL_MAZE_HEIGHT);
 
-        foreach (string gameMode in gameModes)
+        foreach (GameMode gameMode in gameModes)
         {
-            string gameModeName = gameMode + "GM";
+            string gameModeName = gameMode.GetType().Name;
             for (int id = 1; id <= NUM_OF_LEVELS; id++)
             {
                 Maze.Instance.SetDimensions(mazeDimentions);
                 new BranchedDFSGeneration().Generate();
-                int numberOfGhosts = gameMode == "Ghost" ? 0 : 1;
+                int numberOfGhosts = gameModeName == "GhostGM" ? 0 : 1;
                 int numberOfItems = GetNumberOfItems(Maze.Instance.Dimensions);
                 List<Vector2Int> itemPositions = Maze.Instance.GetRandomPositions(numberOfItems);
                 foreach (Vector2Int itemPosition in itemPositions)

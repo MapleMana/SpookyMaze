@@ -6,18 +6,15 @@ using UnityEngine.SceneManagement;
 public abstract class GameMode
 {
     abstract public bool GameEnded();
-    abstract public void Initialize();
-    abstract public void Reset();
+    public virtual void Initialize()
+    {
+        Player.Instance.MazePosition = Maze.Instance.StartPos;
+    }
+    public virtual void Reset()
+    {
+        Player.Instance.MazePosition = Maze.Instance.StartPos;
+    }
     abstract public List<ItemType> GetItems();
-
-    public void DefaultInitialize()
-    {
-        Player.Instance.MazePosition = Maze.Instance.StartPos;
-    }
-    public void DefaultReset()
-    {
-        Player.Instance.MazePosition = Maze.Instance.StartPos;
-    }
 }
 
 public class ClassicGM : GameMode
@@ -27,19 +24,9 @@ public class ClassicGM : GameMode
         return Player.Instance.AtMazeEnd;
     }
 
-    public override  void Initialize()
-    {
-        DefaultInitialize();
-    }
-
     public override List<ItemType> GetItems()
     {
         return new List<ItemType>();
-    }
-
-    public override void Reset()
-    {
-        DefaultReset();
     }
 }
 
@@ -55,16 +42,6 @@ public class DoorKeyGM : GameMode
     {
         return ItemFactory.GetItems(ItemType.Key, 1);
     }
-
-    public override void Initialize()
-    {
-        DefaultInitialize();
-    }
-
-    public override void Reset()
-    {
-        DefaultReset();
-    }
 }
 
 public class OilGM : GameMode
@@ -78,16 +55,6 @@ public class OilGM : GameMode
     {
         int itemQuantity = (Maze.Instance.Dimensions.Height + Maze.Instance.Dimensions.Width) / 8; // magic formula - subject to change in the future
         return ItemFactory.GetItems(ItemType.Oil, itemQuantity);
-    }
-
-    public override void Initialize()
-    {
-        DefaultInitialize();
-    }
-
-    public override void Reset()
-    {
-        DefaultReset();
     }
 }
 
@@ -108,7 +75,7 @@ public class GhostGM : GameMode
 
     public override void Initialize()
     {
-        DefaultInitialize();
+        base.Initialize();
         ghosts = ghosts ?? new List<Ghost>();
         foreach (Ghost ghost in ghosts)
         {
@@ -128,7 +95,7 @@ public class GhostGM : GameMode
 
     public override void Reset()
     {
-        DefaultReset();
+        base.Reset();
         foreach (Ghost ghost in ghosts)
         {
             ghost.MazePosition = StartPosition;
