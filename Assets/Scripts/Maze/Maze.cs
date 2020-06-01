@@ -128,6 +128,20 @@ public class Maze
         return new List<Vector2Int>() { EndPos };
     }
 
+    public void PlaceOnMaze(List<ItemType> itemTypes)
+    {
+        List<Vector2Int> itemPositions = GetRandomPositions(itemTypes.Count);
+        for (int i = 0; i < Mathf.Min(itemPositions.Count, itemTypes.Count); i++)
+        {
+            Grid[itemPositions[i]].ItemType = itemTypes[i];
+        }
+    }
+
+    public void PlaceOnMaze(List<Movable> movables)
+    {
+
+    }
+
     /// <summary>
     /// Display each MazeCell of this maze
     /// </summary>

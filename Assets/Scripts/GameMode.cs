@@ -6,15 +6,23 @@ using UnityEngine.SceneManagement;
 public abstract class GameMode
 {
     abstract public bool GameEnded();
-    public virtual void Initialize()
-    {
-        Player.Instance.MazePosition = Maze.Instance.StartPos;
-    }
+
     public virtual void Reset()
     {
         Player.Instance.MazePosition = Maze.Instance.StartPos;
     }
+
     abstract public List<ItemType> GetItems();
+
+    public void PlaceItems(Maze maze)
+    {
+        maze.PlaceOnMaze(GetItems());
+    }
+
+    virtual public void PlaceMovables()
+    {
+        Player.Instance.MazePosition = Maze.Instance.StartPos;
+    }
 }
 
 public class ClassicGM : GameMode
@@ -24,7 +32,7 @@ public class ClassicGM : GameMode
         return Player.Instance.AtMazeEnd;
     }
 
-    public override List<ItemType> GetItems()
+    public override List<ItemType> GetItems() 
     {
         return new List<ItemType>();
     }
@@ -73,9 +81,9 @@ public class GhostGM : GameMode
         return new List<ItemType>();
     }
 
-    public override void Initialize()
+    public override void PlaceMovables()
     {
-        base.Initialize();
+        base.PlaceMovables();
         ghosts = ghosts ?? new List<Ghost>();
         foreach (Ghost ghost in ghosts)
         {

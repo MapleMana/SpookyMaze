@@ -37,7 +37,7 @@ public class LevelManager : Singleton<LevelManager>
         Maze.Instance.Display();
 
         Movable.ResetState();
-        GameMode.Initialize();
+        GameMode.PlaceMovables();
     }
 
     /// <summary>
