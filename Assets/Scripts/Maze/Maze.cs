@@ -124,7 +124,7 @@ public class Maze
 
     public List<Vector2Int> GetRandomPositions(int quantity)
     {
-        // FIXME: return {quantity} random positions 
+        // TODO: return {quantity} random positions 
         return new List<Vector2Int>() { EndPos };
     }
 
@@ -135,11 +135,6 @@ public class Maze
         {
             Grid[itemPositions[i]].ItemType = itemTypes[i];
         }
-    }
-
-    public void PlaceOnMaze(List<Movable> movables)
-    {
-
     }
 
     /// <summary>

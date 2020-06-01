@@ -84,6 +84,7 @@ public class GhostGM : GameMode
     public override void PlaceMovables()
     {
         base.PlaceMovables();
+        // TODO: clean up and add generation
         ghosts = ghosts ?? new List<Ghost>();
         foreach (Ghost ghost in ghosts)
         {
@@ -92,11 +93,14 @@ public class GhostGM : GameMode
         ghosts.Clear();
         GameObject _template = Resources.Load<GameObject>("Ghost");
         Ghost.CanBeMoved = true;
+
         Vector2Int ghostPosition = StartPosition;
         MazeCell currentCell = Maze.Instance[ghostPosition];
         Vector3 pos = currentCell.CellCenter(y: 0);
+        
         GameObject ghostObject = Object.Instantiate(_template, pos, Quaternion.identity);
         SceneManager.MoveGameObjectToScene(ghostObject, SceneManager.GetSceneByName("Maze"));
+        
         ghostObject.GetComponent<Ghost>().MazePosition = StartPosition;
         ghosts.Add(ghostObject.GetComponent<Ghost>());
     }
