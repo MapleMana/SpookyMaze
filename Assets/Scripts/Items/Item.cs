@@ -17,7 +17,9 @@ public class ItemFactory
     {
         if (itemType == ItemType.None) return null;
         GameObject template = Resources.Load<GameObject>(itemType.ToString());
-        return Object.Instantiate(template, pos, Quaternion.identity);
+        GameObject newItem = Object.Instantiate(template, pos, Quaternion.identity);
+        SceneManager.MoveGameObjectToScene(newItem, SceneManager.GetSceneByName("Maze"));
+        return newItem;
     }
 
     public static List<ItemType> GetItems(ItemType itemType, int quantity)

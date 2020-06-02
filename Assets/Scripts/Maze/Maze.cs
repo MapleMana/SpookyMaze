@@ -124,8 +124,10 @@ public class Maze
 
     public List<Vector2Int> GetRandomPositions(int quantity)
     {
-        // TODO: return {quantity} random positions 
-        return new List<Vector2Int>() { EndPos };
+        List<MazeCell> emptyCells = Grid.Values.Where(cell => cell.IsEmpty && cell.Position != StartPos).ToList();
+        emptyCells.Shuffle();
+        IEnumerable<Vector2Int> randomPositions = emptyCells.Select(cell => cell.Position);
+        return randomPositions.Take(quantity).ToList();
     }
 
     public void PlaceOnMaze(List<ItemType> itemTypes)
