@@ -93,12 +93,8 @@ public class GhostGM : GameMode
         ghosts.Clear();
         GameObject _template = Resources.Load<GameObject>("Ghost");
         Ghost.CanBeMoved = true;
-
-        Vector2Int ghostPosition = StartPosition;
-        MazeCell currentCell = Maze.Instance[ghostPosition];
-        Vector3 pos = currentCell.CellCenter(y: 0);
         
-        GameObject ghostObject = Object.Instantiate(_template, pos, Quaternion.identity);
+        GameObject ghostObject = Object.Instantiate(_template, Vector3.zero, Quaternion.identity);
         SceneManager.MoveGameObjectToScene(ghostObject, SceneManager.GetSceneByName("Maze"));
         
         ghostObject.GetComponent<Ghost>().MazePosition = StartPosition;

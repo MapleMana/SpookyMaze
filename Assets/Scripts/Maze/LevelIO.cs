@@ -1,4 +1,5 @@
 ﻿/// This file contains serializables clones of some objects
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design.Serialization;
 using System.IO;
@@ -6,6 +7,7 @@ using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEditorInternal;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [System.Serializable()]
 public class SerCell
@@ -40,6 +42,30 @@ public class SerCell
         );
         cell.ItemType = (ItemType)itemType;
         return cell;
+    }
+}
+
+[System.Serializable()]
+public class SerMovable
+{
+    string type;
+    int[] mazePosition;
+
+    public SerMovable(Movable movable)
+    {
+        type = movable.GetType().Name;
+        mazePosition = new int[2] { movable.MazePosition.x, movable.MazePosition.y };
+    }
+
+    public Movable Instantiate()
+    {
+        GameObject template = Resources.Load<GameObject>(type);
+        GameObject movableObject = UnityEngine.Object.Instantiate(template, Vector3.zero, Quaternion.identity);
+        SceneManager.MoveGameObjectToScene(movableObject, SceneManager.GetSceneByName("Maze"));
+
+        Movable movableComponent = movableObject.GetComponent<Movable>();
+        movableComponent.MazePosition = new Vector2Int(mazePosition[0], mazePosition[1]);
+        return movableComponent;
     }
 }
 
