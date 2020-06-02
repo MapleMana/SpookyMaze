@@ -6,10 +6,11 @@ using UnityEngine;
 public static class LevelGenerator
 {
     public const int NUM_OF_LEVELS = 10;
-    const int MAZE_WIDTH_INCREMENT = 0;
-    const int MAZE_HEIGHT_INCREMENT = 0;
+    const int MAZE_WIDTH_INCREMENT = 8;
+    const int MAZE_HEIGHT_INCREMENT = 8;
     const int INITIAL_MAZE_WIDTH = 8;
     const int INITIAL_MAZE_HEIGHT = 8;
+    const int DIMENTIONS_COUNT = 3;
     private static readonly List<GameMode> gameModes = new List<GameMode>()
     {
         new ClassicGM(),
@@ -31,22 +32,27 @@ public static class LevelGenerator
         foreach (GameMode gameMode in gameModes)
         {
             string gameModeName = gameMode.GetType().Name;
-            for (int id = 1; id <= NUM_OF_LEVELS; id++)
+
+            for (int i = 0; i < DIMENTIONS_COUNT; i++)
             {
-                Maze.Instance.SetDimensions(mazeDimentions);
-                new BranchedDFSGeneration().Generate();
-                gameMode.PlaceItems(Maze.Instance);
-                LevelIO.SaveLevel(
-                    new LevelSettings(gameModeName, mazeDimentions, id),
-                    new LevelStatus(maze: Maze.Instance, 
-                                    levelTime: GetLevelTime(mazeDimentions, id), 
-                                    mode: gameModeName, 
-                                    mobs: gameMode.GetMovables())
-                );
+                for (int id = 1; id <= NUM_OF_LEVELS; id++)
+                {
+                    Maze.Instance.SetDimensions(mazeDimentions);
+                    new BranchedDFSGeneration().Generate();
+                    gameMode.PlaceItems(Maze.Instance);
+                    LevelIO.SaveLevel(
+                        new LevelSettings(gameModeName, mazeDimentions, id),
+                        new LevelStatus(maze: Maze.Instance,
+                                        levelTime: GetLevelTime(mazeDimentions, id),
+                                        mode: gameModeName,
+                                        mobs: gameMode.GetMovables())
+                    );
+
+                    Maze.Instance.Clear();
+                }
 
                 mazeDimentions.Width += MAZE_WIDTH_INCREMENT;
                 mazeDimentions.Height += MAZE_HEIGHT_INCREMENT;
-                Maze.Instance.Clear();
             }
         }
     }
