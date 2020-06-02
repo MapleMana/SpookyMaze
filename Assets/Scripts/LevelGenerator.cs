@@ -35,14 +35,13 @@ public static class LevelGenerator
             {
                 Maze.Instance.SetDimensions(mazeDimentions);
                 new BranchedDFSGeneration().Generate();
-                int numberOfGhosts = gameModeName == "GhostGM" ? 0 : 1;
                 gameMode.PlaceItems(Maze.Instance);
                 LevelIO.SaveLevel(
                     new LevelSettings(gameModeName, mazeDimentions, id),
                     new LevelStatus(maze: Maze.Instance, 
                                     levelTime: GetLevelTime(mazeDimentions, id), 
                                     mode: gameModeName, 
-                                    ghostStartVectors: Maze.Instance.GetRandomPositions(numberOfGhosts))
+                                    mobs: gameMode.GetMovables())
                 );
 
                 mazeDimentions.Width += MAZE_WIDTH_INCREMENT;

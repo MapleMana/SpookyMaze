@@ -12,7 +12,9 @@ public abstract class Movable : MonoBehaviour
     public bool Moving { get; set; } = false;
     public bool AtMazeEnd => MazePosition == Maze.Instance.EndPos;
 
-    internal Vector2Int MazePosition {
+    public Vector2Int StartingPosition { get; set; }
+
+    public Vector2Int MazePosition {
         get => _mazePosition;
         set
         {
@@ -32,10 +34,15 @@ public abstract class Movable : MonoBehaviour
     /// <summary>
     /// Places movable at the start of the maze and inits movable's state
     /// </summary>
-    public static void ResetState()
+    public static void ReseHistory()
     {
         _commandHistory.Clear();
         _previousCommandTime = Time.time;
+    }
+
+    public void Reset()
+    {
+        MazePosition = StartingPosition;
     }
 
     public void AddToHistory(Movable movingObject, MovableCommand command)

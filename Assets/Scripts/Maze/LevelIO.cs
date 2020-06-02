@@ -51,10 +51,10 @@ public class SerMovable
     string type;
     int[] mazePosition;
 
-    public SerMovable(Movable movable)
+    public SerMovable(string movableType, Vector2Int startingPosition)
     {
-        type = movable.GetType().Name;
-        mazePosition = new int[2] { movable.MazePosition.x, movable.MazePosition.y };
+        type = movableType;
+        mazePosition = new int[2] { startingPosition.x, startingPosition.y };
     }
 
     public Movable Instantiate()
@@ -64,7 +64,7 @@ public class SerMovable
         SceneManager.MoveGameObjectToScene(movableObject, SceneManager.GetSceneByName("Maze"));
 
         Movable movableComponent = movableObject.GetComponent<Movable>();
-        movableComponent.MazePosition = new Vector2Int(mazePosition[0], mazePosition[1]);
+        movableComponent.MazePosition = movableComponent.StartingPosition = new Vector2Int(mazePosition[0], mazePosition[1]);
         return movableComponent;
     }
 }
@@ -90,16 +90,14 @@ public class LevelStatus
     public MazeState mazeState;
     public float time;
     public string gameMode;
-    public List<int[]> ghostPositions;
+    public List<SerMovable> movables;
 
-    public LevelStatus(Maze maze, float levelTime, string mode, List<Vector2Int> ghostStartVectors)
+    public LevelStatus(Maze maze, float levelTime, string mode, List<SerMovable> mobs)
     {
         mazeState = new MazeState(maze);
         time = levelTime;
         gameMode = mode;
-        ghostPositions = ghostStartVectors
-            .Select(pos => new int[2] { pos.x, pos.y })
-            .ToList();
+        movables = mobs;
     }
 }
 

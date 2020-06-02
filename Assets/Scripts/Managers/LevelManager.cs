@@ -33,11 +33,12 @@ public class LevelManager : Singleton<LevelManager>
         Maze.Instance.Clear();
         Maze.Instance.Load(levelStatus.mazeState);
 
+        // TODO: get rid of maze state
         Maze.Instance.SaveState();
         Maze.Instance.Display();
 
-        Movable.ResetState();
-        GameMode.PlaceMovables();
+        Movable.ReseHistory();
+        Player.Instance.MazePosition = Maze.Instance.StartPos;
     }
 
     /// <summary>
