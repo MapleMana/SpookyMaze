@@ -7,11 +7,6 @@ public abstract class GameMode
 {
     abstract public bool GameEnded();
 
-    public virtual void Reset()
-    {
-        Player.Instance.MazePosition = Maze.Instance.StartPos;
-    }
-
     abstract public List<ItemType> GetItems();
 
     public virtual List<SerMovable> GetMovables()

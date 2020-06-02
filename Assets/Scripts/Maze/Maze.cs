@@ -68,23 +68,12 @@ public class Maze
         {
             Grid[cell.Pos] = cell.ToMazeCell();
         }
-    }
-    /// <summary>
-    /// Restores maze state before level start
-    /// </summary>
-    public void Restore()
-    {
-        MazeState state = JsonUtility.FromJson<MazeState>(_beforeStart);
-        Load(state);
+        _beforeStart = JsonUtility.ToJson(state);
     }
 
-    /// <summary>
-    /// Saves the state of the maze before the level starts
-    /// </summary>
-    public void SaveState()
+    public void Reset()
     {
-        MazeState state = new MazeState(this);
-        _beforeStart = JsonUtility.ToJson(state);
+        Load(JsonUtility.FromJson<MazeState>(_beforeStart));
     }
 
     /// <summary>

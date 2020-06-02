@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class LevelManager : Singleton<LevelManager>
@@ -8,6 +10,7 @@ public class LevelManager : Singleton<LevelManager>
     private LevelState _levelState;
     private float LevelTime;
     private float _finalPlayerLightAngle;      // the player light angle at the end of the level
+    private List<Movable> _mobs;
 
     public GameMode GameMode { get; set; }
     public int LevelNumber { get; set; } = 1;
@@ -30,15 +33,24 @@ public class LevelManager : Singleton<LevelManager>
         Type GMType = Type.GetType(levelStatus.gameMode);
         GameMode = (GameMode)Activator.CreateInstance(GMType);
 
-        Maze.Instance.Clear();
         Maze.Instance.Load(levelStatus.mazeState);
-
-        // TODO: get rid of maze state
-        Maze.Instance.SaveState();
         Maze.Instance.Display();
 
-        Movable.ReseHistory();
         Player.Instance.MazePosition = Maze.Instance.StartPos;
+        _mobs = levelStatus.movables.Select(serMovable => serMovable.Instantiate()).ToList();
+        Ghost.CanBeMoved = true;
+    }
+
+    void ResetState()
+    {
+        Maze.Instance.Reset();
+        Maze.Instance.Display();
+
+        Player.Instance.MazePosition = Maze.Instance.StartPos;
+        foreach (Movable mob in _mobs)
+        {
+            mob.Reset();
+        }
     }
 
     /// <summary>
@@ -68,12 +80,10 @@ public class LevelManager : Singleton<LevelManager>
     /// </summary>
     /// <param name="onComplete">Action to perform when the replay is complete</param>
     public void WatchReplay(Action onComplete)
-    {
-        Maze.Instance.Restore();
-        Maze.Instance.Display();
+    {   
         _levelState |= LevelState.InReplay;
         TimeLeft = ReplayTime;
-        GameMode.Reset();
+        ResetState();
         StartCoroutine(Movable.ReplayCommands(
             timeMultiplier: GameManager.Instance.replayMultiplier,
             onComplete: () => {
@@ -95,7 +105,11 @@ public class LevelManager : Singleton<LevelManager>
         StartCoroutine(Movable.ReplayCommands(
             reversed: true,
             timeMultiplier: GameManager.Instance.reversedReplayMultiplier,
-            onComplete: () => GameManager.Instance.LoadLevel(LevelNumber)
+            onComplete: () =>
+            {
+                Clear();
+                GameManager.Instance.LoadLevel(LevelNumber);
+            }
         ));
     }
 
@@ -164,5 +178,16 @@ public class LevelManager : Singleton<LevelManager>
                 );
             }
         }
+    }
+
+    void Clear()
+    {
+        Maze.Instance.Clear();
+        Movable.ClearHistory();
+        foreach (Movable mob in _mobs)
+        {
+            Destroy(mob);
+        }
+        _mobs.Clear();
     }
 }

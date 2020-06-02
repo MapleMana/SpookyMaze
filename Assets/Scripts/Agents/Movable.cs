@@ -34,7 +34,7 @@ public abstract class Movable : MonoBehaviour
     /// <summary>
     /// Places movable at the start of the maze and inits movable's state
     /// </summary>
-    public static void ReseHistory()
+    public static void ClearHistory()
     {
         _commandHistory.Clear();
         _previousCommandTime = Time.time;
