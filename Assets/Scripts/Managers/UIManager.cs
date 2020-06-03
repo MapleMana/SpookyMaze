@@ -10,73 +10,13 @@ public class UIManager : Singleton<UIManager>
 {    
     public TextMeshProUGUI NextPlay;
 
-    public GameObject MainMenu;
-    public GameObject LevelSelect;
-    public GameObject FinishMenu;
-    public GameObject SettingsMenu;
-    public Toggle Key;
-    public Toggle Oil;
-    public Toggle Ghost;
-
-    public GameObject ButtonsPanel;
-    public Button ButtonTemplate;
-    public List<Button> buttonList;
-
-    private void Start()
-    {
-        LoadLevels();
-    }
-
-    /// <summary>
-    /// Executed when one of the level select buttons is pressed
-    /// </summary>
-    /// <param name="levelNumber">The level number to load</param>
-    /// <returns></returns>
-    public UnityEngine.Events.UnityAction OnLevelOptionClick(int levelNumber)
-    {
-        return () =>
-            {
-                GameManager.Instance.CurrentLevel = levelNumber;
-                StartGame();
-            };
-    }
-
-    /// <summary>
-    /// Invoked when the game starts and loads level buttons to the Level Select screen
-    /// </summary>
-    public void LoadLevels()
-    {
-        buttonList = new List<Button>();
-        int levelReached = PlayerPrefs.GetInt("levelReached", 1);
-
-        for (int i = 1; i <= LevelGenerator.NUM_OF_LEVELS; i++)
-        {
-            Button newButton = Instantiate(ButtonTemplate);
-            newButton.GetComponentInChildren<Text>().text = i.ToString();
-            newButton.onClick.AddListener(OnLevelOptionClick(i));
-            newButton.interactable = (i <= levelReached);
-            newButton.transform.SetParent(ButtonsPanel.transform, false);
-
-            buttonList.Add(newButton);
-        }
-    }
-
-    /// <summary>
-    /// Makes "levelNumber" button interactable
-    /// </summary>
-    /// <param name="levelNumber">Level to be inlocked</param>
-    public void UnlockLevel(int levelNumber)
-    {
-        buttonList[levelNumber - 1].interactable = true;
-    }
-
     /// <summary>
     /// This method loads the new maze and starts the game
     /// </summary>
     public void StartGame()
     {
-        LevelSelect.SetActive(false);
-        MainMenu.SetActive(false);
+        LevelSelectMenu.Close();
+        MainMenu.Close();
         SceneManager.LoadScene("Maze", LoadSceneMode.Additive);
     }
 
@@ -90,7 +30,7 @@ public class UIManager : Singleton<UIManager>
     /// </summary>
     public void ShowFinishMenu(bool mazeCompleted)
     {
-        FinishMenu.SetActive(true);
+        EndGameMenu.Open();
         NextPlay.text = mazeCompleted ? "Go to the Next Level" : "Play Again";
     }
 
@@ -99,9 +39,9 @@ public class UIManager : Singleton<UIManager>
     /// </summary>
     public void WatchReplay()
     {
-        FinishMenu.SetActive(false);
+        EndGameMenu.Close();
         LevelManager.Instance.WatchReplay(
-            onComplete: () => FinishMenu.SetActive(true)
+            onComplete: () => EndGameMenu.Open()
         );
     }
 
@@ -110,7 +50,7 @@ public class UIManager : Singleton<UIManager>
     /// </summary>
     public void GoToNextLevel()
     {
-        FinishMenu.SetActive(false);
+        EndGameMenu.Close();
         LevelManager.Instance.LoadCurrentLevel();
     }
 
@@ -119,26 +59,10 @@ public class UIManager : Singleton<UIManager>
     /// </summary>
     public void GoToMainMenu()
     {
-        FinishMenu.SetActive(false);
-        MainMenu.SetActive(true);
+        EndGameMenu.Close();
+        MainMenu.Open();
         LightManager.Instance.TurnOff();
         SceneManager.UnloadSceneAsync("Maze");
-        CameraManager.Instance.FocusOnMenu(MainMenu.transform.position);
-    }
-
-    public void ModeToggled()
-    {
-        if (Key.isOn)
-        {
-            GameManager.Instance.GameMode = new DoorKeyGameMode();
-        }
-        if (Oil.isOn)
-        {
-            GameManager.Instance.GameMode = new OilGameMode();
-        }
-        if (Ghost.isOn)
-        {
-            GameManager.Instance.GameMode = new GhostGameMode();
-        }
+        CameraManager.Instance.FocusOnMenu(MainMenu.Instance.gameObject.transform.position);
     }
 }

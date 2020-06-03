@@ -2,28 +2,24 @@
 using System.Reflection;
 using UnityEngine;
 
-public class MenuManager : MonoBehaviour
+public class MenuManager : Singleton<MenuManager>
 {
     public MainMenu MainMenuPrefab;
+    public SettingsMenu SettingsMenuPrefab;
+    public AboutMenu AboutMenuPrefab;
     public DimensionsMenu DimensionsMenuPrefab;
     public LevelSelectMenu LevelSelectMenuPrefab;
     public EndGameMenu EndGameMenuPrefab;
 
     private Stack<Menu> menuStack = new Stack<Menu>();
 
-    public static MenuManager Instance { get; set; }
-
-    private void Awake()
+    public override void Awake()
     {
-        Instance = this;
+        base.Awake();
 
         MainMenu.Open();
     }
 
-    private void OnDestroy()
-    {
-        Instance = null;
-    }
 
     public void CreateInstance<T>() where T : Menu
     {
@@ -34,7 +30,6 @@ public class MenuManager : MonoBehaviour
 
     public void OpenMenu(Menu instance)
     {
-        // De-activate top menu
         if (menuStack.Count > 0)
         {
             if (instance.DisableMenusUnderneath)
@@ -58,8 +53,6 @@ public class MenuManager : MonoBehaviour
 
     private T GetPrefab<T>() where T : Menu
     {
-        // Get prefab dynamically, based on public fields set from Unity
-        // You can use private fields with SerializeField attribute too
         var fields = this.GetType().GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
         foreach (var field in fields)
         {
@@ -99,8 +92,6 @@ public class MenuManager : MonoBehaviour
         else
             instance.gameObject.SetActive(false);
 
-        // Re-activate top menu
-        // If a re-activated menu is an overlay we need to activate the menu under it
         foreach (var menu in menuStack)
         {
             menu.gameObject.SetActive(true);
@@ -112,7 +103,6 @@ public class MenuManager : MonoBehaviour
 
     private void Update()
     {
-        // On Android the back button is sent as Esc
         if (Input.GetKeyDown(KeyCode.Escape) && menuStack.Count > 0)
         {
             menuStack.Peek().OnBackPressed();

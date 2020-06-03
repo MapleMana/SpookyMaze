@@ -16,7 +16,6 @@ public class LevelManager : Singleton<LevelManager>
     public float ReplayTime => (LEVEL_TIME - TimeLeft) * GameManager.Instance.replayMultiplier;
     public float ReversedReplayTime => (LEVEL_TIME - TimeLeft) * GameManager.Instance.reversedReplayMultiplier;
 
-
     Maze maze;
     Player player;
     List<Movable> mobs;
@@ -126,7 +125,7 @@ public class LevelManager : Singleton<LevelManager>
         {
             LightManager.Instance.TurnOn();
             CameraManager.Instance.FocusOnMaze(Maze.Instance);
-            UIManager.Instance.UnlockLevel(++LevelNumber);
+            //LevelSelectMenu.Instance.UnlockLevel(++LevelNumber);
         }
         UIManager.Instance.ShowFinishMenu(mazeCompleted);
     }

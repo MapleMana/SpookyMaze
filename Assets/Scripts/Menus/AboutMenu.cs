@@ -4,8 +4,4 @@ using UnityEngine;
 
 public class AboutMenu : Menu<AboutMenu>
 {
-    public void OnMainMenuButtonPressed()
-    {
-        MainMenu.Open();
-    }
 }

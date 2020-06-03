@@ -9,7 +9,7 @@ public class MainMenu : Menu<MainMenu>
         AboutMenu.Open();
     }
 
-    public void OnModePressed()
+    public void OnModePressed(string modeName)
     {
         DimensionsMenu.Open();
     }
@@ -17,6 +17,11 @@ public class MainMenu : Menu<MainMenu>
     public void OnSettingsPressed()
     {
         SettingsMenu.Open();
+    }
+
+    public void OnDimensionPressed()
+    {
+        LevelSelectMenu.Open();
     }
 
     public override void OnBackPressed()
