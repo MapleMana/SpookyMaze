@@ -117,6 +117,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DestroyWhenClosed: 1
   DisableMenusUnderneath: 1
+  NextPlay: {fileID: 3260969571042253357}
 --- !u!1 &3260969570572006834
 GameObject:
   m_ObjectHideFlags: 0

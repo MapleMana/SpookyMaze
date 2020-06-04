@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class UIManager : Singleton<UIManager>
 {    
-    public TextMeshProUGUI NextPlay;
-
     /// <summary>
     /// This method loads the new maze and starts the game
     /// </summary>
@@ -31,7 +28,7 @@ public class UIManager : Singleton<UIManager>
     public void ShowFinishMenu(bool mazeCompleted)
     {
         EndGameMenu.Open();
-        NextPlay.text = mazeCompleted ? "Go to the Next Level" : "Play Again";
+        EndGameMenu.Instance.SetNextActionText(mazeCompleted);
     }
 
     /// <summary>
