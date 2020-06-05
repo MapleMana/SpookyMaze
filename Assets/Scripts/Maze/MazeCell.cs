@@ -122,6 +122,7 @@ public class MazeCell : System.IDisposable
         {
             Object.Destroy(child);
         }
+        _walls.Clear();
         Object.Destroy(Item);
     }
 }

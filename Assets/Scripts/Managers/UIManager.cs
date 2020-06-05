@@ -130,15 +130,15 @@ public class UIManager : Singleton<UIManager>
     {
         if (Key.isOn)
         {
-            GameManager.Instance.GameMode = new DoorKeyGameMode();
+            GameManager.Instance.GameMode = new DoorKeyGM();
         }
         if (Oil.isOn)
         {
-            GameManager.Instance.GameMode = new OilGameMode();
+            GameManager.Instance.GameMode = new OilGM();
         }
         if (Ghost.isOn)
         {
-            GameManager.Instance.GameMode = new GhostGameMode();
+            GameManager.Instance.GameMode = new GhostGM();
         }
     }
 }

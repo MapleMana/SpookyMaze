@@ -21,8 +21,8 @@ public class CameraManager : Singleton<CameraManager>
     {
         float screenRatio = 1f * Screen.width / Screen.height;
 
-        float mazeHeight = MazeCell.CELL_WIDTH * maze.Height;
-        float mazeWidth = MazeCell.CELL_WIDTH * maze.Width;
+        float mazeHeight = MazeCell.CELL_WIDTH * maze.Dimensions.Height;
+        float mazeWidth = MazeCell.CELL_WIDTH * maze.Dimensions.Width;
         float significantSide = (mazeWidth > mazeHeight * screenRatio) ? mazeWidth : mazeHeight;
 
         float heightFOV = 2 * Mathf.Tan(_camera.fieldOfView * Mathf.Deg2Rad / 2);

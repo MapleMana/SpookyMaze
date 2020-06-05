@@ -24,7 +24,7 @@ public class GameManager : Singleton<GameManager>
     private void Start()
     {
         Maze.Initialize();
-        GameMode = new ClassicGameMode();
+        GameMode = new ClassicGM();
         int levelsGenerated = PlayerPrefs.GetInt("generated", 0);
         if (levelsGenerated == 0)
         {
@@ -47,7 +47,8 @@ public class GameManager : Singleton<GameManager>
     /// <param name="levelNumber">The level number to load</param>
     public void LoadLevel(int levelNumber)
     {
-        MazeState state = MazeState.LoadFrom($"/{levelNumber}.maze");
-        LevelManager.Instance.Initialize(levelNumber, state, GameMode);
+        string gameModeName = GameMode.GetType().Name;
+        LevelStatus levelStatus = LevelIO.LoadLevel(new LevelSettings(gameModeName, new Dimensions(8, 8), levelNumber));
+        LevelManager.Instance.Initialize(levelNumber, levelStatus);
     }
 }
