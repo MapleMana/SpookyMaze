@@ -8,11 +8,13 @@ public class DimensionsMenu : Menu<DimensionsMenu>
 {
     public GameObject ButtonsPanel;
     public Button ButtonTemplate;
+    public TMP_Text ModeName;
 
     private List<Button> buttonList;
 
     private void Start()
     {
+        ModeName.text = GameManager.Instance.GameModeName;
         LoadDimensions();
     }
 
@@ -27,12 +29,19 @@ public class DimensionsMenu : Menu<DimensionsMenu>
     public void LoadDimensions()
     {
         buttonList = new List<Button>();
-
-        for (int i = 1; i <= 3; i++)
+        List<Dimensions> possibleDimensions = LevelIO.GetPossibleDimensions(GameManager.Instance.GameModeName);
+        possibleDimensions.Sort(delegate (Dimensions d1, Dimensions d2)
         {
+            return d1.Width.CompareTo(d2.Width);
+        });
+
+        foreach (Dimensions dimensions in possibleDimensions)
+        {
+            int width = dimensions.Width;
+            int height = dimensions.Height;
             Button newButton = Instantiate(ButtonTemplate);
-            newButton.GetComponentInChildren<TMP_Text>().text = $"{i}x{i}";
-            newButton.onClick.AddListener(OnLevelOptionClick(i));
+            newButton.GetComponentInChildren<TMP_Text>().text = dimensions.ToString();
+            newButton.onClick.AddListener(OnDimensionsOptionClick(width, height));
             newButton.transform.SetParent(ButtonsPanel.transform, false);
 
             buttonList.Add(newButton);
@@ -44,10 +53,11 @@ public class DimensionsMenu : Menu<DimensionsMenu>
     /// </summary>
     /// <param name="dimensionNumber">The dimensions to load</param>
     /// <returns></returns>
-    public UnityEngine.Events.UnityAction OnLevelOptionClick(int dimensionNumber)
+    public UnityEngine.Events.UnityAction OnDimensionsOptionClick(int dimensionWidth, int dimensionHeight)
     {
         return () =>
         {
+            GameManager.Instance.Dimensions = new Dimensions(dimensionWidth, dimensionHeight);
             LevelSelectMenu.Open();
         };
     }

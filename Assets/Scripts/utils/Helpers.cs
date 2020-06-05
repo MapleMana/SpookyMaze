@@ -59,7 +59,6 @@ public struct Dimensions
         int.TryParse(dimensionNameParts[0], out Width);
         int.TryParse(dimensionNameParts[1], out Height);
     }
-
     public override string ToString()
     {
         return $"{Width}x{Height}";

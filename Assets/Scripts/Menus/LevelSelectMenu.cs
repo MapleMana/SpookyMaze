@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,11 +8,13 @@ public class LevelSelectMenu : Menu<LevelSelectMenu>
 {
     public GameObject ButtonsPanel;
     public Button ButtonTemplate;
+    public TMP_Text ModeName;
 
     private List<Button> buttonList;
 
     private void Start()
     {
+        ModeName.text = GameManager.Instance.GameModeName;
         LoadLevels();
     }
 
@@ -23,12 +26,15 @@ public class LevelSelectMenu : Menu<LevelSelectMenu>
         buttonList = new List<Button>();
         int levelReached = PlayerPrefs.GetInt("levelReached", 1);
 
-        for (int i = 1; i <= LevelGenerator.NUM_OF_LEVELS; i++)
+        List<int> possibleLevels = LevelIO.GetPossibleIds(GameManager.Instance.GameModeName, GameManager.Instance.Dimensions);
+        possibleLevels.Sort();
+
+        foreach (int level in possibleLevels)
         {
             Button newButton = Instantiate(ButtonTemplate);
-            newButton.GetComponentInChildren<Text>().text = i.ToString();
-            newButton.onClick.AddListener(OnLevelOptionClick(i));
-            newButton.interactable = (i <= levelReached);
+            newButton.GetComponentInChildren<Text>().text = level.ToString();
+            newButton.onClick.AddListener(OnLevelOptionClick(level));
+            newButton.interactable = (level <= levelReached);
             newButton.transform.SetParent(ButtonsPanel.transform, false);
 
             buttonList.Add(newButton);
@@ -44,7 +50,7 @@ public class LevelSelectMenu : Menu<LevelSelectMenu>
     {
         return () =>
         {
-            GameManager.Instance.CurrentLevel = levelNumber;
+            GameManager.Instance.LoadLevel(levelNumber);
             UIManager.Instance.StartGame();
         };
     }
