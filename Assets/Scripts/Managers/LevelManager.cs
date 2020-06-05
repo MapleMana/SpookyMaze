@@ -1,58 +1,56 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class LevelManager : Singleton<LevelManager>
 {
     private LevelState _levelState;
-    const float LEVEL_TIME = 75;
+    private float LevelTime;
     private float _finalPlayerLightAngle;      // the player light angle at the end of the level
+    private List<Movable> _mobs;
 
     public GameMode GameMode { get; set; }
     public int LevelNumber { get; set; } = 1;
     public float TimeLeft { get; set; }
     public bool LevelIs(LevelState state) => (_levelState & state) != 0;
-    public float ReplayTime => (LEVEL_TIME - TimeLeft) * GameManager.Instance.replayMultiplier;
-    public float ReversedReplayTime => (LEVEL_TIME - TimeLeft) * GameManager.Instance.reversedReplayMultiplier;
-
-
-    Maze maze;
-    Player player;
-    List<Movable> mobs;
-    List<Item> items;
-
-    /// <summary>
-    /// Initializes the level from a saved state
-    /// </summary>
-    void Initialize() { }
+    public float ReplayTime => (LevelTime - TimeLeft) * GameManager.Instance.replayMultiplier;
+    public float ReversedReplayTime => (LevelTime - TimeLeft) * GameManager.Instance.reversedReplayMultiplier;
 
     /// <summary>
     /// Temporary copy of the above method
     /// </summary>
     /// <param name="levelNumber"></param>
     /// <param name="levelTime"></param>
-    public void Initialize(int levelNumber, MazeState mazeState, GameMode gameMode)
+    public void Initialize(int levelNumber, LevelStatus levelStatus)
     {
         _levelState = LevelState.InProgress;
-        TimeLeft = LEVEL_TIME;
+        TimeLeft = LevelTime = levelStatus.time;
         LevelNumber = levelNumber;
-        GameMode = gameMode;
 
-        Maze.Instance.Clear();
-        Maze.Instance.Load(mazeState);
+        Type GMType = Type.GetType(levelStatus.gameMode);
+        GameMode = (GameMode)Activator.CreateInstance(GMType);
 
-        // FIXME: move item placement to MazeIO
-        if (GameMode.GetItems().Count > 0)
-        {
-            Maze.Instance[new Vector2Int(3, 7)].ItemType = GameMode.GetItems()[0];
-        }
-
-        Maze.Instance.SaveState();
+        Maze.Instance.Load(levelStatus.mazeState);
         Maze.Instance.Display();
 
-        Movable.ResetState();
-        GameMode.Initialize();
+        Player.Instance.MazePosition = Maze.Instance.StartPos;
+        _mobs = levelStatus.movables.Select(serMovable => serMovable.Instantiate()).ToList();
+        Ghost.CanBeMoved = true;
+    }
+
+    void ResetState()
+    {
+        Maze.Instance.Reset();
+        Maze.Instance.Display();
+
+        Player.Instance.MazePosition = Maze.Instance.StartPos;
+        foreach (Movable mob in _mobs)
+        {
+            mob.Reset();
+        }
     }
 
     /// <summary>
@@ -64,7 +62,7 @@ public class LevelManager : Singleton<LevelManager>
         float timeToAdd = 0;
         if (LevelIs(LevelState.InProgress))
         {
-            timeToAdd = ratio * LEVEL_TIME;
+            timeToAdd = ratio * LevelTime;
         }
         else if (LevelIs(LevelState.InReplay))
         {
@@ -82,12 +80,10 @@ public class LevelManager : Singleton<LevelManager>
     /// </summary>
     /// <param name="onComplete">Action to perform when the replay is complete</param>
     public void WatchReplay(Action onComplete)
-    {
-        Maze.Instance.Restore();
-        Maze.Instance.Display();
+    {   
         _levelState |= LevelState.InReplay;
         TimeLeft = ReplayTime;
-        GameMode.Reset();
+        ResetState();
         StartCoroutine(Movable.ReplayCommands(
             timeMultiplier: GameManager.Instance.replayMultiplier,
             onComplete: () => {
@@ -109,7 +105,11 @@ public class LevelManager : Singleton<LevelManager>
         StartCoroutine(Movable.ReplayCommands(
             reversed: true,
             timeMultiplier: GameManager.Instance.reversedReplayMultiplier,
-            onComplete: () => GameManager.Instance.LoadLevel(LevelNumber)
+            onComplete: () =>
+            {
+                Clear();
+                GameManager.Instance.LoadLevel(LevelNumber);
+            }
         ));
     }
 
@@ -148,7 +148,7 @@ public class LevelManager : Singleton<LevelManager>
             else
             {
                 TimeLeft -= Time.deltaTime;
-                Player.Instance.LerpLightAngle(coef: TimeLeft / LEVEL_TIME);
+                Player.Instance.LerpLightAngle(coef: TimeLeft / LevelTime);
             }
 
             if (GameMode.GameEnded())
@@ -178,5 +178,16 @@ public class LevelManager : Singleton<LevelManager>
                 );
             }
         }
+    }
+
+    void Clear()
+    {
+        Maze.Instance.Clear();
+        Movable.ClearHistory();
+        foreach (Movable mob in _mobs)
+        {
+            Destroy(mob.gameObject);
+        }
+        _mobs.Clear();
     }
 }

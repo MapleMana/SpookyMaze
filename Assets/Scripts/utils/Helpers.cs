@@ -41,3 +41,27 @@ public enum LevelState
     InReplayReversed = 16
 }
 
+[System.Serializable()]
+public struct Dimensions
+{
+    public int Width;
+    public int Height;
+
+    public Dimensions(int Width, int Height)
+    {
+        this.Width = Width;
+        this.Height = Height;
+    }
+
+    public Dimensions(string dimensionName)
+    {
+        string[] dimensionNameParts = dimensionName.Split('x');
+        int.TryParse(dimensionNameParts[0], out Width);
+        int.TryParse(dimensionNameParts[1], out Height);
+    }
+
+    public override string ToString()
+    {
+        return $"{Width}x{Height}";
+    }
+}

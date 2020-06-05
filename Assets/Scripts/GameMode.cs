@@ -6,44 +6,34 @@ using UnityEngine.SceneManagement;
 public abstract class GameMode
 {
     abstract public bool GameEnded();
-    abstract public void Initialize();
-    abstract public void Reset();
+
     abstract public List<ItemType> GetItems();
 
-    public void DefaultInitialize()
+    public virtual List<SerMovable> GetMovables()
     {
-        Player.Instance.MazePosition = Maze.Instance.StartPos;
+        return new List<SerMovable>();
     }
-    public void DefaultReset()
+
+    public void PlaceItems(Maze maze)
     {
-        Player.Instance.MazePosition = Maze.Instance.StartPos;
+        maze.PlaceOnMaze(GetItems());
     }
 }
 
-public class ClassicGameMode : GameMode
+public class ClassicGM : GameMode
 {
     public override bool GameEnded()
     {
         return Player.Instance.AtMazeEnd;
     }
 
-    public override  void Initialize()
-    {
-        DefaultInitialize();
-    }
-
-    public override List<ItemType> GetItems()
+    public override List<ItemType> GetItems() 
     {
         return new List<ItemType>();
     }
-
-    public override void Reset()
-    {
-        DefaultReset();
-    }
 }
 
-public class DoorKeyGameMode : GameMode
+public class DoorKeyGM : GameMode
 {
     public override bool GameEnded()
     {
@@ -55,19 +45,9 @@ public class DoorKeyGameMode : GameMode
     {
         return ItemFactory.GetItems(ItemType.Key, 1);
     }
-
-    public override void Initialize()
-    {
-        DefaultInitialize();
-    }
-
-    public override void Reset()
-    {
-        DefaultReset();
-    }
 }
 
-public class OilGameMode : GameMode
+public class OilGM : GameMode
 {
     public override bool GameEnded()
     {
@@ -76,26 +56,13 @@ public class OilGameMode : GameMode
 
     public override List<ItemType> GetItems()
     {
-        int itemQuantity = (Maze.Instance.Height + Maze.Instance.Width) / 8; // magic formula - subject to change in the future
+        int itemQuantity = (Maze.Instance.Dimensions.Height + Maze.Instance.Dimensions.Width) / 8; // magic formula - subject to change in the future
         return ItemFactory.GetItems(ItemType.Oil, itemQuantity);
-    }
-
-    public override void Initialize()
-    {
-        DefaultInitialize();
-    }
-
-    public override void Reset()
-    {
-        DefaultReset();
     }
 }
 
-public class GhostGameMode : GameMode
+public class GhostGM : GameMode
 {
-    List<Ghost> ghosts;
-    Vector2Int StartPosition => new Vector2Int(Maze.Instance.EndPos.x, Maze.Instance.EndPos.y);
-
     public override bool GameEnded()
     {
         return Player.Instance.AtMazeEnd;
@@ -106,32 +73,16 @@ public class GhostGameMode : GameMode
         return new List<ItemType>();
     }
 
-    public override void Initialize()
+    public override List<SerMovable> GetMovables()
     {
-        DefaultInitialize();
-        ghosts = ghosts ?? new List<Ghost>();
-        foreach (Ghost ghost in ghosts)
-        {
-            GameObject.Destroy(ghost.gameObject);
-        }
-        ghosts.Clear();
-        GameObject _template = Resources.Load<GameObject>("Ghost");
-        Ghost.CanBeMoved = true;
-        Vector2Int ghostPosition = StartPosition;
-        MazeCell currentCell = Maze.Instance[ghostPosition];
-        Vector3 pos = currentCell.CellCenter(y: 0);
-        GameObject ghostObject = Object.Instantiate(_template, pos, Quaternion.identity);
-        SceneManager.MoveGameObjectToScene(ghostObject, SceneManager.GetSceneByName("Maze"));
-        ghostObject.GetComponent<Ghost>().MazePosition = StartPosition;
-        ghosts.Add(ghostObject.GetComponent<Ghost>());
-    }
+        int ghostQuantity = (Maze.Instance.Dimensions.Height + Maze.Instance.Dimensions.Width) / 16; // magic formula - subject to change in the future
+        List<SerMovable> ghosts = new List<SerMovable>();
 
-    public override void Reset()
-    {
-        DefaultReset();
-        foreach (Ghost ghost in ghosts)
+        foreach (Vector2Int position in Maze.Instance.GetRandomPositions(ghostQuantity))
         {
-            ghost.MazePosition = StartPosition;
+            ghosts.Add(new SerMovable("Ghost", position));
         }
+
+        return ghosts;
     }
 }

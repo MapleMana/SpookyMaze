@@ -15,20 +15,11 @@ public class ItemFactory
 {
     public static GameObject SpawnItem(ItemType itemType, Vector3 pos)
     {
-        GameObject itemObject;
-        switch (itemType)
-        {
-            case ItemType.Key:
-                itemObject = Object.Instantiate(Resources.Load<GameObject>("Key"), pos, Quaternion.identity);
-                break;
-            case ItemType.Oil:
-                itemObject = Object.Instantiate(Resources.Load<GameObject>("Oil"), pos, Quaternion.identity);
-                break;
-            default:
-                return null;
-        }
-        SceneManager.MoveGameObjectToScene(itemObject, SceneManager.GetSceneByName("Maze"));
-        return itemObject;
+        if (itemType == ItemType.None) return null;
+        GameObject template = Resources.Load<GameObject>(itemType.ToString());
+        GameObject newItem = Object.Instantiate(template, pos, Quaternion.identity);
+        SceneManager.MoveGameObjectToScene(newItem, SceneManager.GetSceneByName("Maze"));
+        return newItem;
     }
 
     public static List<ItemType> GetItems(ItemType itemType, int quantity)
