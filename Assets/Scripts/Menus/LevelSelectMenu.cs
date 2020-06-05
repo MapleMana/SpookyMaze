@@ -14,7 +14,7 @@ public class LevelSelectMenu : Menu<LevelSelectMenu>
 
     private void Start()
     {
-        ModeName.text = GameManager.Instance.GameModeName;
+        ModeName.text = GameManager.Instance.CurrentSettings.gameMode;
         LoadLevels();
     }
 
@@ -26,7 +26,7 @@ public class LevelSelectMenu : Menu<LevelSelectMenu>
         buttonList = new List<Button>();
         int levelReached = PlayerPrefs.GetInt("levelReached", 1);
 
-        List<int> possibleLevels = LevelIO.GetPossibleIds(GameManager.Instance.GameModeName, GameManager.Instance.Dimensions);
+        List<int> possibleLevels = LevelIO.GetPossibleIds(GameManager.Instance.CurrentSettings);
         possibleLevels.Sort();
 
         foreach (int level in possibleLevels)
@@ -50,7 +50,8 @@ public class LevelSelectMenu : Menu<LevelSelectMenu>
     {
         return () =>
         {
-            GameManager.Instance.LoadLevel(levelNumber);
+            GameManager.Instance.CurrentSettings.id = levelNumber;
+            GameManager.Instance.LoadLevel();
             UIManager.Instance.StartGame();
         };
     }

@@ -14,7 +14,7 @@ public class DimensionsMenu : Menu<DimensionsMenu>
 
     private void Start()
     {
-        ModeName.text = GameManager.Instance.GameModeName;
+        ModeName.text = GameManager.Instance.CurrentSettings.gameMode;
         LoadDimensions();
     }
 
@@ -29,7 +29,7 @@ public class DimensionsMenu : Menu<DimensionsMenu>
     public void LoadDimensions()
     {
         buttonList = new List<Button>();
-        List<Dimensions> possibleDimensions = LevelIO.GetPossibleDimensions(GameManager.Instance.GameModeName);
+        List<Dimensions> possibleDimensions = LevelIO.GetPossibleDimensions(GameManager.Instance.CurrentSettings);
         possibleDimensions.Sort(delegate (Dimensions d1, Dimensions d2)
         {
             return d1.Width.CompareTo(d2.Width);
@@ -57,7 +57,7 @@ public class DimensionsMenu : Menu<DimensionsMenu>
     {
         return () =>
         {
-            GameManager.Instance.Dimensions = new Dimensions(dimensionWidth, dimensionHeight);
+            GameManager.Instance.CurrentSettings.dimensions = new Dimensions(dimensionWidth, dimensionHeight);
             LevelSelectMenu.Open();
         };
     }

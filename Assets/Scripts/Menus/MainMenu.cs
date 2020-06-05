@@ -11,7 +11,7 @@ public class MainMenu : Menu<MainMenu>
 
     public void OnModePressed(string modeName)
     {
-        GameManager.Instance.GameModeName = modeName;
+        GameManager.Instance.CurrentSettings.gameMode = modeName;
         DimensionsMenu.Open();
     }
 

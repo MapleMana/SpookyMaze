@@ -8,9 +8,7 @@ public class GameManager : Singleton<GameManager>
 {
     public float replayMultiplier;
     public float reversedReplayMultiplier;
-    public int CurrentLevel { get; set; } = 1;
-    public Dimensions Dimensions { get; set; }
-    public string GameModeName { get; set; }
+    public LevelSettings CurrentSettings { get; set; }
     
     private void OnEnable()
     {
@@ -37,17 +35,16 @@ public class GameManager : Singleton<GameManager>
     {
         if (scene.name == "Maze")
         {
-            LoadLevel(CurrentLevel);
+            LoadLevel();
         }
     }
 
     /// <summary>
     /// Loads the appropriate level from the file
     /// </summary>
-    /// <param name="levelNumber">The level number to load</param>
-    public void LoadLevel(int levelNumber)
+    public void LoadLevel()
     {
-        LevelStatus levelStatus = LevelIO.LoadLevel(new LevelSettings(GameModeName, Dimensions, levelNumber));
-        LevelManager.Instance.Initialize(levelNumber, levelStatus);
+        LevelStatus levelStatus = LevelIO.LoadLevel(CurrentSettings);
+        LevelManager.Instance.Initialize(CurrentSettings.id, levelStatus);
     }
 }

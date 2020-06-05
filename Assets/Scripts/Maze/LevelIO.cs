@@ -101,7 +101,7 @@ public class LevelStatus
     }
 }
 
-public struct LevelSettings
+public class LevelSettings
 {
     public string gameMode;
     public Dimensions dimensions;
@@ -169,18 +169,18 @@ public static class LevelIO
             .ToList();
     }
 
-    public static List<Dimensions> GetPossibleDimensions(string gameMode)
+    public static List<Dimensions> GetPossibleDimensions(LevelSettings levelSettings)
     {
-        List<string> dimensionNames = GetSubdirectoryNames($"{Root}/{gameMode}");
+        List<string> dimensionNames = GetSubdirectoryNames($"{Root}/{levelSettings.gameMode}");
 
         return dimensionNames
             .Select(dimensionName => new Dimensions(dimensionName))
             .ToList();
     }
 
-    public static List<int> GetPossibleIds(string gameMode, Dimensions dimensions)
+    public static List<int> GetPossibleIds(LevelSettings levelSettings)
     {
-        List<string> mazeFiles = GetSubdirectoryNames($"{Root}/{gameMode}/{dimensions}");
+        List<string> mazeFiles = GetSubdirectoryNames($"{Root}/{levelSettings.gameMode}/{levelSettings.dimensions}");
         return mazeFiles
             .Select(mazeFile => int.Parse(mazeFile))
             .ToList();

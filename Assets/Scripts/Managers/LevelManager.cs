@@ -108,7 +108,7 @@ public class LevelManager : Singleton<LevelManager>
             onComplete: () =>
             {
                 Clear();
-                GameManager.Instance.LoadLevel(LevelNumber);
+                GameManager.Instance.LoadLevel();
             }
         ));
     }
