@@ -27,10 +27,9 @@ public static class LevelGenerator
     public static void GenerateLevels()
     {
         LevelIO.ClearAll();
-        Dimensions mazeDimentions = new Dimensions(INITIAL_MAZE_WIDTH, INITIAL_MAZE_HEIGHT);
-
         foreach (GameMode gameMode in gameModes)
         {
+            Dimensions mazeDimentions = new Dimensions(INITIAL_MAZE_WIDTH, INITIAL_MAZE_HEIGHT);
             string gameModeName = gameMode.GetType().Name;
 
             for (int i = 0; i < DIMENTIONS_COUNT; i++)
