@@ -7,7 +7,8 @@ public class LevelSelectMenu : Menu<LevelSelectMenu>
 {
     public GameObject ButtonsPanel;
     public Button ButtonTemplate;
-    public List<Button> buttonList;
+
+    private List<Button> buttonList;
 
     private void Start()
     {
@@ -46,14 +47,5 @@ public class LevelSelectMenu : Menu<LevelSelectMenu>
             GameManager.Instance.CurrentLevel = levelNumber;
             UIManager.Instance.StartGame();
         };
-    }
-
-    /// <summary>
-    /// Makes "levelNumber" button interactable
-    /// </summary>
-    /// <param name="levelNumber">Level to be inlocked</param>
-    public void UnlockLevel(int levelNumber)
-    {
-        buttonList[levelNumber - 1].interactable = true;
     }
 }

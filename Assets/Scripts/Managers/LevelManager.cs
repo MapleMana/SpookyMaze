@@ -125,7 +125,7 @@ public class LevelManager : Singleton<LevelManager>
         {
             LightManager.Instance.TurnOn();
             CameraManager.Instance.FocusOnMaze(Maze.Instance);
-            //LevelSelectMenu.Instance.UnlockLevel(++LevelNumber);
+            PlayerPrefs.SetInt("levelReached", ++LevelNumber);
         }
         UIManager.Instance.ShowFinishMenu(mazeCompleted);
     }
@@ -159,7 +159,7 @@ public class LevelManager : Singleton<LevelManager>
         {
             if (TimeLeft > 0)
             {
-                TimeLeft -= Time.deltaTime;// / replayMultiplier;
+                TimeLeft -= Time.deltaTime;
                 Player.Instance.LerpLightAngle(
                     min: _finalPlayerLightAngle,
                     coef: TimeLeft / ReplayTime
@@ -170,7 +170,7 @@ public class LevelManager : Singleton<LevelManager>
         {
             if (TimeLeft < ReversedReplayTime)
             {
-                TimeLeft += Time.deltaTime;// / reversedReplayMultiplier;
+                TimeLeft += Time.deltaTime;
                 Player.Instance.LerpLightAngle(
                     min: _finalPlayerLightAngle,
                     coef: TimeLeft / ReversedReplayTime

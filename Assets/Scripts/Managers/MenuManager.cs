@@ -34,7 +34,7 @@ public class MenuManager : Singleton<MenuManager>
         {
             if (instance.DisableMenusUnderneath)
             {
-                foreach (var menu in menuStack)
+                foreach (Menu menu in menuStack)
                 {
                     menu.gameObject.SetActive(false);
 
@@ -92,13 +92,22 @@ public class MenuManager : Singleton<MenuManager>
         else
             instance.gameObject.SetActive(false);
 
-        foreach (var menu in menuStack)
+        foreach (Menu menu in menuStack)
         {
             menu.gameObject.SetActive(true);
 
             if (menu.DisableMenusUnderneath)
                 break;
         }
+    }
+
+    public void ClearMenuStack()
+    {
+        foreach (Menu menu in menuStack)
+        {
+            Destroy(menu.gameObject);
+        }
+        menuStack.Clear();
     }
 
     private void Update()
