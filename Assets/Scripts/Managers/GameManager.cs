@@ -8,7 +8,7 @@ public class GameManager : Singleton<GameManager>
 {
     public float replayMultiplier;
     public float reversedReplayMultiplier;
-    public LevelSettings CurrentSettings { get; set; }
+    public LevelSettings CurrentSettings { get; set; } = new LevelSettings();
     
     private void OnEnable()
     {

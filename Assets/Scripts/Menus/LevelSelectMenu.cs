@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class LevelSelectMenu : Menu<LevelSelectMenu>
@@ -51,7 +52,6 @@ public class LevelSelectMenu : Menu<LevelSelectMenu>
         return () =>
         {
             GameManager.Instance.CurrentSettings.id = levelNumber;
-            GameManager.Instance.LoadLevel();
             UIManager.Instance.StartGame();
         };
     }

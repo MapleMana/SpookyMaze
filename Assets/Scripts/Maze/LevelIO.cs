@@ -107,6 +107,8 @@ public class LevelSettings
     public Dimensions dimensions;
     public int id;
 
+    public LevelSettings() { }
+
     public LevelSettings(string gameMode, Dimensions dimensions, int id)
     {
         this.gameMode = gameMode;
