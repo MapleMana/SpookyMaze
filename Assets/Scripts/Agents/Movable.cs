@@ -70,7 +70,7 @@ public abstract class Movable : MonoBehaviour
         {
             _commandHistory.Reverse();
         }
-                
+
         foreach (var command in _commandHistory)
         {
             float executionTime = reversed

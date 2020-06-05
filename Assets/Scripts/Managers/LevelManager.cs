@@ -186,7 +186,7 @@ public class LevelManager : Singleton<LevelManager>
         Movable.ClearHistory();
         foreach (Movable mob in _mobs)
         {
-            Destroy(mob);
+            Destroy(mob.gameObject);
         }
         _mobs.Clear();
     }
