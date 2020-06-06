@@ -13,7 +13,6 @@ public class LevelManager : Singleton<LevelManager>
     private List<Movable> _mobs;
 
     public GameMode GameMode { get; set; }
-    public int LevelNumber { get; set; } = 1;
     public float TimeLeft { get; set; }
     public bool LevelIs(LevelState state) => (_levelState & state) != 0;
     public float ReplayTime => (LevelTime - TimeLeft) * GameManager.Instance.replayMultiplier;
@@ -22,13 +21,11 @@ public class LevelManager : Singleton<LevelManager>
     /// <summary>
     /// Temporary copy of the above method
     /// </summary>
-    /// <param name="levelNumber"></param>
     /// <param name="levelTime"></param>
-    public void Initialize(int levelNumber, LevelStatus levelStatus)
+    public void Initialize(LevelStatus levelStatus)
     {
         _levelState = LevelState.InProgress;
         TimeLeft = LevelTime = levelStatus.time;
-        LevelNumber = levelNumber;
 
         Type GMType = Type.GetType(levelStatus.gameMode);
         GameMode = (GameMode)Activator.CreateInstance(GMType);
@@ -126,7 +123,7 @@ public class LevelManager : Singleton<LevelManager>
         {
             LightManager.Instance.TurnOn();
             CameraManager.Instance.FocusOnMaze(Maze.Instance);
-            PlayerPrefs.SetInt("levelReached", ++LevelNumber);
+            PlayerPrefs.SetInt("levelReached", ++GameManager.Instance.CurrentSettings.id);
         }
         UIManager.Instance.ShowFinishMenu(mazeCompleted);
     }
