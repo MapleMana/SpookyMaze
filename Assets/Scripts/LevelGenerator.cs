@@ -11,6 +11,7 @@ public static class LevelGenerator
     const int INITIAL_MAZE_WIDTH = 8;
     const int INITIAL_MAZE_HEIGHT = 8;
     const int DIMENTIONS_COUNT = 3;
+
     private static readonly List<GameMode> gameModes = new List<GameMode>()
     {
         new ClassicGM(),
