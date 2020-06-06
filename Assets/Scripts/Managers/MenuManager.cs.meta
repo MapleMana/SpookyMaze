@@ -1,0 +1,23 @@
+fileFormatVersion: 2
+guid: 3f65f261818fb3146b91fa8e8b9321f5
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - MainMenuPrefab: {fileID: 6813214519199201444, guid: 8a22d3220cf5aaa44ae5382c1923c0b8,
+      type: 3}
+  - SettingsMenuPrefab: {fileID: 6600607643221304524, guid: 25601a9772674124e93beaf2c37050e3,
+      type: 3}
+  - AboutMenuPrefab: {fileID: 8994445263102251638, guid: c794a8909fb39aa4887306c7cee15d7a,
+      type: 3}
+  - DimensionsMenuPrefab: {fileID: 6929987564755497002, guid: 628210e5f11f0d249b92a05b8fc386b3,
+      type: 3}
+  - LevelSelectMenuPrefab: {fileID: 5917160879899057118, guid: a6ce5a271e0ff9e4cb738235e8ff16a7,
+      type: 3}
+  - EndGameMenuPrefab: {fileID: 1588959527956654672, guid: d6d8fdb78235c5e43a7ed46a21f56af2,
+      type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
