@@ -15,7 +15,7 @@ public class LevelSelectMenu : Menu<LevelSelectMenu>
 
     private void Start()
     {
-        ModeName.text = GameManager.Instance.CurrentSettings.gameMode;
+        ModeName.text = GameManager.Instance.CurrentSettings.GetReadableGameMode();
         LoadLevels();
     }
 

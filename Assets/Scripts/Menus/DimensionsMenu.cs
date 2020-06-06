@@ -14,7 +14,7 @@ public class DimensionsMenu : Menu<DimensionsMenu>
 
     private void Start()
     {
-        ModeName.text = GameManager.Instance.CurrentSettings.gameMode;
+        ModeName.text = GameManager.Instance.CurrentSettings.GetReadableGameMode();
         LoadDimensions();
     }
 

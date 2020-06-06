@@ -5,6 +5,7 @@ using System.ComponentModel.Design.Serialization;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Text.RegularExpressions;
 using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -114,6 +115,14 @@ public class LevelSettings
         this.gameMode = gameMode;
         this.dimensions = dimensions;
         this.id = id;
+    }
+
+    public string GetReadableGameMode()
+    {
+        string modeName = gameMode.Replace("GM", "");
+        MatchCollection matches = Regex.Matches(modeName, "[A-Z][a-z]+");
+        List<string> matchWords = matches.Cast<Match>().Select(match => match.Value).ToList();
+        return String.Join(" ", matchWords);
     }
 
     public override string ToString()
