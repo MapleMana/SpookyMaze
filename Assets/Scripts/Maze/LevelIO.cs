@@ -107,6 +107,7 @@ public class LevelSettings
     public string gameMode;
     public Dimensions dimensions;
     public int id;
+    public string ModeDimensions => $"{this.gameMode}{this.dimensions}";
 
     public LevelSettings() { }
 
