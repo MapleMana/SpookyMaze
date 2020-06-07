@@ -123,9 +123,16 @@ public class LevelManager : Singleton<LevelManager>
         {
             LightManager.Instance.TurnOn();
             CameraManager.Instance.FocusOnMaze(Maze.Instance);
-            PlayerPrefs.SetInt("levelReached", ++GameManager.Instance.CurrentSettings.id);
+            SaveLevelProgress();
         }
         UIManager.Instance.ShowFinishMenu(mazeCompleted);
+    }
+
+    private static void SaveLevelProgress()
+    {
+        LevelSettings currentLevelSettings = GameManager.Instance.CurrentSettings;
+        string modeDimension = currentLevelSettings.ModeDimensions;
+        PlayerPrefs.SetInt(modeDimension, ++currentLevelSettings.id);
     }
 
     void Update()

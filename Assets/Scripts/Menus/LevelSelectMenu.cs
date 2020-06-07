@@ -25,21 +25,33 @@ public class LevelSelectMenu : Menu<LevelSelectMenu>
     public void LoadLevels()
     {
         buttonList = new List<Button>();
-        int levelReached = PlayerPrefs.GetInt("levelReached", 1);
+        int levelReached = GetLevelProgress();
 
         List<int> possibleLevels = LevelIO.GetPossibleIds(GameManager.Instance.CurrentSettings);
         possibleLevels.Sort();
 
         foreach (int level in possibleLevels)
         {
-            Button newButton = Instantiate(ButtonTemplate);
-            newButton.GetComponentInChildren<Text>().text = level.ToString();
-            newButton.onClick.AddListener(OnLevelOptionClick(level));
-            newButton.interactable = (level <= levelReached);
-            newButton.transform.SetParent(ButtonsPanel.transform, false);
-
+            Button newButton = CreateLevelButton(levelReached, level);
             buttonList.Add(newButton);
         }
+    }
+
+    private Button CreateLevelButton(int levelReached, int level)
+    {
+        Button newButton = Instantiate(ButtonTemplate);
+        newButton.GetComponentInChildren<Text>().text = level.ToString();
+        newButton.onClick.AddListener(OnLevelOptionClick(level));
+        newButton.interactable = (level <= levelReached);
+        newButton.transform.SetParent(ButtonsPanel.transform, false);
+        return newButton;
+    }
+
+    private static int GetLevelProgress()
+    {
+        LevelSettings currentLevelSettings = GameManager.Instance.CurrentSettings;
+        string modeDimension = currentLevelSettings.ModeDimensions;
+        return PlayerPrefs.GetInt(modeDimension, 1);
     }
 
     /// <summary>
