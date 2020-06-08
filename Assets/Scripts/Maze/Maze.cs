@@ -146,5 +146,6 @@ public class Maze
             kvPair.Value.Dispose();
         }
         Grid.Clear();
+        Instance = new Maze();
     }
 }
