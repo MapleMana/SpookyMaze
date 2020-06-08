@@ -184,7 +184,7 @@ public class LevelManager : Singleton<LevelManager>
         }
     }
 
-    void Clear()
+    public void Clear()
     {
         Maze.Instance.Clear();
         Movable.ClearHistory();
@@ -193,5 +193,11 @@ public class LevelManager : Singleton<LevelManager>
             Destroy(mob.gameObject);
         }
         _mobs.Clear();
+    }
+
+    protected override void OnDestroy()
+    {
+        Clear();
+        base.OnDestroy();
     }
 }
