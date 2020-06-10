@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class EndGameMenu : Menu<EndGameMenu>
 {
     public TextMeshProUGUI NextPlay;
+    public Button SkipButtonTemplate;
 
     /// <summary>
     /// Goes to the MainMenu Scene and displays the main menu again
@@ -37,9 +39,25 @@ public class EndGameMenu : Menu<EndGameMenu>
     public void GoToNextLevel()
     {
         EndGameMenu.Close();
+        Button skipButton = Instantiate(SkipButtonTemplate);
+        skipButton.onClick.AddListener(SkipReplay);
         LevelManager.Instance.LoadCurrentLevel();
     }
 
+    /// <summary>
+    /// Skips replay of player's movements and loads the next level
+    /// </summary>
+    private void SkipReplay()
+    {
+        StopCoroutine("ReplayCommands");
+        LevelManager.Instance.Clear();
+        GameManager.Instance.LoadLevel();
+    }
+
+    /// <summary>
+    /// Sets the text on the button for showing the next available action
+    /// </summary>
+    /// <param name="mazeCompleted"></param>
     public void SetNextActionText(bool mazeCompleted)
     {
         NextPlay.text = mazeCompleted ? "Go to the Next Level" : "Play Again";

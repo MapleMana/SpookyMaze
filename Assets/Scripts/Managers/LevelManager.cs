@@ -99,6 +99,7 @@ public class LevelManager : Singleton<LevelManager>
         _levelState |= LevelState.InReplayReversed;
         TimeLeft = 0;
         LightManager.Instance.TurnOff();
+
         StartCoroutine(Movable.ReplayCommands(
             reversed: true,
             timeMultiplier: GameManager.Instance.reversedReplayMultiplier,
