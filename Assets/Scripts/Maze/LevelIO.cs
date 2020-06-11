@@ -58,7 +58,7 @@ public class SerMovable
         mazePosition = new int[2] { startingPosition.x, startingPosition.y };
     }
 
-    public Movable Instantiate()
+    public Movable Spawn()
     {
         GameObject template = Resources.Load<GameObject>(type);
         GameObject movableObject = UnityEngine.Object.Instantiate(template, Vector3.zero, Quaternion.identity);
@@ -86,19 +86,30 @@ public class MazeState
 }
 
 [System.Serializable()]
-public class LevelStatus
+public class LevelData
 {
     public MazeState mazeState;
     public float time;
     public string gameMode;
     public List<SerMovable> movables;
 
-    public LevelStatus(Maze maze, float levelTime, string mode, List<SerMovable> mobs)
+    public LevelData(Maze maze, float levelTime, string mode, List<SerMovable> mobs)
     {
         mazeState = new MazeState(maze);
         time = levelTime;
         gameMode = mode;
         movables = mobs;
+    }
+
+    public List<Movable> SpawnMovables()
+    {
+        return movables.Select(serMovable => serMovable.Spawn()).ToList();
+    }
+
+    public GameMode GetGameMode()
+    {
+        Type GMType = Type.GetType(gameMode);
+        return (GameMode)Activator.CreateInstance(GMType);
     }
 }
 
@@ -149,7 +160,7 @@ public static class LevelIO
         }
     }
 
-    public static void SaveLevel(LevelSettings levelSettings, LevelStatus levelStatus)
+    public static void SaveLevel(LevelSettings levelSettings, LevelData levelStatus)
     {
         BinaryFormatter formatter = new BinaryFormatter();
         string path = GetFilePath(levelSettings);
@@ -164,13 +175,13 @@ public static class LevelIO
         }
     }
 
-    public static LevelStatus LoadLevel(LevelSettings levelSettings)
+    public static LevelData LoadLevel(LevelSettings levelSettings)
     {
         BinaryFormatter formatter = new BinaryFormatter();
         string path = GetFilePath(levelSettings);
         using (FileStream stream = new FileStream(path, FileMode.Open)) 
         {
-            return formatter.Deserialize(stream) as LevelStatus;
+            return formatter.Deserialize(stream) as LevelData;
         }
     }
 

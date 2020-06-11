@@ -18,7 +18,7 @@ public class Maze
     public Dimensions Dimensions
     {
         get => _dimensions;
-        private set {
+        set {
             _dimensions = value;
             StartPos = new Vector2Int(0, value.Height - 1);
             EndPos = new Vector2Int(value.Width - 1, 0);
@@ -44,17 +44,6 @@ public class Maze
     {
         return pos.x >= 0 && pos.x < Dimensions.Width &&
                pos.y >= 0 && pos.y < Dimensions.Height;
-    }
-
-    /// <summary>
-    /// Specifies the initial maze dimensions
-    /// </summary>
-    /// <param name="width">The width (X) of the maze</param>
-    /// <param name="height">The height (Z) of the maze</param>
-    public void SetDimensions(Dimensions newDimensions)
-    {
-        Dimensions = newDimensions;
-
     }
 
     // FIXME: move back to MazeIO when Maze is no longer a singleton
