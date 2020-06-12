@@ -8,7 +8,6 @@ using UnityEngine.UI;
 public class EndGameMenu : Menu<EndGameMenu>
 {
     public TextMeshProUGUI NextPlay;
-    public Button SkipButtonTemplate;
 
     /// <summary>
     /// Goes to the MainMenu Scene and displays the main menu again
@@ -39,19 +38,8 @@ public class EndGameMenu : Menu<EndGameMenu>
     public void GoToNextLevel()
     {
         EndGameMenu.Close();
-        Button skipButton = Instantiate(SkipButtonTemplate);
-        skipButton.onClick.AddListener(SkipReplay);
+        OnReplayMenu.Open();
         LevelManager.Instance.LoadCurrentLevel();
-    }
-
-    /// <summary>
-    /// Skips replay of player's movements and loads the next level
-    /// </summary>
-    private void SkipReplay()
-    {
-        StopCoroutine("ReplayCommands");
-        LevelManager.Instance.Clear();
-        GameManager.Instance.LoadLevel();
     }
 
     /// <summary>
