@@ -11,7 +11,7 @@ public class OnReplayMenu : Menu<OnReplayMenu>
     /// </summary>
     public void SkipReplay()
     {
-        StopCoroutine("ReplayCommands");
+        LevelManager.Instance.StopAllCoroutines();
         LevelManager.Instance.Clear();
         GameManager.Instance.LoadLevel();
     }
