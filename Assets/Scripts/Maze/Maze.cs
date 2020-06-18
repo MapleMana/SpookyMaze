@@ -55,6 +55,7 @@ public class Maze
         foreach (SerCell cell in state.cells)
         {
             Grid[cell.Pos] = cell.ToMazeCell();
+            Grid[cell.Pos].Instantiate();
         }
     }
 
@@ -107,17 +108,6 @@ public class Maze
         for (int i = 0; i < Mathf.Min(itemPositions.Count, itemTypes.Count); i++)
         {
             Grid[itemPositions[i]].ItemType = itemTypes[i];
-        }
-    }
-
-    /// <summary>
-    /// Display each MazeCell of this maze
-    /// </summary>
-    public void Display()
-    {
-        foreach (var kvPair in Grid)
-        {
-            kvPair.Value.Display();            
         }
     }
 
