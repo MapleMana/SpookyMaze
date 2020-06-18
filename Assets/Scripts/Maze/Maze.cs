@@ -50,6 +50,7 @@ public class Maze
     /// </summary>
     public void Load(MazeState state)
     {
+        Clear();
         Dimensions = state.dimensions;
         foreach (SerCell cell in state.cells)
         {
@@ -127,6 +128,5 @@ public class Maze
             kvPair.Value.Dispose();
         }
         Grid.Clear();
-        Instance = new Maze();
     }
 }
