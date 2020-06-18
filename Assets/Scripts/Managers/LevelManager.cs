@@ -8,6 +8,7 @@ using UnityEngine;
 public class LevelManager : Singleton<LevelManager>
 {
     private LevelState _levelState;
+    private LevelData _levelData;
     private float LevelTime;
     private float _finalPlayerLightAngle;      // the player light angle at the end of the level
     private List<Movable> _mobs;
@@ -18,30 +19,24 @@ public class LevelManager : Singleton<LevelManager>
     public float ReplayTime => (LevelTime - TimeLeft) * GameManager.Instance.replayMultiplier;
     public float ReversedReplayTime => (LevelTime - TimeLeft) * GameManager.Instance.reversedReplayMultiplier;
 
-    /// <summary>
-    /// Temporary copy of the above method
-    /// </summary>
-    /// <param name="levelTime"></param>
-    public void Initialize(LevelStatus levelStatus)
+    public void Initialize(LevelData levelData)
     {
+        _levelData = levelData;
         _levelState = LevelState.InProgress;
-        TimeLeft = LevelTime = levelStatus.time;
+        TimeLeft = LevelTime = levelData.time;
+        GameMode = levelData.GetGameMode();
 
-        Type GMType = Type.GetType(levelStatus.gameMode);
-        GameMode = (GameMode)Activator.CreateInstance(GMType);
-
-        Maze.Instance.Load(levelStatus.mazeState);
-        Maze.Instance.Display();
+        Maze.Instance.Load(levelData.mazeState);
 
         Player.Instance.MazePosition = Maze.Instance.StartPos;
-        _mobs = levelStatus.movables.Select(serMovable => serMovable.Instantiate()).ToList();
+        _mobs = levelData.SpawnMovables();
+        Movable.ClearHistory();
         Ghost.CanBeMoved = true;
     }
 
     void ResetState()
     {
-        Maze.Instance.Reset();
-        Maze.Instance.Display();
+        Maze.Instance.Load(_levelData.mazeState);
 
         Player.Instance.MazePosition = Maze.Instance.StartPos;
         foreach (Movable mob in _mobs)
@@ -187,7 +182,6 @@ public class LevelManager : Singleton<LevelManager>
     public void Clear()
     {
         Maze.Instance.Clear();
-        Movable.ClearHistory();
         foreach (Movable mob in _mobs)
         {
             Destroy(mob.gameObject);

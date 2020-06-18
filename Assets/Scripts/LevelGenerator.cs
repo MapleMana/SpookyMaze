@@ -37,12 +37,12 @@ public static class LevelGenerator
             {
                 for (int id = 1; id <= NUM_OF_LEVELS; id++)
                 {
-                    Maze.Instance.SetDimensions(mazeDimentions);
+                    Maze.Instance.Dimensions = mazeDimentions;
                     new BranchedDFSGeneration().Generate();
                     gameMode.PlaceItems(Maze.Instance);
                     LevelIO.SaveLevel(
                         new LevelSettings(gameModeName, mazeDimentions, id),
-                        new LevelStatus(maze: Maze.Instance,
+                        new LevelData(maze: Maze.Instance,
                                         levelTime: GetLevelTime(mazeDimentions, id),
                                         mode: gameModeName,
                                         mobs: gameMode.GetMovables())
