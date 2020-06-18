@@ -95,7 +95,7 @@ public class MazeCell : System.IDisposable
     /// <summary>
     /// Instantiates walls according to _wallState
     /// </summary>
-    public void Display()
+    public void Instantiate()
     {
         Item = ItemFactory.SpawnItem(ItemType, CellCenter(y: 0));
         if (WallExists(Vector2Int.right))

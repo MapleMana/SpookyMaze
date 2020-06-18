@@ -27,6 +27,7 @@ public class UIManager : Singleton<UIManager>
     public void ShowFinishMenu(bool mazeCompleted)
     {
         EndGameMenu.Open();
-        EndGameMenu.Instance.SetNextActionText(mazeCompleted);
+        EndGameMenu.Instance.LevelCompleted = mazeCompleted;
+        EndGameMenu.Instance.SetNextActionText();
     }
 }
