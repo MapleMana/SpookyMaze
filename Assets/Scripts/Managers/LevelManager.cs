@@ -38,7 +38,7 @@ public class LevelManager : Singleton<LevelManager>
 
     void ResetState()
     {
-        Maze.Instance.Reset();
+        Maze.Instance.Load(_levelData.mazeState);
         Maze.Instance.Display();
 
         Player.Instance.MazePosition = Maze.Instance.StartPos;

@@ -9,7 +9,6 @@ using UnityEngine.SceneManagement;
 public class Maze
 {
     private Dimensions _dimensions;
-    private string  _beforeStart;
     private static readonly Random _generator = new Random();
 
     public static Maze Instance { get; private set; }
@@ -46,7 +45,6 @@ public class Maze
                pos.y >= 0 && pos.y < Dimensions.Height;
     }
 
-    // FIXME: move back to MazeIO when Maze is no longer a singleton
     /// <summary>
     /// Synchronize the Maze with this state
     /// </summary>
@@ -57,12 +55,6 @@ public class Maze
         {
             Grid[cell.Pos] = cell.ToMazeCell();
         }
-        _beforeStart = JsonUtility.ToJson(state);
-    }
-
-    public void Reset()
-    {
-        Load(JsonUtility.FromJson<MazeState>(_beforeStart));
     }
 
     /// <summary>
