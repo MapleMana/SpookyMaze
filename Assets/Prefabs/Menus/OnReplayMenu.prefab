@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 6973303102693853450}
   - component: {fileID: 6769759170645729131}
   - component: {fileID: 6142380349243289243}
-  - component: {fileID: 1421558334674013392}
   - component: {fileID: 7861223854276550378}
   m_Layer: 5
   m_Name: OnReplayMenu
@@ -101,20 +100,6 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &1421558334674013392
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3744723651519240057}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 860b94fc9e0b3a840bfc94c40014fd64, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  DestroyWhenClosed: 1
-  DisableMenusUnderneath: 1
 --- !u!114 &7861223854276550378
 MonoBehaviour:
   m_ObjectHideFlags: 0
