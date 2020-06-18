@@ -44,10 +44,6 @@ public class GameManager : Singleton<GameManager>
     /// </summary>
     public void LoadLevel()
     {
-        if (OnReplayMenu.Instance)
-        {
-            OnReplayMenu.Close();
-        }
         LevelStatus levelStatus = LevelIO.LoadLevel(CurrentSettings);
         LevelManager.Instance.Initialize(levelStatus);
     }
