@@ -44,11 +44,10 @@ public class EndGameMenu : Menu<EndGameMenu>
         OnReplayMenu.Open();
         LevelManager.Instance.LoadCurrentLevel();
     }
-    
+
     /// <summary>
     /// Sets the text on the button for showing the next available action
     /// </summary>
-    /// <param name="mazeCompleted"></param>
     public void SetNextActionText()
     {
         NextPlay.text = _levelCompleted ? "Go to the Next Level" : "Play Again";
