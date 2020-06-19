@@ -118,6 +118,8 @@ MonoBehaviour:
   DestroyWhenClosed: 1
   DisableMenusUnderneath: 1
   NextPlay: {fileID: 3260969571042253357}
+  SkipButtonTemplate: {fileID: 8717896847970421452, guid: e1bddbaf0bed63849babf5abbca6b214,
+    type: 3}
 --- !u!1 &3260969570572006834
 GameObject:
   m_ObjectHideFlags: 0
