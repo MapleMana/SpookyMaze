@@ -7,7 +7,10 @@ using UnityEngine.UI;
 
 public class EndGameMenu : Menu<EndGameMenu>
 {
+    private bool _levelCompleted;
+
     public TextMeshProUGUI NextPlay;
+    public bool LevelCompleted { get => _levelCompleted; set => _levelCompleted = value; }
 
     /// <summary>
     /// Goes to the MainMenu Scene and displays the main menu again
@@ -24,11 +27,11 @@ public class EndGameMenu : Menu<EndGameMenu>
     /// <summary>
     /// Replays player's movements from the start. Fired from FinishMenu.
     /// </summary>
-    public void WatchReplay()
+    public void ReplayPlayersMovement()
     {
         EndGameMenu.Close();
         LevelManager.Instance.WatchReplay(
-            onComplete: () => EndGameMenu.Open()
+            onComplete: () => UIManager.Instance.ShowFinishMenu(_levelCompleted)
         );
     }
 
@@ -41,13 +44,13 @@ public class EndGameMenu : Menu<EndGameMenu>
         OnReplayMenu.Open();
         LevelManager.Instance.LoadCurrentLevel();
     }
-
+    
     /// <summary>
     /// Sets the text on the button for showing the next available action
     /// </summary>
     /// <param name="mazeCompleted"></param>
-    public void SetNextActionText(bool mazeCompleted)
+    public void SetNextActionText()
     {
-        NextPlay.text = mazeCompleted ? "Go to the Next Level" : "Play Again";
+        NextPlay.text = _levelCompleted ? "Go to the Next Level" : "Play Again";
     }
 }

@@ -906,7 +906,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1588959527956654672}
-        m_MethodName: WatchReplay
+        m_MethodName: ReplayPlayersMovement
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

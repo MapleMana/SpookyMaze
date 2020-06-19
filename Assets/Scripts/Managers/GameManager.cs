@@ -44,7 +44,7 @@ public class GameManager : Singleton<GameManager>
     /// </summary>
     public void LoadLevel()
     {
-        LevelStatus levelStatus = LevelIO.LoadLevel(CurrentSettings);
+        LevelData levelStatus = LevelIO.LoadLevel(CurrentSettings);
         LevelManager.Instance.Initialize(levelStatus);
     }
 }
