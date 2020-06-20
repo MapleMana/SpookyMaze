@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class EndGameMenu : Menu<EndGameMenu>
 {
@@ -40,9 +41,13 @@ public class EndGameMenu : Menu<EndGameMenu>
     public void GoToNextLevel()
     {
         EndGameMenu.Close();
+        OnReplayMenu.Open();
         LevelManager.Instance.LoadCurrentLevel();
     }
 
+    /// <summary>
+    /// Sets the text on the button for showing the next available action
+    /// </summary>
     public void SetNextActionText()
     {
         NextPlay.text = _levelCompleted ? "Go to the Next Level" : "Play Again";

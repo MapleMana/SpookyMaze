@@ -9,7 +9,6 @@ using UnityEngine.SceneManagement;
 public class Maze
 {
     private Dimensions _dimensions;
-    private string  _beforeStart;
     private static readonly Random _generator = new Random();
 
     public static Maze Instance { get; private set; }
@@ -18,7 +17,7 @@ public class Maze
     public Dimensions Dimensions
     {
         get => _dimensions;
-        private set {
+        set {
             _dimensions = value;
             StartPos = new Vector2Int(0, value.Height - 1);
             EndPos = new Vector2Int(value.Width - 1, 0);
@@ -47,33 +46,17 @@ public class Maze
     }
 
     /// <summary>
-    /// Specifies the initial maze dimensions
-    /// </summary>
-    /// <param name="width">The width (X) of the maze</param>
-    /// <param name="height">The height (Z) of the maze</param>
-    public void SetDimensions(Dimensions newDimensions)
-    {
-        Dimensions = newDimensions;
-
-    }
-
-    // FIXME: move back to MazeIO when Maze is no longer a singleton
-    /// <summary>
     /// Synchronize the Maze with this state
     /// </summary>
     public void Load(MazeState state)
     {
+        Clear();
         Dimensions = state.dimensions;
         foreach (SerCell cell in state.cells)
         {
             Grid[cell.Pos] = cell.ToMazeCell();
+            Grid[cell.Pos].Instantiate();
         }
-        _beforeStart = JsonUtility.ToJson(state);
-    }
-
-    public void Reset()
-    {
-        Load(JsonUtility.FromJson<MazeState>(_beforeStart));
     }
 
     /// <summary>
@@ -128,17 +111,6 @@ public class Maze
         }
     }
 
-    /// <summary>
-    /// Display each MazeCell of this maze
-    /// </summary>
-    public void Display()
-    {
-        foreach (var kvPair in Grid)
-        {
-            kvPair.Value.Display();            
-        }
-    }
-
     public void Clear()
     {
         foreach (var kvPair in Grid)
@@ -146,6 +118,5 @@ public class Maze
             kvPair.Value.Dispose();
         }
         Grid.Clear();
-        Instance = new Maze();
     }
 }
