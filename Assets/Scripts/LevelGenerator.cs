@@ -45,7 +45,8 @@ public static class LevelGenerator
                         new LevelData(maze: Maze.Instance,
                                         levelTime: GetLevelTime(mazeDimentions, id),
                                         mode: gameModeName,
-                                        mobs: gameMode.GetMovables())
+                                        mobs: gameMode.GetMovables(),
+                                        levelPoints: i * id)
                     );
 
                     Maze.Instance.Clear();
