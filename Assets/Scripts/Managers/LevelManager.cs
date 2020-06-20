@@ -134,7 +134,7 @@ public class LevelManager : Singleton<LevelManager>
 
     private void IncreasePlayerScore()
     {
-        int previousScore = PlayerPrefs.GetInt("PlayerScore");
+        int previousScore = PlayerPrefs.GetInt("PlayerScore", 0);
         int newScore = previousScore + _levelData.points;
         PlayerPrefs.SetInt("PlayerScore", newScore);
     }
