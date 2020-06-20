@@ -10,6 +10,7 @@ public class MenuManager : Singleton<MenuManager>
     public LevelSelectMenu LevelSelectMenuPrefab;
     public MainMenu MainMenuPrefab;
     public OnReplayMenu OnReplayMenuPrefab;
+    public ScoreMenu ScoreMenuPrefab;
     public SettingsMenu SettingsMenuPrefab;
 
     private Stack<Menu> menuStack = new Stack<Menu>();
