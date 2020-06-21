@@ -128,8 +128,11 @@ public class LevelManager : Singleton<LevelManager>
     {
         LevelSettings currentLevelSettings = GameManager.Instance.CurrentSettings;
         string modeDimension = currentLevelSettings.ModeDimensions;
-        PlayerPrefs.SetInt(modeDimension, ++currentLevelSettings.id);
-        IncreasePlayerScore();
+        if (PlayerPrefs.GetInt(modeDimension) < ++currentLevelSettings.id)
+        {
+            PlayerPrefs.SetInt(modeDimension, ++currentLevelSettings.id);
+            IncreasePlayerScore();
+        }
     }
 
     private void IncreasePlayerScore()
