@@ -4,12 +4,13 @@ using UnityEngine;
 
 public class MenuManager : Singleton<MenuManager>
 {
-    public MainMenu MainMenuPrefab;
-    public SettingsMenu SettingsMenuPrefab;
     public AboutMenu AboutMenuPrefab;
     public DimensionsMenu DimensionsMenuPrefab;
-    public LevelSelectMenu LevelSelectMenuPrefab;
     public EndGameMenu EndGameMenuPrefab;
+    public LevelSelectMenu LevelSelectMenuPrefab;
+    public MainMenu MainMenuPrefab;
+    public OnReplayMenu OnReplayMenuPrefab;
+    public SettingsMenu SettingsMenuPrefab;
 
     private Stack<Menu> menuStack = new Stack<Menu>();
 
