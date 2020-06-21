@@ -84,10 +84,7 @@ public class MazeCell : System.IDisposable
         float wallX = horizontal ? CELL_WIDTH + WALL_WIDTH : WALL_WIDTH;
         float wallY = horizontal ? WALL_WIDTH : CELL_WIDTH + WALL_WIDTH;
 
-        // a random value is added, so that the overlap is better rendered
-        float wallHeight = CELL_WIDTH + Random.value * 0.1f;
-
-        wall.transform.localScale = new Vector3(wallX, wallHeight, wallY);
+        wall.transform.localScale = new Vector3(wallX, CELL_WIDTH, wallY);
         SceneManager.MoveGameObjectToScene(wall, SceneManager.GetSceneByName("Maze"));
         _walls.Add(wall);
     }
