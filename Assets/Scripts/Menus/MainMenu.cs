@@ -15,8 +15,7 @@ public class MainMenu : Menu<MainMenu>
 
     private void InstantiateScore()
     {
-        TMP_Text playerScore = Instantiate(Score);
-        playerScore.transform.SetParent(MainMenu.Instance.transform, false);
+        TMP_Text playerScore = Instantiate(Score, MainMenu.Instance.transform, false);
         playerScore.text = $"Score: {PlayerPrefs.GetInt("PlayerScore", 0)}";
     }
 

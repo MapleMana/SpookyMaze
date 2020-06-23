@@ -21,8 +21,7 @@ public class EndGameMenu : Menu<EndGameMenu>
 
     private void InstantiateScore()
     {
-        TMP_Text playerScore = Instantiate(Score);
-        playerScore.transform.SetParent(EndGameMenu.Instance.transform, false);
+        TMP_Text playerScore = Instantiate(Score, EndGameMenu.Instance.transform, false);
         playerScore.transform.position = new Vector3(playerScore.transform.position.x, 150f, playerScore.transform.position.z);
         playerScore.fontSize = 80;
         playerScore.text = $"Score: {PlayerPrefs.GetInt("PlayerScore", 0)}";
