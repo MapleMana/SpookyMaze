@@ -118,7 +118,7 @@ MonoBehaviour:
   DestroyWhenClosed: 1
   DisableMenusUnderneath: 1
   NextPlay: {fileID: 3260969571042253357}
-  Score: {fileID: 4926199390477448993, guid: a535fec7fd39fe146b0cbff27315bd0b, type: 3}
+  Coins: {fileID: 4926199390477448993, guid: a535fec7fd39fe146b0cbff27315bd0b, type: 3}
 --- !u!1 &3260969570572006834
 GameObject:
   m_ObjectHideFlags: 0

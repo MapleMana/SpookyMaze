@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class MainMenu : Menu<MainMenu>
 {
-    public TMP_Text Score;
+    public TMP_Text Coins;
 
     protected override void Awake()
     {
@@ -15,8 +15,8 @@ public class MainMenu : Menu<MainMenu>
 
     private void InstantiateScore()
     {
-        TMP_Text playerScore = Instantiate(Score, MainMenu.Instance.transform, false);
-        playerScore.text = $"Score: {PlayerPrefs.GetInt("PlayerScore", 0)}";
+        TMP_Text playerScore = Instantiate(Coins, MainMenu.Instance.transform, false);
+        playerScore.text = $"Coins: {PlayerPrefs.GetInt("PlayersCoins", 0)}";
     }
 
     public void OnAboutPressed()
