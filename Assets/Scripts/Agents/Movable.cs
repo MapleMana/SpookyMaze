@@ -6,8 +6,11 @@ using UnityEngine;
 public abstract class Movable : MonoBehaviour
 {
     private Vector2Int _mazePosition;
-    internal static List<KeyValuePair<Movable, MovableCommand>> _commandHistory;
-    internal static float _previousCommandTime;
+    private static float _previousCommandTime;
+    protected static List<KeyValuePair<Movable, MovableCommand>> _commandHistory;
+    protected Vector3 _target;
+
+    public float speed;
 
     public bool Moving { get; set; } = false;
     public bool AtMazeEnd => MazePosition == Maze.Instance.EndPos;
@@ -31,8 +34,6 @@ public abstract class Movable : MonoBehaviour
         transform.position = currentCell.CellCenter(y: transform.position.y);
     }
 
-    public Vector3 _target;
-
     void Awake()
     {
         _commandHistory = new List<KeyValuePair<Movable, MovableCommand>>();
@@ -45,9 +46,11 @@ public abstract class Movable : MonoBehaviour
         {
             PerformMovement();
         }
-        if (Moving)
+        if (Moving || 
+            LevelManager.Instance.LevelIs(LevelState.InReplay) || 
+            LevelManager.Instance.LevelIs(LevelState.InReplayReversed))
         {
-            transform.position = Vector3.Lerp(transform.position, _target, 0.1f);
+            transform.position = Vector3.Lerp(transform.position, _target, 1 / speed);
         }
     }
 

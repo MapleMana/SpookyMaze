@@ -7,7 +7,6 @@ using UnityEngine.Events;
 
 public class Player : Movable
 {
-    public float playerSpeed;
     [Range(0f, 180f)]
     public float maxLightAngle;
     [Range(0f, 180f)]
@@ -78,7 +77,7 @@ public class Player : Movable
 
         StartCoroutine(PlayCommandsInRealTime(
             playerCommands: commandSequence,
-            pauseBetween: 1 / playerSpeed
+            pauseBetween: 1 / speed
        ));
     }
 

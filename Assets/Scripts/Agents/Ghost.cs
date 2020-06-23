@@ -7,13 +7,11 @@ public class Ghost : Movable
 {
     private const float EFFECTIVENESS = 0.3f; // percentage of the total time to remove
 
-    public float ghostSpeed;
-
     public override void PerformMovement()
     {
         StartCoroutine(PlayCommandsInRealTime(
             playerCommands: new List<MovableCommand> { MovableMovementCommand.FromVector(GetRandomDirection()) },
-            pauseBetween: 1 / ghostSpeed
+            pauseBetween: 1 / speed
         ));
     }
 

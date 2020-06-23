@@ -150,7 +150,7 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 3
+  serializedVersion: 4
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
@@ -481,7 +481,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 180ce68db0e03794287c5675091f7eea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerSpeed: 7
+  _target: {x: 0, y: 0, z: 0}
+  speed: 7
   maxLightAngle: 150
   minLightAngle: 20
 --- !u!23 &1144077015
