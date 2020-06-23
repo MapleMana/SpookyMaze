@@ -17,8 +17,9 @@ public class Player : Movable
     public float DefaultLightIntensity { get; private set; }
     public Stack<ItemType> Inventory { get; private set; }
 
-    void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         if (Instance == null)
         {
             Instance = this;
@@ -27,8 +28,13 @@ public class Player : Movable
         {
             Destroy(gameObject);
         }
-        _commandHistory = new List<KeyValuePair<Movable, MovableCommand>>();
         Inventory = new Stack<ItemType>();
+    }
+
+    public void PlaceOn(Maze maze)
+    {
+        StartingPosition = maze.StartPos;
+        Reset();
     }
 
     private void Start()
@@ -50,11 +56,11 @@ public class Player : Movable
 
     public override void PerformMovement()
     {
-        MovableCommand command = PlayerActionDetector.DetectDesktop();
+        MovableMovementCommand command = PlayerActionDetector.DetectDesktop();
         if (command != null && command.Execute(this).Succeeded)
         {
             AddToHistory(this, command);
-            MoveToDecisionPoint(incomingDirection: ((MovableMovementCommand)command).Direction);
+            MoveToDecisionPoint(incomingDirection: command.Direction);
         }
     }
 

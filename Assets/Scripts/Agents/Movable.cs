@@ -34,7 +34,7 @@ public abstract class Movable : MonoBehaviour
         transform.position = currentCell.CellCenter(y: transform.position.y);
     }
 
-    void Awake()
+    protected virtual void Awake()
     {
         _commandHistory = new List<KeyValuePair<Movable, MovableCommand>>();
         _target = transform.position;
@@ -126,14 +126,17 @@ public abstract class Movable : MonoBehaviour
         //pauseBetweenCommands -= Time.deltaTime;
 
         Moving = true;
+
+        yield return new WaitForSeconds(pauseBetween);
+
         foreach (MovableCommand command in playerCommands)
         {
             if (Moving)
             {
-                yield return new WaitForSeconds(pauseBetween);
-
                 command.Execute(this);
                 AddToHistory(this, command);
+
+                yield return new WaitForSeconds(pauseBetween);
             }
         }
         Moving = false;
