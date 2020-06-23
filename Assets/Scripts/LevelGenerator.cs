@@ -25,6 +25,11 @@ public static class LevelGenerator
         return Mathf.FloorToInt(dimensions.Width * dimensions.Height / 2) - 3 * id;
     }
 
+    private static int GetLevelPoints(Dimensions dimensions, int id)
+    {
+        return (dimensions.Width + dimensions.Height) * id;
+    }
+
     public static void GenerateLevels()
     {
         LevelIO.ClearAll();
@@ -45,7 +50,8 @@ public static class LevelGenerator
                         new LevelData(maze: Maze.Instance,
                                         levelTime: GetLevelTime(mazeDimentions, id),
                                         mode: gameModeName,
-                                        mobs: gameMode.GetMovables())
+                                        mobs: gameMode.GetMovables(),
+                                        levelPoints: GetLevelPoints(mazeDimentions, id))
                     );
 
                     Maze.Instance.Clear();

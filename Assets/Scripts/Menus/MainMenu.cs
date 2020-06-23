@@ -1,9 +1,24 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class MainMenu : Menu<MainMenu>
 {
+    public TMP_Text Coins;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        InstantiateScore();
+    }
+
+    private void InstantiateScore()
+    {
+        TMP_Text playerCoins = Instantiate(Coins, MainMenu.Instance.transform, false);
+        playerCoins.text = $"Coins: {PlayerPrefs.GetInt("PlayersCoins", 0)}";
+    }
+
     public void OnAboutPressed()
     {
         AboutMenu.Open();

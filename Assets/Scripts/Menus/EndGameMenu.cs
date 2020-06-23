@@ -10,7 +10,22 @@ public class EndGameMenu : Menu<EndGameMenu>
     private bool _levelCompleted;
 
     public TextMeshProUGUI NextPlay;
+    public TMP_Text Coins;
     public bool LevelCompleted { get => _levelCompleted; set => _levelCompleted = value; }
+
+    protected override void Awake()
+    {
+        base.Awake();
+        InstantiateScore();
+    }
+
+    private void InstantiateScore()
+    {
+        TMP_Text playerCoins = Instantiate(Coins, EndGameMenu.Instance.transform, false);
+        playerCoins.transform.position = new Vector3(playerCoins.transform.position.x, 150f, playerCoins.transform.position.z);
+        playerCoins.fontSize = 70;
+        playerCoins.text = $"Coins: {PlayerPrefs.GetInt("PlayersCoins", 0)}";
+    }
 
     /// <summary>
     /// Goes to the MainMenu Scene and displays the main menu again

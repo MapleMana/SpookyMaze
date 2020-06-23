@@ -124,11 +124,22 @@ public class LevelManager : Singleton<LevelManager>
         UIManager.Instance.ShowFinishMenu(mazeCompleted);
     }
 
-    private static void SaveLevelProgress()
+    private void SaveLevelProgress()
     {
         LevelSettings currentLevelSettings = GameManager.Instance.CurrentSettings;
         string modeDimension = currentLevelSettings.ModeDimensions;
-        PlayerPrefs.SetInt(modeDimension, ++currentLevelSettings.id);
+        if (PlayerPrefs.GetInt(modeDimension) < ++currentLevelSettings.id)
+        {
+            PlayerPrefs.SetInt(modeDimension, currentLevelSettings.id);
+            IncreasePlayerScore();
+        }
+    }
+
+    private void IncreasePlayerScore()
+    {
+        int previousScore = PlayerPrefs.GetInt("PlayersCoins", 0);
+        int newScore = previousScore + _levelData.points;
+        PlayerPrefs.SetInt("PlayersCoins", newScore);
     }
 
     void Update()

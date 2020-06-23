@@ -191,7 +191,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 2, y: -124}
+  m_AnchoredPosition: {x: 2, y: -150}
   m_SizeDelta: {x: 160, y: 23}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4736582104279436329
@@ -473,7 +473,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 320}
+  m_AnchoredPosition: {x: 0, y: 269}
   m_SizeDelta: {x: 200, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4736582104734045135
@@ -621,7 +621,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4736582104843318563}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2.302025, y: 3.9117713, z: 1.692877}
   m_Children:
   - {fileID: 4736582104932996933}
@@ -630,7 +630,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 2, y: -2}
+  m_AnchoredPosition: {x: 2, y: -28.000008}
   m_SizeDelta: {x: 160, y: 23}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4736582104843318567
@@ -1317,7 +1317,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4736582105646771277}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2.302025, y: 3.9117713, z: 1.692877}
   m_Children:
   - {fileID: 4736582104376343566}
@@ -1326,7 +1326,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 2, y: 118.999985}
+  m_AnchoredPosition: {x: 2, y: 93}
   m_SizeDelta: {x: 160, y: 23}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4736582105646771265
@@ -1538,3 +1538,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DestroyWhenClosed: 1
   DisableMenusUnderneath: 1
+  Coins: {fileID: 4926199390477448993, guid: a535fec7fd39fe146b0cbff27315bd0b, type: 3}
