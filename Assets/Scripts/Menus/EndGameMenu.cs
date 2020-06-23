@@ -21,10 +21,10 @@ public class EndGameMenu : Menu<EndGameMenu>
 
     private void InstantiateScore()
     {
-        TMP_Text playerScore = Instantiate(Coins, EndGameMenu.Instance.transform, false);
-        playerScore.transform.position = new Vector3(playerScore.transform.position.x, 150f, playerScore.transform.position.z);
-        playerScore.fontSize = 80;
-        playerScore.text = $"Coins: {PlayerPrefs.GetInt("PlayersCoins", 0)}";
+        TMP_Text playerCoins = Instantiate(Coins, EndGameMenu.Instance.transform, false);
+        playerCoins.transform.position = new Vector3(playerCoins.transform.position.x, 150f, playerCoins.transform.position.z);
+        playerCoins.fontSize = 70;
+        playerCoins.text = $"Coins: {PlayerPrefs.GetInt("PlayersCoins", 0)}";
     }
 
     /// <summary>

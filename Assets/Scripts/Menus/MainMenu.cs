@@ -15,8 +15,8 @@ public class MainMenu : Menu<MainMenu>
 
     private void InstantiateScore()
     {
-        TMP_Text playerScore = Instantiate(Coins, MainMenu.Instance.transform, false);
-        playerScore.text = $"Coins: {PlayerPrefs.GetInt("PlayersCoins", 0)}";
+        TMP_Text playerCoins = Instantiate(Coins, MainMenu.Instance.transform, false);
+        playerCoins.text = $"Coins: {PlayerPrefs.GetInt("PlayersCoins", 0)}";
     }
 
     public void OnAboutPressed()
