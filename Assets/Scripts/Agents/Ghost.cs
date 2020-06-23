@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,6 +15,11 @@ public class Ghost : Movable
             playerCommands: new List<MovableCommand> { MovableMovementCommand.FromVector(GetRandomDirection()) },
             pauseBetween: 1 / ghostSpeed
         ));
+    }
+
+    protected override void Update()
+    {
+        base.Update();
     }
 
     public override bool Move(Vector2Int direction)

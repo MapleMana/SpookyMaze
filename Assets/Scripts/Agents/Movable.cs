@@ -20,13 +20,23 @@ public abstract class Movable : MonoBehaviour
         {
             _mazePosition = value;
             MazeCell currentCell = Maze.Instance[value];
-            transform.position = currentCell.CellCenter(y: transform.position.y);
+            _target = currentCell.CellCenter(y: transform.position.y);
         }
     }
+
+    public void SetMazePositionWithoutLerp(Vector2Int value)
+    {
+        _mazePosition = value;
+        MazeCell currentCell = Maze.Instance[value];
+        transform.position = currentCell.CellCenter(y: transform.position.y);
+    }
+
+    public Vector3 _target;
 
     void Awake()
     {
         _commandHistory = new List<KeyValuePair<Movable, MovableCommand>>();
+        _target = transform.position;
     }
 
     protected virtual void Update()
@@ -34,6 +44,10 @@ public abstract class Movable : MonoBehaviour
         if (!Moving && LevelManager.Instance.LevelIs(LevelState.InProgress))
         {
             PerformMovement();
+        }
+        if (Moving)
+        {
+            transform.position = Vector3.Lerp(transform.position, _target, 0.1f);
         }
     }
 
@@ -57,7 +71,7 @@ public abstract class Movable : MonoBehaviour
 
     public void Reset()
     {
-        MazePosition = StartingPosition;
+        SetMazePositionWithoutLerp(StartingPosition);
     }
 
     public void AddToHistory(Movable movingObject, MovableCommand command)

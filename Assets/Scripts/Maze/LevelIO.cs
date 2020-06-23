@@ -50,12 +50,12 @@ public class SerCell
 public class SerMovable
 {
     string type;
-    int[] mazePosition;
+    int[] startingMazePosition;
 
     public SerMovable(string movableType, Vector2Int startingPosition)
     {
         type = movableType;
-        mazePosition = new int[2] { startingPosition.x, startingPosition.y };
+        startingMazePosition = new int[2] { startingPosition.x, startingPosition.y };
     }
 
     public Movable Spawn()
@@ -65,7 +65,7 @@ public class SerMovable
         SceneManager.MoveGameObjectToScene(movableObject, SceneManager.GetSceneByName("Maze"));
 
         Movable movableComponent = movableObject.GetComponent<Movable>();
-        movableComponent.MazePosition = movableComponent.StartingPosition = new Vector2Int(mazePosition[0], mazePosition[1]);
+        movableComponent.StartingPosition = new Vector2Int(startingMazePosition[0], startingMazePosition[1]);
         return movableComponent;
     }
 }

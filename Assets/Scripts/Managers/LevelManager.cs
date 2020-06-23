@@ -28,7 +28,7 @@ public class LevelManager : Singleton<LevelManager>
 
         Maze.Instance.Load(levelData.mazeState);
 
-        Player.Instance.MazePosition = Maze.Instance.StartPos;
+        Player.Instance.Reset();
         _mobs = levelData.SpawnMovables();
         Movable.ClearHistory();
     }
@@ -37,7 +37,7 @@ public class LevelManager : Singleton<LevelManager>
     {
         Maze.Instance.Load(_levelData.mazeState);
 
-        Player.Instance.MazePosition = Maze.Instance.StartPos;
+        Player.Instance.Reset();
         foreach (Movable mob in _mobs)
         {
             mob.Reset();
