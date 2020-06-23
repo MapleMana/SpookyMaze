@@ -7,19 +7,15 @@ public class Ghost : Movable
     private const float EFFECTIVENESS = 0.3f; // percentage of the total time to remove
 
     public float ghostSpeed;
-    public static bool CanBeMoved { get; set; } = false;
 
-    void Update()
+    public override void PerformMovement()
     {
-        if (CanBeMoved && !Moving)
-        {
-            StartCoroutine(PlayCommandsInRealTime(
-                playerCommands: new List<MovableCommand> { MovableMovementCommand.FromVector(GetRandomDirection()) },
-                pauseBetween: 1 / ghostSpeed
-            ));
-        }
+        StartCoroutine(PlayCommandsInRealTime(
+            playerCommands: new List<MovableCommand> { MovableMovementCommand.FromVector(GetRandomDirection()) },
+            pauseBetween: 1 / ghostSpeed
+        ));
     }
-    
+
     public override bool Move(Vector2Int direction)
     {
         MazePosition += direction;

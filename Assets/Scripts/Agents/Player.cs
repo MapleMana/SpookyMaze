@@ -49,16 +49,13 @@ public class Player : Movable
         Light.spotAngle = Mathf.Lerp(min ?? minLightAngle, max ?? maxLightAngle, coef);
     }
 
-    void Update()
+    public override void PerformMovement()
     {
-        if (LevelManager.Instance.LevelIs(LevelState.InProgress))
+        MovableCommand command = PlayerActionDetector.DetectDesktop();
+        if (command != null && command.Execute(this).Succeeded)
         {
-            MovableCommand command = PlayerActionDetector.DetectDesktop();
-            if (!Moving && command != null && command.Execute(this).Succeeded)
-            {
-                AddToHistory(this, command);
-                MoveToDecisionPoint(incomingDirection: ((MovableMovementCommand)command).Direction);
-            }
+            AddToHistory(this, command);
+            MoveToDecisionPoint(incomingDirection: ((MovableMovementCommand)command).Direction);
         }
     }
 

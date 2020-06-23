@@ -31,7 +31,6 @@ public class LevelManager : Singleton<LevelManager>
         Player.Instance.MazePosition = Maze.Instance.StartPos;
         _mobs = levelData.SpawnMovables();
         Movable.ClearHistory();
-        Ghost.CanBeMoved = true;
     }
 
     void ResetState()
@@ -112,7 +111,6 @@ public class LevelManager : Singleton<LevelManager>
     public void EndLevel(bool mazeCompleted)
     {
         _levelState = mazeCompleted ? LevelState.Completed : LevelState.Failed;
-        Ghost.CanBeMoved = false;
         _finalPlayerLightAngle = Player.Instance.Light.spotAngle;
 
         if (mazeCompleted)

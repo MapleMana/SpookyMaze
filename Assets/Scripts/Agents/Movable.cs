@@ -24,12 +24,22 @@ public abstract class Movable : MonoBehaviour
         }
     }
 
-    public abstract bool Move(Vector2Int direction);
-
     void Awake()
     {
         _commandHistory = new List<KeyValuePair<Movable, MovableCommand>>();
     }
+
+    protected virtual void Update()
+    {
+        if (!Moving && LevelManager.Instance.LevelIs(LevelState.InProgress))
+        {
+            PerformMovement();
+        }
+    }
+
+    public abstract void PerformMovement();
+
+    public abstract bool Move(Vector2Int direction);
 
     /// <summary>
     /// Places movable at the start of the maze and inits movable's state
