@@ -37,13 +37,18 @@ public abstract class Movable : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Is being called on update. Complex movement logic.
+    /// </summary>
     public abstract void PerformMovement();
 
+    /// <summary>
+    /// Atomic (between 2 cells) movement logic
+    /// </summary>
+    /// <param name="direction"></param>
+    /// <returns>true if the movement succeeded</returns>
     public abstract bool Move(Vector2Int direction);
 
-    /// <summary>
-    /// Places movable at the start of the maze and inits movable's state
-    /// </summary>
     public static void ClearHistory()
     {
         _commandHistory.Clear();

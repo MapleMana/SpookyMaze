@@ -82,11 +82,6 @@ public class Player : Movable
        ));
     }
 
-    /// <summary>
-    /// Move player in the chosen direction. If there is a wall on the way, player idles
-    /// </summary>
-    /// <param name="direction">The direction of movement</param>
-    /// <returns>true if the movement completed</returns>
     public override bool Move(Vector2Int direction)
     {
         if (!Maze.Instance[MazePosition].WallExists(direction))
