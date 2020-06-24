@@ -120,14 +120,13 @@ public abstract class Movable : MonoBehaviour
     /// <param name="pauseBetween"></param>
     /// <returns></returns>
     internal IEnumerator PlayCommandsInRealTime(
-        List<MovableCommand> playerCommands,
-        float pauseBetween)
+        List<MovableCommand> playerCommands)
     {
         //pauseBetweenCommands -= Time.deltaTime;
 
         Moving = true;
 
-        yield return new WaitForSeconds(pauseBetween);
+        yield return new WaitForSeconds(1 / speed);
 
         foreach (MovableCommand command in playerCommands)
         {
@@ -136,7 +135,7 @@ public abstract class Movable : MonoBehaviour
                 command.Execute(this);
                 AddToHistory(this, command);
 
-                yield return new WaitForSeconds(pauseBetween);
+                yield return new WaitForSeconds(1 / speed);
             }
         }
         Moving = false;

@@ -10,14 +10,8 @@ public class Ghost : Movable
     public override void PerformMovement()
     {
         StartCoroutine(PlayCommandsInRealTime(
-            playerCommands: new List<MovableCommand> { MovableMovementCommand.FromVector(GetRandomDirection()) },
-            pauseBetween: 1 / speed
+            playerCommands: new List<MovableCommand> { MovableMovementCommand.FromVector(GetRandomDirection()) }
         ));
-    }
-
-    protected override void Update()
-    {
-        base.Update();
     }
 
     public override bool Move(Vector2Int direction)

@@ -82,9 +82,8 @@ public class Player : Movable
         }
 
         StartCoroutine(PlayCommandsInRealTime(
-            playerCommands: commandSequence,
-            pauseBetween: 1 / speed
-       ));
+            playerCommands: commandSequence
+        ));
     }
 
     public override bool Move(Vector2Int direction)
