@@ -38,6 +38,7 @@ public class LevelManager : Singleton<LevelManager>
         Maze.Instance.Load(_levelData.mazeState);
 
         Player.Instance.Reset();
+        // TODO: figure out null reference thing:
         foreach (Movable mob in _mobs)
         {
             mob.Reset();
@@ -75,6 +76,7 @@ public class LevelManager : Singleton<LevelManager>
         _levelState |= LevelState.InReplay;
         TimeLeft = ReplayTime;
         ResetState();
+        // TODO: speed up movables
         StartCoroutine(Movable.ReplayCommands(
             timeMultiplier: GameManager.Instance.replayMultiplier,
             onComplete: () => {

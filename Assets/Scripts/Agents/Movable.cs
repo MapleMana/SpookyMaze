@@ -50,6 +50,7 @@ public abstract class Movable : MonoBehaviour
             LevelManager.Instance.LevelIs(LevelState.InReplay) || 
             LevelManager.Instance.LevelIs(LevelState.InReplayReversed))
         {
+            // TODO: simulate constant movement
             transform.position = Vector3.Lerp(transform.position, _target, 1 / speed);
         }
     }
