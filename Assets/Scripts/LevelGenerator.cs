@@ -20,9 +20,14 @@ public static class LevelGenerator
         new GhostGM()
     };
 
-    private static int GetLevelTime(Dimensions dimensions, int id)
+    private static int GetLevelTime(Dimensions mazeDimensions, int id)
     {
-        return Mathf.FloorToInt(dimensions.Width * dimensions.Height / 2) - 3 * id;
+        return Mathf.FloorToInt(mazeDimensions.Width * mazeDimensions.Height / 2) - 3 * id;
+    }
+
+    private static int GetMobQuantity(Dimensions mazeDimensions)
+    {
+        return (mazeDimensions.Width + mazeDimensions.Height) / 16; 
     }
 
     public static void GenerateLevels()
@@ -43,9 +48,9 @@ public static class LevelGenerator
                     LevelIO.SaveLevel(
                         new LevelSettings(gameModeName, mazeDimentions, id),
                         new LevelData(maze: Maze.Instance,
-                                        levelTime: GetLevelTime(mazeDimentions, id),
-                                        mode: gameModeName,
-                                        mobs: gameMode.GetMovables())
+                                      levelTime: GetLevelTime(mazeDimentions, id),
+                                      mode: gameModeName,
+                                      mobs: gameMode.GetMovables(GetMobQuantity(Maze.Instance.Dimensions)))
                     );
 
                     Maze.Instance.Clear();
