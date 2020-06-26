@@ -31,7 +31,7 @@ public abstract class Movable : MonoBehaviour
     {
         _mazePosition = value;
         MazeCell currentCell = Maze.Instance[value];
-        transform.position = currentCell.CellCenter(y: transform.position.y);
+        _target = transform.position = currentCell.CellCenter(y: transform.position.y);
     }
 
     protected virtual void Awake()
