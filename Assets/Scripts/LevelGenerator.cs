@@ -11,7 +11,8 @@ public static class LevelGenerator
     const int INITIAL_MAZE_WIDTH = 8;
     const int INITIAL_MAZE_HEIGHT = 8;
     const int DIMENTIONS_COUNT = 3;
-
+    const int SEED = 145;
+    
     private static readonly List<GameMode> gameModes = new List<GameMode>()
     {
         new ClassicGM(),
@@ -32,7 +33,7 @@ public static class LevelGenerator
 
     public static void GenerateLevels()
     {
-        UnityEngine.Random.InitState(145);
+        UnityEngine.Random.InitState(SEED);
         LevelIO.ClearAll();
 
         foreach (GameMode gameMode in gameModes)
