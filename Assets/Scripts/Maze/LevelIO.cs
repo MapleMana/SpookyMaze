@@ -62,6 +62,7 @@ public class SerMovable
 
         Movable movableComponent = movableObject.GetComponent<Movable>();
         movableComponent.StartingPosition = startingMazePosition.ToVector2Int();
+        movableComponent.SetMazePositionWithoutLerp(movableComponent.StartingPosition);
         return movableComponent;
     }
 }
