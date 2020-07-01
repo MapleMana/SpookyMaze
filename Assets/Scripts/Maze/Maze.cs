@@ -9,7 +9,6 @@ using UnityEngine.SceneManagement;
 public class Maze
 {
     private Dimensions _dimensions;
-    private static readonly Random _generator = new Random();
 
     public static Maze Instance { get; private set; }
     public Vector2Int StartPos { get; private set; }
