@@ -13,6 +13,7 @@ public class GameManager : Singleton<GameManager>
     private void OnEnable()
     {
         SceneManager.sceneLoaded += OnFullLoad;
+        //ScoreMenu.Open();
     }
 
     private void OnDisable()
@@ -44,7 +45,7 @@ public class GameManager : Singleton<GameManager>
     /// </summary>
     public void LoadLevel()
     {
-        LevelData levelStatus = LevelIO.LoadLevel(CurrentSettings);
-        LevelManager.Instance.Initialize(levelStatus);
+        LevelData levelData = LevelIO.LoadLevel(CurrentSettings);
+        LevelManager.Instance.Initialize(levelData);
     }
 }

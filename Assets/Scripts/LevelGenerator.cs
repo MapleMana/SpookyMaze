@@ -30,6 +30,11 @@ public static class LevelGenerator
         return (mazeDimensions.Width + mazeDimensions.Height) / 16; 
     }
 
+    private static int GetLevelPoints(Dimensions dimensions, int id)
+    {
+        return (dimensions.Width + dimensions.Height) * id;
+    }
+
     public static void GenerateLevels()
     {
         LevelIO.ClearAll();
@@ -48,9 +53,10 @@ public static class LevelGenerator
                     LevelIO.SaveLevel(
                         new LevelSettings(gameModeName, mazeDimentions, id),
                         new LevelData(maze: Maze.Instance,
-                                      levelTime: GetLevelTime(mazeDimentions, id),
-                                      mode: gameModeName,
-                                      mobs: gameMode.GetMovables(GetMobQuantity(Maze.Instance.Dimensions)))
+                                        levelTime: GetLevelTime(mazeDimentions, id),
+                                        mode: gameModeName,
+                                        mobs: gameMode.GetMovables(GetMobQuantity(mazeDimentions)),
+                                        levelPoints: GetLevelPoints(mazeDimentions, id))
                     );
 
                     Maze.Instance.Clear();

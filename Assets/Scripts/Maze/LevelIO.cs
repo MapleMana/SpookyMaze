@@ -89,13 +89,15 @@ public class LevelData
     public float time;
     public string gameMode;
     public List<SerMovable> movables;
+    public int points;
 
-    public LevelData(Maze maze, float levelTime, string mode, List<SerMovable> mobs)
+    public LevelData(Maze maze, float levelTime, string mode, List<SerMovable> mobs, int levelPoints)
     {
         mazeState = new MazeState(maze);
         time = levelTime;
         gameMode = mode;
         movables = mobs;
+        points = levelPoints;
     }
 
     public List<Movable> SpawnMovables()
@@ -157,7 +159,7 @@ public static class LevelIO
         }
     }
 
-    public static void SaveLevel(LevelSettings levelSettings, LevelData levelStatus)
+    public static void SaveLevel(LevelSettings levelSettings, LevelData levelData)
     {
         BinaryFormatter formatter = new BinaryFormatter();
         string path = GetFilePath(levelSettings);
@@ -168,7 +170,7 @@ public static class LevelIO
         }
         using (FileStream stream = new FileStream(path, FileMode.OpenOrCreate))
         {
-            formatter.Serialize(stream, levelStatus);
+            formatter.Serialize(stream, levelData);
         }
     }
 
