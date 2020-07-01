@@ -11,7 +11,8 @@ public static class LevelGenerator
     const int INITIAL_MAZE_WIDTH = 8;
     const int INITIAL_MAZE_HEIGHT = 8;
     const int DIMENTIONS_COUNT = 3;
-
+    const int SEED = 145;
+    
     private static readonly List<GameMode> gameModes = new List<GameMode>()
     {
         new ClassicGM(),
@@ -32,7 +33,9 @@ public static class LevelGenerator
 
     public static void GenerateLevels()
     {
+        UnityEngine.Random.InitState(SEED);
         LevelIO.ClearAll();
+
         foreach (GameMode gameMode in gameModes)
         {
             Dimensions mazeDimentions = new Dimensions(INITIAL_MAZE_WIDTH, INITIAL_MAZE_HEIGHT);
@@ -48,10 +51,10 @@ public static class LevelGenerator
                     LevelIO.SaveLevel(
                         new LevelSettings(gameModeName, mazeDimentions, id),
                         new LevelData(maze: Maze.Instance,
-                                        levelTime: GetLevelTime(mazeDimentions, id),
-                                        mode: gameModeName,
-                                        mobs: gameMode.GetMovables(),
-                                        levelPoints: GetLevelPoints(mazeDimentions, id))
+                                      levelTime: GetLevelTime(mazeDimentions, id),
+                                      mode: gameModeName,
+                                      mobs: gameMode.GetMovables(),
+                                      levelPoints: GetLevelPoints(mazeDimentions, id))
                     );
 
                     Maze.Instance.Clear();
