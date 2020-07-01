@@ -82,7 +82,8 @@ public class Player : Movable
         }
 
         StartCoroutine(PlayCommandsInRealTime(
-            playerCommands: commandSequence
+            playerCommands: commandSequence,
+            waitBefore: true
         ));
     }
 

@@ -38,7 +38,6 @@ public class LevelManager : Singleton<LevelManager>
         Maze.Instance.Load(_levelData.mazeState);
 
         Player.Instance.Reset();
-        // TODO: figure out null reference thing:
         foreach (Movable mob in _mobs)
         {
             mob.Reset();

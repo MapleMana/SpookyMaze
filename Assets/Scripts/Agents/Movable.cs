@@ -118,16 +118,20 @@ public abstract class Movable : MonoBehaviour
     /// Executes commands to decision point and saves them to history
     /// </summary>
     /// <param name="playerCommands"></param>
-    /// <param name="pauseBetween"></param>
+    /// <param name="waitBefore"></param>
     /// <returns></returns>
-    internal IEnumerator PlayCommandsInRealTime(
-        List<MovableCommand> playerCommands)
+    protected IEnumerator PlayCommandsInRealTime(
+        List<MovableCommand> playerCommands,
+        bool waitBefore=false)
     {
         //pauseBetweenCommands -= Time.deltaTime;
 
         Moving = true;
 
-        yield return new WaitForSeconds(1 / speed);
+        if (waitBefore)
+        {
+            yield return new WaitForSeconds(1 / speed);
+        }
 
         foreach (MovableCommand command in playerCommands)
         {

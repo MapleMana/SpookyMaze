@@ -61,7 +61,6 @@ public class SerMovable
         SceneManager.MoveGameObjectToScene(movableObject, SceneManager.GetSceneByName("Maze"));
 
         Movable movableComponent = movableObject.GetComponent<Movable>();
-        // TODO: figure out null reference thing:
         movableComponent.StartingPosition = startingMazePosition.ToVector2Int();
         return movableComponent;
     }
