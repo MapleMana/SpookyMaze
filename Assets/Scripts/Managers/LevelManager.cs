@@ -18,7 +18,7 @@ public class LevelManager : Singleton<LevelManager>
     public bool LevelIs(LevelState state) => (_levelState & state) != 0;
     public float ReplayTime => (LevelTime - TimeLeft) * GameManager.Instance.replayMultiplier;
     public float ReversedReplayTime => (LevelTime - TimeLeft) * GameManager.Instance.reversedReplayMultiplier;
-
+    
     public void Initialize(LevelData levelData)
     {
         _levelData = levelData;
@@ -66,6 +66,19 @@ public class LevelManager : Singleton<LevelManager>
         TimeLeft += timeToAdd;
     }
 
+    public float GetSpeedMultiplier()
+    {
+        if (LevelIs(LevelState.InReplay))
+        {
+            return 1 / GameManager.Instance.replayMultiplier;
+        }
+        else if (LevelIs(LevelState.InReplayReversed))
+        {
+            return 1 / GameManager.Instance.reversedReplayMultiplier;
+        }
+        return 1;
+    }
+
     /// <summary>
     /// Replays player movements from the start.
     /// </summary>
@@ -75,7 +88,6 @@ public class LevelManager : Singleton<LevelManager>
         _levelState |= LevelState.InReplay;
         TimeLeft = ReplayTime;
         ResetState();
-        // TODO: speed up movables
         StartCoroutine(Movable.ReplayCommands(
             timeMultiplier: GameManager.Instance.replayMultiplier,
             onComplete: () => {

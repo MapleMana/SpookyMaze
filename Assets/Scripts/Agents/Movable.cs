@@ -10,7 +10,8 @@ public abstract class Movable : MonoBehaviour
     protected static List<KeyValuePair<Movable, MovableCommand>> _commandHistory;
     protected Vector3 _target;
 
-    public float speed;
+    [SerializeField]
+    private float speed;
 
     public bool Moving { get; set; } = false;
     public bool AtMazeEnd => MazePosition == Maze.Instance.EndPos;
@@ -25,6 +26,12 @@ public abstract class Movable : MonoBehaviour
             MazeCell currentCell = Maze.Instance[value];
             _target = currentCell.CellCenter(y: transform.position.y);
         }
+    }
+
+    public float Speed 
+    { 
+        get => speed * LevelManager.Instance.GetSpeedMultiplier(); 
+        set => speed = value; 
     }
 
     public void SetMazePositionWithoutLerp(Vector2Int value)
@@ -50,8 +57,8 @@ public abstract class Movable : MonoBehaviour
             LevelManager.Instance.LevelIs(LevelState.InReplay) || 
             LevelManager.Instance.LevelIs(LevelState.InReplayReversed))
         {
-            // TODO: simulate constant movement
-            transform.position = Vector3.Lerp(transform.position, _target, 1 / speed);
+            float dx = Speed * Time.deltaTime;
+            transform.position = Vector3.MoveTowards(transform.position, _target, dx);
         }
     }
 
@@ -130,7 +137,7 @@ public abstract class Movable : MonoBehaviour
 
         if (waitBefore)
         {
-            yield return new WaitForSeconds(1 / speed);
+            yield return new WaitForSeconds(MazeCell.CELL_WIDTH / Speed);
         }
 
         foreach (MovableCommand command in playerCommands)
@@ -140,7 +147,7 @@ public abstract class Movable : MonoBehaviour
                 command.Execute(this);
                 AddToHistory(this, command);
 
-                yield return new WaitForSeconds(1 / speed);
+                yield return new WaitForSeconds(MazeCell.CELL_WIDTH / Speed);
             }
         }
         Moving = false;
