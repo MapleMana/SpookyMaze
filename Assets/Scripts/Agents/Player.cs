@@ -53,7 +53,7 @@ public class Player : Movable
     {
         if (LevelManager.Instance.LevelIs(LevelState.InProgress))
         {
-            MovableCommand command = PlayerActionDetector.DetectDesktop();
+            MovableCommand command = PlayerActionDetector.Detect();
             if (!Moving && command != null && command.Execute(this).Succeeded)
             {
                 AddToHistory(this, command);
