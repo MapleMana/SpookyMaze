@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text.RegularExpressions;
-using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
