@@ -8,6 +8,7 @@ using UnityEngine.Events;
 public class Player : Movable
 {
     private float _time;
+    private float _finalPlayerLightAngle;      // the player light angle at the end of the level
 
     [Range(0f, 180f)]
     public float maxLightAngle;
@@ -52,9 +53,15 @@ public class Player : Movable
     /// <param name="coef">Completeness (max -> min) coefficient</param>
     /// <param name="min">Minimal value to interpolate from</param>
     /// <param name="max">Maximal value to interpolate to</param>
-    public void LerpLightAngle(float? min = null, float? max = null, float coef = 0)
+    public void LerpLightAngle(float coef = 0)
     {
-        Light.spotAngle = Mathf.Lerp(min ?? minLightAngle, max ?? maxLightAngle, coef);
+        float min = LevelManager.Instance.LevelIs(LevelState.InProgress) ? minLightAngle : _finalPlayerLightAngle;
+        Light.spotAngle = Mathf.Lerp(min, maxLightAngle, coef);
+    }
+
+    public void Snap()
+    {
+        _finalPlayerLightAngle = Light.spotAngle;
     }
 
     public override void PerformMovement()

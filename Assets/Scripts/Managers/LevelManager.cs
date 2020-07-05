@@ -10,7 +10,6 @@ public class LevelManager : Singleton<LevelManager>
     private LevelState _levelState;
     private LevelData _levelData;
     private float LevelTime;
-    private float _finalPlayerLightAngle;      // the player light angle at the end of the level
     private List<Movable> _mobs;
 
     public GameMode GameMode { get; set; }
@@ -123,7 +122,7 @@ public class LevelManager : Singleton<LevelManager>
     public void EndLevel(bool mazeCompleted)
     {
         _levelState = mazeCompleted ? LevelState.Completed : LevelState.Failed;
-        _finalPlayerLightAngle = Player.Instance.Light.spotAngle;
+        Player.Instance.Snap();
 
         if (mazeCompleted)
         {
@@ -183,7 +182,6 @@ public class LevelManager : Singleton<LevelManager>
             {
                 Player.Instance.Time -= Time.deltaTime;
                 Player.Instance.LerpLightAngle(
-                    min: _finalPlayerLightAngle,
                     coef: Player.Instance.Time / ReplayTime
                 );
             }
@@ -194,7 +192,6 @@ public class LevelManager : Singleton<LevelManager>
             {
                 Player.Instance.Time += Time.deltaTime;
                 Player.Instance.LerpLightAngle(
-                    min: _finalPlayerLightAngle,
                     coef: Player.Instance.Time / ReversedReplayTime
                 );
             }
