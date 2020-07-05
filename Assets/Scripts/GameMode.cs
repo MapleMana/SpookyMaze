@@ -82,3 +82,30 @@ public class GhostGM : GameMode
             .ToList();
     }
 }
+
+public class CombinedGM: GameMode
+{
+    GameMode[] gameModes;
+    string name;
+
+    public CombinedGM(string name, params GameMode[] gameModes)
+    {
+        this.name = name;
+        this.gameModes = gameModes; 
+    }
+
+    public override bool GameEnded()
+    {
+        return gameModes.All(gm => gm.GameEnded());
+    }
+
+    public override List<ItemType> GetItems()
+    {
+        return gameModes.SelectMany(gm => gm.GetItems()).ToList();
+    }
+
+    public override List<SerMovable> GetMovables(int quantity)
+    {
+        return gameModes.SelectMany(gm => gm.GetMovables()).ToList();
+    }
+}
