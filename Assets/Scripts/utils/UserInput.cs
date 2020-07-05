@@ -11,7 +11,7 @@ static class PlayerActionDetector
     static private Vector3 touchStart;
     const double minSwipeDistance = 0.1;  //minimum distance for a swipe to be registered (fraction of screen height)
 
-    public static MovableCommand Detect()
+    public static MovableMovementCommand Detect()
     {
         if (Application.platform == RuntimePlatform.Android || 
             Application.platform == RuntimePlatform.IPhonePlayer)
