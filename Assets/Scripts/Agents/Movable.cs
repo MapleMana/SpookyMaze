@@ -6,8 +6,12 @@ using UnityEngine;
 public abstract class Movable : MonoBehaviour
 {
     private Vector2Int _mazePosition;
-    internal static List<KeyValuePair<Movable, MovableCommand>> _commandHistory;
-    internal static float _previousCommandTime;
+    private static float _previousCommandTime;
+    protected static List<KeyValuePair<Movable, MovableCommand>> _commandHistory;
+    protected Vector3 _target;
+
+    [SerializeField]
+    private float speed;
 
     public bool Moving { get; set; } = false;
     public bool AtMazeEnd => MazePosition == Maze.Instance.EndPos;
@@ -20,20 +24,56 @@ public abstract class Movable : MonoBehaviour
         {
             _mazePosition = value;
             MazeCell currentCell = Maze.Instance[value];
-            transform.position = currentCell.CellCenter(y: transform.position.y);
+            _target = currentCell.CellCenter(y: transform.position.y);
         }
     }
 
-    public abstract bool Move(Vector2Int direction);
+    public float Speed 
+    { 
+        get => speed * LevelManager.Instance.GetSpeedMultiplier(); 
+        set => speed = value; 
+    }
 
-    void Awake()
+    public void SetMazePositionWithoutLerp(Vector2Int value)
+    {
+        _mazePosition = value;
+        MazeCell currentCell = Maze.Instance[value];
+        _target = transform.position = currentCell.CellCenter(y: transform.position.y);
+    }
+
+    protected virtual void Awake()
     {
         _commandHistory = new List<KeyValuePair<Movable, MovableCommand>>();
+        _target = transform.position;
+    }
+
+    protected virtual void Update()
+    {
+        if (!Moving && LevelManager.Instance.LevelIs(LevelState.InProgress))
+        {
+            PerformMovement();
+        }
+        if (Moving || 
+            LevelManager.Instance.LevelIs(LevelState.InReplay) || 
+            LevelManager.Instance.LevelIs(LevelState.InReplayReversed))
+        {
+            float dx = Speed * Time.deltaTime;
+            transform.position = Vector3.MoveTowards(transform.position, _target, dx);
+        }
     }
 
     /// <summary>
-    /// Places movable at the start of the maze and inits movable's state
+    /// Is being called on update. Complex movement logic.
     /// </summary>
+    public abstract void PerformMovement();
+
+    /// <summary>
+    /// Atomic (between 2 cells) movement logic
+    /// </summary>
+    /// <param name="direction"></param>
+    /// <returns>true if the movement succeeded</returns>
+    public abstract bool Move(Vector2Int direction);
+
     public static void ClearHistory()
     {
         _commandHistory.Clear();
@@ -42,7 +82,7 @@ public abstract class Movable : MonoBehaviour
 
     public void Reset()
     {
-        MazePosition = StartingPosition;
+        SetMazePositionWithoutLerp(StartingPosition);
     }
 
     public void AddToHistory(Movable movingObject, MovableCommand command)
@@ -85,23 +125,29 @@ public abstract class Movable : MonoBehaviour
     /// Executes commands to decision point and saves them to history
     /// </summary>
     /// <param name="playerCommands"></param>
-    /// <param name="pauseBetween"></param>
+    /// <param name="waitBefore"></param>
     /// <returns></returns>
-    internal IEnumerator PlayCommandsInRealTime(
+    protected IEnumerator PlayCommandsInRealTime(
         List<MovableCommand> playerCommands,
-        float pauseBetween)
+        bool waitBefore=false)
     {
         //pauseBetweenCommands -= Time.deltaTime;
 
         Moving = true;
+
+        if (waitBefore)
+        {
+            yield return new WaitForSeconds(MazeCell.CELL_WIDTH / Speed);
+        }
+
         foreach (MovableCommand command in playerCommands)
         {
             if (Moving)
             {
-                yield return new WaitForSeconds(pauseBetween);
-
                 command.Execute(this);
                 AddToHistory(this, command);
+
+                yield return new WaitForSeconds(MazeCell.CELL_WIDTH / Speed);
             }
         }
         Moving = false;

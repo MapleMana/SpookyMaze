@@ -18,7 +18,7 @@ public class LevelManager : Singleton<LevelManager>
     public bool LevelIs(LevelState state) => (_levelState & state) != 0;
     public float ReplayTime => (LevelTime - TimeLeft) * GameManager.Instance.replayMultiplier;
     public float ReversedReplayTime => (LevelTime - TimeLeft) * GameManager.Instance.reversedReplayMultiplier;
-
+    
     public void Initialize(LevelData levelData)
     {
         _levelData = levelData;
@@ -28,17 +28,16 @@ public class LevelManager : Singleton<LevelManager>
 
         Maze.Instance.Load(levelData.mazeState);
 
-        Player.Instance.MazePosition = Maze.Instance.StartPos;
+        Player.Instance.PlaceOn(Maze.Instance);
         _mobs = levelData.SpawnMovables();
         Movable.ClearHistory();
-        Ghost.CanBeMoved = true;
     }
 
     void ResetState()
     {
         Maze.Instance.Load(_levelData.mazeState);
 
-        Player.Instance.MazePosition = Maze.Instance.StartPos;
+        Player.Instance.Reset();
         foreach (Movable mob in _mobs)
         {
             mob.Reset();
@@ -65,6 +64,19 @@ public class LevelManager : Singleton<LevelManager>
             timeToAdd = ratio * ReversedReplayTime;
         }
         TimeLeft += timeToAdd;
+    }
+
+    public float GetSpeedMultiplier()
+    {
+        if (LevelIs(LevelState.InReplay))
+        {
+            return 1 / GameManager.Instance.replayMultiplier;
+        }
+        else if (LevelIs(LevelState.InReplayReversed))
+        {
+            return 1 / GameManager.Instance.reversedReplayMultiplier;
+        }
+        return 1;
     }
 
     /// <summary>
@@ -112,7 +124,6 @@ public class LevelManager : Singleton<LevelManager>
     public void EndLevel(bool mazeCompleted)
     {
         _levelState = mazeCompleted ? LevelState.Completed : LevelState.Failed;
-        Ghost.CanBeMoved = false;
         _finalPlayerLightAngle = Player.Instance.Light.spotAngle;
 
         if (mazeCompleted)

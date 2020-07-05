@@ -53,8 +53,8 @@ public class Maze
         Dimensions = state.dimensions;
         foreach (SerCell cell in state.cells)
         {
-            Grid[cell.Pos] = cell.ToMazeCell();
-            Grid[cell.Pos].Instantiate();
+            Grid[cell.pos.ToVector2Int()] = cell.ToMazeCell();
+            Grid[cell.pos.ToVector2Int()].Instantiate();
         }
     }
 

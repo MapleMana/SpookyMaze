@@ -59,7 +59,11 @@ public class MovableMovementCommand : MovableCommand
     public static readonly MovableMovementCommand MoveLeft = new MovableMovementCommand(Vector2Int.left);
     public static readonly MovableMovementCommand MoveRight = new MovableMovementCommand(Vector2Int.right);
 
-    public MovableMovementCommand(Vector2Int direction) : base(player => new Verdict(player.Move(direction)), player => new Verdict(player.Move(-1 * direction)))
+    public MovableMovementCommand(Vector2Int direction) 
+        : base(
+            movable => new Verdict(movable.Move(direction)), 
+            movable => new Verdict(movable.Move(-1 * direction))
+        )
     {
         _direction = direction;
     }
