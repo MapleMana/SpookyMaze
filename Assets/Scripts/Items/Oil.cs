@@ -14,6 +14,6 @@ public class Oil : Item
 
     public override void Deactivate()
     {
-        Player.Instance.SubtractTime(power: EFFECTIVENESS);
+        Player.Instance.SubtractTime(power: -EFFECTIVENESS);
     }
 }

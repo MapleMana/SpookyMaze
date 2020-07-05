@@ -63,7 +63,7 @@ public class Ghost : Movable
     /// <returns></returns>
     public bool LeavePlayer()
     {
-        Player.Instance.SubtractTime(power: -EFFECTIVENESS);
+        Player.Instance.SubtractTime(power: EFFECTIVENESS);
         return true;
     }
 }
