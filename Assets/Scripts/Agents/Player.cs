@@ -46,14 +46,19 @@ public class Player : Movable
         DefaultLightIntensity = Light.intensity;
     }
 
-    protected override void Update()
+    public void SubtractTime(float power=1)
     {
         if (LevelManager.Instance.LevelIs(LevelState.InProgress | LevelState.InReplay | LevelState.InReplayReversed))
         {
             float dt = LevelManager.Instance.LevelIs(LevelState.InReplayReversed) ? -1 : 1;
-            TimeLeft -= Speed / 30 * dt * Time.deltaTime;
+            TimeLeft = Mathf.Clamp(TimeLeft - power * Speed / 30 * dt * Time.deltaTime, 0, LevelManager.Instance.LevelTime);
             Light.spotAngle = Mathf.Lerp(minLightAngle, maxLightAngle, TimeLeft / LevelManager.Instance.LevelTime);
         }
+    }
+
+    protected override void Update()
+    {
+        SubtractTime();
         base.Update();
     }
 
