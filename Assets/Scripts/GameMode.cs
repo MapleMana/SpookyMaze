@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -9,7 +10,7 @@ public abstract class GameMode
 
     abstract public List<ItemType> GetItems();
 
-    public virtual List<SerMovable> GetMovables()
+    public virtual List<SerMovable> GetMovables(int quantity=0)
     {
         return new List<SerMovable>();
     }
@@ -73,16 +74,11 @@ public class GhostGM : GameMode
         return new List<ItemType>();
     }
 
-    public override List<SerMovable> GetMovables()
+    public override List<SerMovable> GetMovables(int quantity)
     {
-        int ghostQuantity = (Maze.Instance.Dimensions.Height + Maze.Instance.Dimensions.Width) / 16; // magic formula - subject to change in the future
-        List<SerMovable> ghosts = new List<SerMovable>();
-
-        foreach (Vector2Int position in Maze.Instance.GetRandomPositions(ghostQuantity))
-        {
-            ghosts.Add(new SerMovable("Ghost", position));
-        }
-
-        return ghosts;
+        List<Vector2Int> positions = Maze.Instance.GetRandomPositions(quantity);
+        return positions
+            .Select((position) => new SerMovable("Ghost", position))
+            .ToList();
     }
 }

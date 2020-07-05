@@ -7,7 +7,6 @@ using UnityEngine.Events;
 
 public class Player : Movable
 {
-    public float playerSpeed;
     [Range(0f, 180f)]
     public float maxLightAngle;
     [Range(0f, 180f)]
@@ -18,8 +17,9 @@ public class Player : Movable
     public float DefaultLightIntensity { get; private set; }
     public Stack<ItemType> Inventory { get; private set; }
 
-    void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         if (Instance == null)
         {
             Instance = this;
@@ -28,8 +28,13 @@ public class Player : Movable
         {
             Destroy(gameObject);
         }
-        _commandHistory = new List<KeyValuePair<Movable, MovableCommand>>();
         Inventory = new Stack<ItemType>();
+    }
+
+    public void PlaceOn(Maze maze)
+    {
+        StartingPosition = maze.StartPos;
+        Reset();
     }
 
     private void Start()
@@ -49,16 +54,13 @@ public class Player : Movable
         Light.spotAngle = Mathf.Lerp(min ?? minLightAngle, max ?? maxLightAngle, coef);
     }
 
-    void Update()
+    public override void PerformMovement()
     {
-        if (LevelManager.Instance.LevelIs(LevelState.InProgress))
+        MovableMovementCommand command = PlayerActionDetector.DetectDesktop();
+        if (command != null && command.Execute(this).Succeeded)
         {
-            MovableCommand command = PlayerActionDetector.DetectDesktop();
-            if (!Moving && command != null && command.Execute(this).Succeeded)
-            {
-                AddToHistory(this, command);
-                MoveToDecisionPoint(incomingDirection: ((MovableMovementCommand)command).Direction);
-            }
+            AddToHistory(this, command);
+            MoveToDecisionPoint(incomingDirection: command.Direction);
         }
     }
 
@@ -81,15 +83,10 @@ public class Player : Movable
 
         StartCoroutine(PlayCommandsInRealTime(
             playerCommands: commandSequence,
-            pauseBetween: 1 / playerSpeed
-       ));
+            waitBefore: true
+        ));
     }
 
-    /// <summary>
-    /// Move player in the chosen direction. If there is a wall on the way, player idles
-    /// </summary>
-    /// <param name="direction">The direction of movement</param>
-    /// <returns>true if the movement completed</returns>
     public override bool Move(Vector2Int direction)
     {
         if (!Maze.Instance[MazePosition].WallExists(direction))

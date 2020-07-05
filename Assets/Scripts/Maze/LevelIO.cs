@@ -1,12 +1,10 @@
 ﻿/// This file contains serializables clones of some objects
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design.Serialization;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text.RegularExpressions;
-using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -19,8 +17,6 @@ public class SerCell
     public bool right;
     public bool down;
     public int itemType;
-
-    public Vector2Int Pos => new Vector2Int(pos[0], pos[1]);
 
     public SerCell(MazeCell cell)
     {
@@ -35,7 +31,7 @@ public class SerCell
     public MazeCell ToMazeCell()
     {
         MazeCell cell = new MazeCell(
-            Pos, 
+            pos.ToVector2Int(), 
             up ? WallState.Exists : WallState.Destroyed,
             left ? WallState.Exists : WallState.Destroyed,
             down ? WallState.Exists : WallState.Destroyed,
@@ -50,12 +46,12 @@ public class SerCell
 public class SerMovable
 {
     string type;
-    int[] mazePosition;
+    int[] startingMazePosition;
 
     public SerMovable(string movableType, Vector2Int startingPosition)
     {
         type = movableType;
-        mazePosition = new int[2] { startingPosition.x, startingPosition.y };
+        startingMazePosition = startingPosition.ToArray();
     }
 
     public Movable Spawn()
@@ -65,7 +61,8 @@ public class SerMovable
         SceneManager.MoveGameObjectToScene(movableObject, SceneManager.GetSceneByName("Maze"));
 
         Movable movableComponent = movableObject.GetComponent<Movable>();
-        movableComponent.MazePosition = movableComponent.StartingPosition = new Vector2Int(mazePosition[0], mazePosition[1]);
+        movableComponent.StartingPosition = startingMazePosition.ToVector2Int();
+        movableComponent.SetMazePositionWithoutLerp(movableComponent.StartingPosition);
         return movableComponent;
     }
 }
