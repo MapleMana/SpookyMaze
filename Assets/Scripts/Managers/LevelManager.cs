@@ -9,19 +9,19 @@ public class LevelManager : Singleton<LevelManager>
 {
     private LevelState _levelState;
     private LevelData _levelData;
-    private float LevelTime;
+    public float LevelTime;
     private List<Movable> _mobs;
 
     public GameMode GameMode { get; set; }
     public bool LevelIs(LevelState state) => (_levelState & state) != 0;
-    public float ReplayTime => (LevelTime - Player.Instance.Time) * GameManager.Instance.replayMultiplier;
-    public float ReversedReplayTime => (LevelTime - Player.Instance.Time) * GameManager.Instance.reversedReplayMultiplier;
+    public float ReplayTime => (LevelTime - Player.Instance.TimeLeft) * GameManager.Instance.replayMultiplier;
+    public float ReversedReplayTime => (LevelTime - Player.Instance.TimeLeft) * GameManager.Instance.reversedReplayMultiplier;
     
     public void Initialize(LevelData levelData)
     {
         _levelData = levelData;
         _levelState = LevelState.InProgress;
-        Player.Instance.Time = LevelTime = levelData.time;
+        Player.Instance.TimeLeft = LevelTime = levelData.time;
         GameMode = levelData.GetGameMode();
 
         Maze.Instance.Load(levelData.mazeState);
@@ -61,7 +61,7 @@ public class LevelManager : Singleton<LevelManager>
         {
             timeToAdd = ratio * ReversedReplayTime;
         }
-        Player.Instance.Time += timeToAdd;
+        Player.Instance.TimeLeft += timeToAdd;
     }
 
     public float GetSpeedMultiplier()
@@ -84,7 +84,7 @@ public class LevelManager : Singleton<LevelManager>
     public void WatchReplay(Action onComplete)
     {   
         _levelState |= LevelState.InReplay;
-        Player.Instance.Time = ReplayTime;
+        Player.Instance.TimeLeft = LevelTime;
         ResetState();
         StartCoroutine(Movable.ReplayCommands(
             timeMultiplier: GameManager.Instance.replayMultiplier,
@@ -102,7 +102,6 @@ public class LevelManager : Singleton<LevelManager>
     public void LoadCurrentLevel()
     {
         _levelState |= LevelState.InReplayReversed;
-        Player.Instance.Time = 0;
         LightManager.Instance.TurnOff();
 
         StartCoroutine(Movable.ReplayCommands(
@@ -122,7 +121,6 @@ public class LevelManager : Singleton<LevelManager>
     public void EndLevel(bool mazeCompleted)
     {
         _levelState = mazeCompleted ? LevelState.Completed : LevelState.Failed;
-        Player.Instance.Snap();
 
         if (mazeCompleted)
         {
@@ -161,39 +159,14 @@ public class LevelManager : Singleton<LevelManager>
 
         if (LevelIs(LevelState.InProgress))
         {
-            if (Player.Instance.Time < 0)
+            if (Player.Instance.TimeLeft < 0)
             {
                 EndLevel(mazeCompleted: false);
-            }
-            else
-            {
-                Player.Instance.Time -= Time.deltaTime;
-                Player.Instance.LerpLightAngle(coef: Player.Instance.Time / LevelTime);
             }
 
             if (GameMode.GameEnded())
             {
                 EndLevel(mazeCompleted: true);
-            }
-        }
-        else if (LevelIs(LevelState.InReplay))
-        {
-            if (Player.Instance.Time > 0)
-            {
-                Player.Instance.Time -= Time.deltaTime;
-                Player.Instance.LerpLightAngle(
-                    coef: Player.Instance.Time / ReplayTime
-                );
-            }
-        }
-        else if (LevelIs(LevelState.InReplayReversed))
-        {
-            if (Player.Instance.Time < ReversedReplayTime)
-            {
-                Player.Instance.Time += Time.deltaTime;
-                Player.Instance.LerpLightAngle(
-                    coef: Player.Instance.Time / ReversedReplayTime
-                );
             }
         }
     }
