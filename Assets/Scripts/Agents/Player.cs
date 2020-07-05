@@ -56,7 +56,7 @@ public class Player : Movable
 
     public override void PerformMovement()
     {
-        MovableMovementCommand command = PlayerActionDetector.DetectDesktop();
+        MovableMovementCommand command = PlayerActionDetector.Detect();
         if (command != null && command.Execute(this).Succeeded)
         {
             AddToHistory(this, command);
