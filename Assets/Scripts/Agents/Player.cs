@@ -7,6 +7,8 @@ using UnityEngine.Events;
 
 public class Player : Movable
 {
+    private float _time;
+
     [Range(0f, 180f)]
     public float maxLightAngle;
     [Range(0f, 180f)]
@@ -16,6 +18,7 @@ public class Player : Movable
     public Light Light { get; private set; }
     public float DefaultLightIntensity { get; private set; }
     public Stack<ItemType> Inventory { get; private set; }
+    public float Time { get => _time; set => _time = value; }
 
     protected override void Awake()
     {
