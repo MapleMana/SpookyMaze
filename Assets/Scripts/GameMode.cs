@@ -109,6 +109,7 @@ public class CombinedGM: GameMode
 
     public override List<SerMovable> GetMovables(int quantity)
     {
-        return GameModes.SelectMany(gm => gm.GetMovables()).ToList();
+        var movable = GameModes.SelectMany(gm => gm.GetMovables(quantity)).ToList();
+        return movable;
     }
 }
