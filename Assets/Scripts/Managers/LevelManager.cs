@@ -9,19 +9,18 @@ public class LevelManager : Singleton<LevelManager>
 {
     private LevelState _levelState;
     private LevelData _levelData;
-    public float LevelTime;
     private List<Movable> _mobs;
 
     public GameMode GameMode { get; set; }
+    public LevelData LevelData { get => _levelData; }
+
     public bool LevelIs(LevelState state) => (_levelState & state) != 0;
-    public float ReplayTime => (LevelTime - Player.Instance.TimeLeft) * GameManager.Instance.replayMultiplier;
-    public float ReversedReplayTime => (LevelTime - Player.Instance.TimeLeft) * GameManager.Instance.reversedReplayMultiplier;
-    
+
     public void Initialize(LevelData levelData)
     {
         _levelData = levelData;
         _levelState = LevelState.InProgress;
-        Player.Instance.TimeLeft = LevelTime = levelData.time;
+        Player.Instance.TimeLeft = levelData.time;
         GameMode = levelData.GetGameMode();
 
         Maze.Instance.Load(levelData.mazeState);
@@ -40,28 +39,6 @@ public class LevelManager : Singleton<LevelManager>
         {
             mob.Reset();
         }
-    }
-
-    /// <summary>
-    /// Adds the specified percentage of total time to current time
-    /// </summary>
-    /// <param name="ratio">The percentage of the total time to add</param>
-    public void AddTime(float ratio)
-    {
-        float timeToAdd = 0;
-        if (LevelIs(LevelState.InProgress))
-        {
-            timeToAdd = ratio * LevelTime;
-        }
-        else if (LevelIs(LevelState.InReplay))
-        {
-            timeToAdd = ratio * ReplayTime;
-        }
-        else if (LevelIs(LevelState.InReplayReversed))
-        {
-            timeToAdd = ratio * ReversedReplayTime;
-        }
-        Player.Instance.TimeLeft += timeToAdd;
     }
 
     public float GetSpeedMultiplier()
@@ -84,7 +61,7 @@ public class LevelManager : Singleton<LevelManager>
     public void WatchReplay(Action onComplete)
     {   
         _levelState |= LevelState.InReplay;
-        Player.Instance.TimeLeft = LevelTime;
+        Player.Instance.TimeLeft = LevelData.time;
         ResetState();
         StartCoroutine(Movable.ReplayCommands(
             timeMultiplier: GameManager.Instance.replayMultiplier,

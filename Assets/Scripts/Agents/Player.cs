@@ -51,8 +51,8 @@ public class Player : Movable
         if (LevelManager.Instance.LevelIs(LevelState.InProgress | LevelState.InReplay | LevelState.InReplayReversed))
         {
             float dt = LevelManager.Instance.LevelIs(LevelState.InReplayReversed) ? -1 : 1;
-            TimeLeft = Mathf.Clamp(TimeLeft - power * Speed / 30 * dt * Time.deltaTime, 0, LevelManager.Instance.LevelTime);
-            Light.spotAngle = Mathf.Lerp(minLightAngle, maxLightAngle, TimeLeft / LevelManager.Instance.LevelTime);
+            TimeLeft = Mathf.Clamp(TimeLeft - power * Speed / 30 * dt * Time.deltaTime, 0, LevelManager.Instance.LevelData.time);
+            Light.spotAngle = Mathf.Lerp(minLightAngle, maxLightAngle, TimeLeft / LevelManager.Instance.LevelData.time);
         }
     }
 
