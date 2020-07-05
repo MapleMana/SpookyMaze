@@ -94,18 +94,21 @@ public class CombinedGM: GameMode
         this.gameModes = gameModes; 
     }
 
+    public string Name { get => name; }
+    public GameMode[] GameModes { get => gameModes; }
+
     public override bool GameEnded()
     {
-        return gameModes.All(gm => gm.GameEnded());
+        return GameModes.All(gm => gm.GameEnded());
     }
 
     public override List<ItemType> GetItems()
     {
-        return gameModes.SelectMany(gm => gm.GetItems()).ToList();
+        return GameModes.SelectMany(gm => gm.GetItems()).ToList();
     }
 
     public override List<SerMovable> GetMovables(int quantity)
     {
-        return gameModes.SelectMany(gm => gm.GetMovables()).ToList();
+        return GameModes.SelectMany(gm => gm.GetMovables()).ToList();
     }
 }
