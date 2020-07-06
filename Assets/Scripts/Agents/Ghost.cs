@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Ghost : Movable
 {
-    private const float EFFECTIVENESS = 0.3f; // percentage of the total time to remove
+    private const float EFFECTIVENESS = 100f; // percentage of the total time to remove
 
     public override void PerformMovement()
     {
@@ -53,7 +53,7 @@ public class Ghost : Movable
     /// <returns></returns>
     public bool EncounterPlayer()
     {
-        LevelManager.Instance.AddTime(ratio: -EFFECTIVENESS);
+        Player.Instance.SubtractTime(power: EFFECTIVENESS);
         return true;
     }
 
@@ -63,7 +63,7 @@ public class Ghost : Movable
     /// <returns></returns>
     public bool LeavePlayer()
     {
-        LevelManager.Instance.AddTime(ratio: EFFECTIVENESS);
+        Player.Instance.SubtractTime(power: EFFECTIVENESS);
         return true;
     }
 }

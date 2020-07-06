@@ -9,21 +9,18 @@ public class LevelManager : Singleton<LevelManager>
 {
     private LevelState _levelState;
     private LevelData _levelData;
-    private float LevelTime;
-    private float _finalPlayerLightAngle;      // the player light angle at the end of the level
     private List<Movable> _mobs;
 
     public GameMode GameMode { get; set; }
-    public float TimeLeft { get; set; }
+    public LevelData LevelData { get => _levelData; }
+
     public bool LevelIs(LevelState state) => (_levelState & state) != 0;
-    public float ReplayTime => (LevelTime - TimeLeft) * GameManager.Instance.replayMultiplier;
-    public float ReversedReplayTime => (LevelTime - TimeLeft) * GameManager.Instance.reversedReplayMultiplier;
-    
+
     public void Initialize(LevelData levelData)
     {
         _levelData = levelData;
         _levelState = LevelState.InProgress;
-        TimeLeft = LevelTime = levelData.time;
+        Player.Instance.TimeLeft = levelData.time;
         GameMode = levelData.GetGameMode();
 
         Maze.Instance.Load(levelData.mazeState);
@@ -42,28 +39,6 @@ public class LevelManager : Singleton<LevelManager>
         {
             mob.Reset();
         }
-    }
-
-    /// <summary>
-    /// Adds the specified percentage of total time to current time
-    /// </summary>
-    /// <param name="ratio">The percentage of the total time to add</param>
-    public void AddTime(float ratio)
-    {
-        float timeToAdd = 0;
-        if (LevelIs(LevelState.InProgress))
-        {
-            timeToAdd = ratio * LevelTime;
-        }
-        else if (LevelIs(LevelState.InReplay))
-        {
-            timeToAdd = ratio * ReplayTime;
-        }
-        else if (LevelIs(LevelState.InReplayReversed))
-        {
-            timeToAdd = ratio * ReversedReplayTime;
-        }
-        TimeLeft += timeToAdd;
     }
 
     public float GetSpeedMultiplier()
@@ -86,7 +61,7 @@ public class LevelManager : Singleton<LevelManager>
     public void WatchReplay(Action onComplete)
     {   
         _levelState |= LevelState.InReplay;
-        TimeLeft = ReplayTime;
+        Player.Instance.TimeLeft = LevelData.time;
         ResetState();
         StartCoroutine(Movable.ReplayCommands(
             timeMultiplier: GameManager.Instance.replayMultiplier,
@@ -104,7 +79,6 @@ public class LevelManager : Singleton<LevelManager>
     public void LoadCurrentLevel()
     {
         _levelState |= LevelState.InReplayReversed;
-        TimeLeft = 0;
         LightManager.Instance.TurnOff();
 
         StartCoroutine(Movable.ReplayCommands(
@@ -124,7 +98,6 @@ public class LevelManager : Singleton<LevelManager>
     public void EndLevel(bool mazeCompleted)
     {
         _levelState = mazeCompleted ? LevelState.Completed : LevelState.Failed;
-        _finalPlayerLightAngle = Player.Instance.Light.spotAngle;
 
         if (mazeCompleted)
         {
@@ -163,41 +136,14 @@ public class LevelManager : Singleton<LevelManager>
 
         if (LevelIs(LevelState.InProgress))
         {
-            if (TimeLeft < 0)
+            if (Player.Instance.TimeLeft < Mathf.Epsilon)
             {
                 EndLevel(mazeCompleted: false);
-            }
-            else
-            {
-                TimeLeft -= Time.deltaTime;
-                Player.Instance.LerpLightAngle(coef: TimeLeft / LevelTime);
             }
 
             if (GameMode.GameEnded())
             {
                 EndLevel(mazeCompleted: true);
-            }
-        }
-        else if (LevelIs(LevelState.InReplay))
-        {
-            if (TimeLeft > 0)
-            {
-                TimeLeft -= Time.deltaTime;
-                Player.Instance.LerpLightAngle(
-                    min: _finalPlayerLightAngle,
-                    coef: TimeLeft / ReplayTime
-                );
-            }
-        }
-        else if (LevelIs(LevelState.InReplayReversed))
-        {
-            if (TimeLeft < ReversedReplayTime)
-            {
-                TimeLeft += Time.deltaTime;
-                Player.Instance.LerpLightAngle(
-                    min: _finalPlayerLightAngle,
-                    coef: TimeLeft / ReversedReplayTime
-                );
             }
         }
     }

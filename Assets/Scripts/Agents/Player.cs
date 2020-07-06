@@ -7,6 +7,8 @@ using UnityEngine.Events;
 
 public class Player : Movable
 {
+    private float _time;
+
     [Range(0f, 180f)]
     public float maxLightAngle;
     [Range(0f, 180f)]
@@ -16,6 +18,7 @@ public class Player : Movable
     public Light Light { get; private set; }
     public float DefaultLightIntensity { get; private set; }
     public Stack<ItemType> Inventory { get; private set; }
+    public float TimeLeft { get => _time; set => _time = value; }
 
     protected override void Awake()
     {
@@ -42,16 +45,21 @@ public class Player : Movable
         Light = GetComponentInChildren<Light>();
         DefaultLightIntensity = Light.intensity;
     }
-        
-    /// <summary>
-    /// Sets the angle of the light cone above the player
-    /// </summary>
-    /// <param name="coef">Completeness (max -> min) coefficient</param>
-    /// <param name="min">Minimal value to interpolate from</param>
-    /// <param name="max">Maximal value to interpolate to</param>
-    public void LerpLightAngle(float? min = null, float? max = null, float coef = 0)
+
+    public void SubtractTime(float power=1)
     {
-        Light.spotAngle = Mathf.Lerp(min ?? minLightAngle, max ?? maxLightAngle, coef);
+        if (LevelManager.Instance.LevelIs(LevelState.InProgress | LevelState.InReplay | LevelState.InReplayReversed))
+        {
+            float dt = LevelManager.Instance.LevelIs(LevelState.InReplayReversed) ? -1 : 1;
+            TimeLeft = Mathf.Clamp(TimeLeft - power * Speed / 30 * dt * Time.deltaTime, 0, LevelManager.Instance.LevelData.time);
+            Light.spotAngle = Mathf.Lerp(minLightAngle, maxLightAngle, TimeLeft / LevelManager.Instance.LevelData.time);
+        }
+    }
+
+    protected override void Update()
+    {
+        SubtractTime();
+        base.Update();
     }
 
     public override void PerformMovement()
