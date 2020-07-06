@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public static class LevelGenerator
@@ -13,12 +14,11 @@ public static class LevelGenerator
     const int DIMENTIONS_COUNT = 3;
     const int SEED = 145;
     
-    private static readonly List<GameMode> gameModes = new List<GameMode>()
+    private static readonly List<CombinedGM> gameModes = new List<CombinedGM>()
     {
-        new ClassicGM(),
-        new DoorKeyGM(),
-        new OilGM(),
-        new GhostGM()
+        new CombinedGM("Classic", new ClassicGM()),
+        new CombinedGM("Dungeon", new DoorKeyGM()),
+        new CombinedGM("Cursed House", new OilGM(), new GhostGM()),
     };
 
     private static int GetLevelTime(Dimensions mazeDimensions, int id)
@@ -41,10 +41,10 @@ public static class LevelGenerator
         UnityEngine.Random.InitState(SEED);
         LevelIO.ClearAll();
 
-        foreach (GameMode gameMode in gameModes)
+        foreach (CombinedGM combinedGM in gameModes)
         {
             Dimensions mazeDimentions = new Dimensions(INITIAL_MAZE_WIDTH, INITIAL_MAZE_HEIGHT);
-            string gameModeName = gameMode.GetType().Name;
+            string gameModeName = combinedGM.Name;
 
             for (int i = 0; i < DIMENTIONS_COUNT; i++)
             {
@@ -52,13 +52,13 @@ public static class LevelGenerator
                 {
                     Maze.Instance.Dimensions = mazeDimentions;
                     new BranchedDFSGeneration().Generate();
-                    gameMode.PlaceItems(Maze.Instance);
+                    combinedGM.PlaceItems(Maze.Instance);
                     LevelIO.SaveLevel(
                         new LevelSettings(gameModeName, mazeDimentions, id),
                         new LevelData(maze: Maze.Instance,
                                       levelTime: GetLevelTime(mazeDimentions, id),
-                                      mode: gameModeName,
-                                      mobs: gameMode.GetMovables(GetMobQuantity(mazeDimentions)),
+                                      modeNames: combinedGM.GameModes.Select(gm => gm.GetType().Name).ToArray(),
+                                      mobs: combinedGM.GetMovables(GetMobQuantity(mazeDimentions)),
                                       levelPoints: GetLevelPoints(mazeDimentions, id))
                     );
 

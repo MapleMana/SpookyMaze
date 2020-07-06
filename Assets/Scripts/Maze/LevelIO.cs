@@ -87,15 +87,15 @@ public class LevelData
 {
     public MazeState mazeState;
     public float time;
-    public string gameMode;
+    public string[] gameModes;
     public List<SerMovable> movables;
     public int points;
 
-    public LevelData(Maze maze, float levelTime, string mode, List<SerMovable> mobs, int levelPoints)
+    public LevelData(Maze maze, float levelTime, string[] modeNames, List<SerMovable> mobs, int levelPoints)
     {
         mazeState = new MazeState(maze);
         time = levelTime;
-        gameMode = mode;
+        gameModes = modeNames;
         movables = mobs;
         points = levelPoints;
     }
@@ -107,8 +107,13 @@ public class LevelData
 
     public GameMode GetGameMode()
     {
-        Type GMType = Type.GetType(gameMode);
-        return (GameMode)Activator.CreateInstance(GMType);
+        return new CombinedGM(
+            name: "", 
+            gameModes.Select(name => {
+                Type GMType = Type.GetType(name);
+                return (GameMode)Activator.CreateInstance(GMType);
+            }).ToArray()
+        );
     }
 }
 
