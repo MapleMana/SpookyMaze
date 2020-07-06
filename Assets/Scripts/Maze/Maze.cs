@@ -8,16 +8,20 @@ using UnityEngine.SceneManagement;
 
 public class Maze
 {
-    private Vector2Int _start;
-    private Vector2Int _end;
-    private string  _beforeStart;
-    private static readonly Random _generator = new Random();
+    private Dimensions _dimensions;
 
     public static Maze Instance { get; private set; }
-    public Vector2Int StartPos => _start;
-    public Vector2Int EndPos => _end;
-    public int Width { get; private set; } = 10;
-    public int Height { get; private set; } = 10;
+    public Vector2Int StartPos { get; private set; }
+    public Vector2Int EndPos { get; private set; }
+    public Dimensions Dimensions
+    {
+        get => _dimensions;
+        set {
+            _dimensions = value;
+            StartPos = new Vector2Int(0, value.Height - 1);
+            EndPos = new Vector2Int(value.Width - 1, 0);
+        } 
+    }
     public Dictionary<Vector2Int, MazeCell> Grid { get; private set; } = new Dictionary<Vector2Int, MazeCell>();
     public MazeCell this[Vector2Int pos] => Grid[pos];
 
@@ -36,52 +40,22 @@ public class Maze
     /// <returns></returns>
     public bool InBounds(Vector2Int pos)
     {
-        return pos.x >= 0 && pos.x < Width &&
-               pos.y >= 0 && pos.y < Height;
+        return pos.x >= 0 && pos.x < Dimensions.Width &&
+               pos.y >= 0 && pos.y < Dimensions.Height;
     }
 
-    /// <summary>
-    /// Specifies the initial maze dimensions
-    /// </summary>
-    /// <param name="width">The width (X) of the maze</param>
-    /// <param name="height">The height (Z) of the maze</param>
-    public void SetDimensions(int width, int height)
-    {
-        Width = width;
-        Height = height;
-
-        _start = new Vector2Int(0, height - 1);
-        _end = new Vector2Int(width - 1, 0);
-    }
-
-    // FIXME: move back to MazeIO when Maze is no longer a singleton
     /// <summary>
     /// Synchronize the Maze with this state
     /// </summary>
     public void Load(MazeState state)
     {
-        SetDimensions(state.width, state.height);
+        Clear();
+        Dimensions = state.dimensions;
         foreach (SerCell cell in state.cells)
         {
-            Grid[cell.Pos] = cell.ToMazeCell();
+            Grid[cell.pos.ToVector2Int()] = cell.ToMazeCell();
+            Grid[cell.pos.ToVector2Int()].Instantiate();
         }
-    }
-    /// <summary>
-    /// Restores maze state before level start
-    /// </summary>
-    public void Restore()
-    {
-        MazeState state = JsonUtility.FromJson<MazeState>(_beforeStart);
-        Load(state);
-    }
-
-    /// <summary>
-    /// Saves the state of the maze before the level starts
-    /// </summary>
-    public void SaveState()
-    {
-        MazeState state = new MazeState(this);
-        _beforeStart = JsonUtility.ToJson(state);
     }
 
     /// <summary>
@@ -90,9 +64,9 @@ public class Maze
     /// <param name="wallState">The state of the walls to fill with</param>
     public void Fill(WallState wallState=WallState.Exists)
     {
-        for (int x = 0; x < Width; x++)
+        for (int x = 0; x < Dimensions.Width; x++)
         {
-            for (int y = 0; y < Height; y++)
+            for (int y = 0; y < Dimensions.Height; y++)
             {
                 Vector2Int pos = new Vector2Int(x, y);
                 Grid[pos] = new MazeCell(pos, wallState, wallState, wallState, wallState);
@@ -119,14 +93,20 @@ public class Maze
         return sequence;
     }
 
-    /// <summary>
-    /// Display each MazeCell of this maze
-    /// </summary>
-    public void Display()
+    public List<Vector2Int> GetRandomPositions(int quantity)
     {
-        foreach (var kvPair in Grid)
+        List<MazeCell> emptyCells = Grid.Values.Where(cell => cell.IsEmpty && cell.Position != StartPos).ToList();
+        emptyCells.Shuffle();
+        IEnumerable<Vector2Int> randomPositions = emptyCells.Select(cell => cell.Position);
+        return randomPositions.Take(quantity).ToList();
+    }
+
+    public void PlaceOnMaze(List<ItemType> itemTypes)
+    {
+        List<Vector2Int> itemPositions = GetRandomPositions(itemTypes.Count);
+        for (int i = 0; i < Mathf.Min(itemPositions.Count, itemTypes.Count); i++)
         {
-            kvPair.Value.Display();            
+            Grid[itemPositions[i]].ItemType = itemTypes[i];
         }
     }
 

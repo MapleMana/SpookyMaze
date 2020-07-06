@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class ListExtension
+public static class Extension
 {
     public static void Shuffle<T>(this List<T> list)
     {
@@ -14,6 +14,16 @@ public static class ListExtension
             list[k] = list[j];
             list[j] = value;
         }
+    }
+
+    public static int[] ToArray(this Vector2Int vector)
+    {
+        return new int[] { vector.x, vector.y };
+    }
+
+    public static Vector2Int ToVector2Int(this int[] arr)
+    {
+        return new Vector2Int(arr[0], arr[1]);
     }
 }
 
@@ -41,3 +51,27 @@ public enum LevelState
     InReplayReversed = 16
 }
 
+[System.Serializable()]
+public struct Dimensions
+{
+    public int Width;
+    public int Height;
+
+    public Dimensions(int Width, int Height)
+    {
+        this.Width = Width;
+        this.Height = Height;
+    }
+
+    public Dimensions(string dimensionName)
+    {
+        string[] dimensionNameParts = dimensionName.Split('x');
+        int.TryParse(dimensionNameParts[0], out Width);
+        int.TryParse(dimensionNameParts[1], out Height);
+    }
+
+    public override string ToString()
+    {
+        return $"{Width}x{Height}";
+    }
+}
