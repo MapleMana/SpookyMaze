@@ -56,6 +56,7 @@ public class Maze
             Grid[cell.pos.ToVector2Int()] = cell.ToMazeCell();
             Grid[cell.pos.ToVector2Int()].Instantiate();
         }
+        FillMissingCorners();
     }
 
     /// <summary>
@@ -70,6 +71,24 @@ public class Maze
             {
                 Vector2Int pos = new Vector2Int(x, y);
                 Grid[pos] = new MazeCell(pos, wallState, wallState, wallState, wallState);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Fills all the walls of the maze with a specific state
+    /// </summary>
+    public void FillMissingCorners()
+    {
+        GameObject wallTemplate = Resources.Load<GameObject>("Wall");
+        for (int x = 0; x <= Dimensions.Width; x++)
+        {
+            for (int y = 0; y <= Dimensions.Height; y++)
+            {
+                GameObject wall = Object.Instantiate(wallTemplate);
+                wall.transform.position = new Vector3(x * MazeCell.CELL_WIDTH, 0, y * MazeCell.CELL_WIDTH);
+                wall.transform.localScale = new Vector3(MazeCell.WALL_WIDTH, MazeCell.WALL_HEIGHT, MazeCell.WALL_WIDTH);
+                SceneManager.MoveGameObjectToScene(wall, SceneManager.GetSceneByName("Maze"));
             }
         }
     }
