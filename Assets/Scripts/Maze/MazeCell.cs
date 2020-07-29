@@ -94,7 +94,7 @@ public class MazeCell : System.IDisposable
     {
         GameObject wall = Object.Instantiate(_wallTemplate, pos, Quaternion.identity);
         float wallX = horizontal ? CELL_WIDTH + WALL_WIDTH : WALL_WIDTH;
-        float wallY = horizontal ? WALL_WIDTH : CELL_WIDTH + WALL_WIDTH;
+        float wallY = horizontal ? WALL_WIDTH              : CELL_WIDTH + WALL_WIDTH;
 
         wall.transform.localScale = new Vector3(wallX, WallHeight, wallY);
         SceneManager.MoveGameObjectToScene(wall, SceneManager.GetSceneByName("Maze"));
@@ -115,13 +115,14 @@ public class MazeCell : System.IDisposable
         {
             PutWall(new Vector3(CELL_WIDTH * (_position.x + 0.5f), 0, CELL_WIDTH * (_position.y + 1)), true);
         }
-        if (WallExists(Vector2Int.left))
-        {
-            PutWall(new Vector3(CELL_WIDTH * _position.x, 0, CELL_WIDTH * (_position.y + 0.5f)), false);
-        }
-        if (WallExists(Vector2Int.down))
+
+        if (WallExists(Vector2Int.down) && _position.y == 0)
         {
             PutWall(new Vector3(CELL_WIDTH * (_position.x + 0.5f), 0, CELL_WIDTH * _position.y), true);
+        }
+        if (WallExists(Vector2Int.left) && _position.x == 0)
+        {
+            PutWall(new Vector3(CELL_WIDTH * _position.x, 0, CELL_WIDTH * (_position.y + 0.5f)), false);
         }
     }
 
