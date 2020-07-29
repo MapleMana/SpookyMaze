@@ -12,6 +12,7 @@ public class MazeCell : System.IDisposable
     private Dictionary<Vector2Int, WallState> _wallState = new Dictionary<Vector2Int, WallState>();
     private Vector2Int _position;
     private List<GameObject> _walls;
+    private static List<GameObject> _corners = new List<GameObject>();
     private static GameObject _wallTemplate = Resources.Load<GameObject>("Wall");
 
     public static List<Vector2Int> neighbours = new List<Vector2Int> { Vector2Int.up,
@@ -116,6 +117,24 @@ public class MazeCell : System.IDisposable
         }
     }
 
+    /// <summary>
+    /// Fills all the walls of the maze with a specific state
+    /// </summary>
+    public static void FillCorners()
+    {
+        for (int x = 0; x <= Maze.Instance.Dimensions.Width; x++)
+        {
+            for (int y = 0; y <= Maze.Instance.Dimensions.Height; y++)
+            {
+                GameObject corner = Object.Instantiate(_wallTemplate);
+                corner.transform.position = new Vector3(x * CELL_WIDTH, 0, y * CELL_WIDTH);
+                corner.transform.localScale = new Vector3(WALL_WIDTH, WALL_HEIGHT, WALL_WIDTH);
+                SceneManager.MoveGameObjectToScene(corner, SceneManager.GetSceneByName("Maze"));
+                _corners.Add(corner);
+            }
+        }
+    }
+
     public void Dispose()
     {
         foreach (GameObject child in _walls)
@@ -124,5 +143,14 @@ public class MazeCell : System.IDisposable
         }
         _walls.Clear();
         Object.Destroy(Item);
+    }
+
+    public static void DisposeCorners()
+    {
+        foreach (GameObject child in _corners)
+        {
+            Object.Destroy(child);
+        }
+        _corners.Clear();
     }
 }
