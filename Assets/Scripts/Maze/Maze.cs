@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -100,6 +101,34 @@ public class Maze
         emptyCells.Shuffle();
         IEnumerable<Vector2Int> randomPositions = emptyCells.Select(cell => cell.Position);
         return randomPositions.Take(quantity).ToList();
+    }
+
+    /// <summary>
+    /// Calculates the path length from start to end using BFS;
+    /// </summary>
+    /// <returns>The length of the path from start to finish</returns>
+    public int GetPathLength()
+    {
+        Dictionary<Vector2Int, int> distance = new Dictionary<Vector2Int, int>();
+        distance[StartPos] = 0;
+
+        Queue<Vector2Int> cellsBeingAnalyzed = new Queue<Vector2Int>();
+        cellsBeingAnalyzed.Enqueue(StartPos);
+        
+        while (cellsBeingAnalyzed.Count > 0)
+        {
+            Vector2Int curPos = cellsBeingAnalyzed.Dequeue();
+            foreach (Vector2Int neighbour in MazeCell.neighbours)
+            {
+                Vector2Int newPos = curPos + neighbour;
+                if (InBounds(newPos) && !distance.ContainsKey(newPos) && !Grid[curPos].WallExists(neighbour))
+                {
+                    cellsBeingAnalyzed.Enqueue(newPos);
+                    distance[newPos] = distance[curPos] + 1;
+                }
+            }
+        }
+        return distance[EndPos];
     }
 
     public void PlaceOnMaze(List<ItemType> itemTypes)
