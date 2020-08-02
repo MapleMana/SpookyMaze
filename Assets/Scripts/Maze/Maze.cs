@@ -56,6 +56,7 @@ public class Maze
             Grid[cell.pos.ToVector2Int()] = cell.ToMazeCell();
             Grid[cell.pos.ToVector2Int()].Instantiate();
         }
+        MazeCell.FillCorners();
     }
 
     /// <summary>
@@ -116,6 +117,7 @@ public class Maze
         {
             kvPair.Value.Dispose();
         }
+        MazeCell.DisposeCorners();
         Grid.Clear();
     }
 }
