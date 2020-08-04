@@ -43,7 +43,7 @@ public class DimensionsMenu : Menu<DimensionsMenu>
             newButton.GetComponentInChildren<TMP_Text>().text = dimensions.ToString();
             newButton.onClick.AddListener(OnDimensionsOptionClick(width, height));
             newButton.transform.SetParent(ButtonsPanel.transform, false);
-
+            
             buttonList.Add(newButton);
         }
     }
