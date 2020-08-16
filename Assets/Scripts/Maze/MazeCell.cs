@@ -84,10 +84,9 @@ public class MazeCell : System.IDisposable
     private void PutWall(Vector3 pos, bool horizontal = true)
     {
         GameObject wall = Object.Instantiate(_wallTemplate, pos, Quaternion.identity);
-        float wallX = horizontal ? CELL_WIDTH - WALL_WIDTH : WALL_WIDTH;
-        float wallY = horizontal ? WALL_WIDTH              : CELL_WIDTH - WALL_WIDTH;
-
-        wall.transform.localScale = new Vector3(wallX, WALL_HEIGHT, wallY);
+        wall.transform.localScale = new Vector3(CELL_WIDTH - WALL_WIDTH, WALL_HEIGHT, WALL_WIDTH);
+        float rotation = horizontal ? 0 : 90;
+        wall.transform.Rotate(0, rotation, 0);
         SceneManager.MoveGameObjectToScene(wall, SceneManager.GetSceneByName("Maze"));
         _walls.Add(wall);
     }
