@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEngine;
 
@@ -21,9 +22,9 @@ public static class LevelGenerator
         new CombinedGM("Cursed House", new OilGM(), new GhostGM()),
     };
 
-    private static int GetLevelTime(Dimensions mazeDimensions, int id)
+    private static int GetLevelTime(int pathLength)
     {
-        return Mathf.FloorToInt(mazeDimensions.Width * mazeDimensions.Height / 2) - 3 * id;
+        return pathLength * 3;
     }
 
     private static int GetMobQuantity(Dimensions mazeDimensions)
@@ -51,12 +52,12 @@ public static class LevelGenerator
                 for (int id = 1; id <= NUM_OF_LEVELS; id++)
                 {
                     Maze.Instance.Dimensions = mazeDimentions;
-                    new BranchedDFSGeneration().Generate();
+                    new BranchedDFSGeneration(Maze.Instance).Generate();
                     combinedGM.PlaceItems(Maze.Instance);
                     LevelIO.SaveLevel(
                         new LevelSettings(gameModeName, mazeDimentions, id),
                         new LevelData(maze: Maze.Instance,
-                                      levelTime: GetLevelTime(mazeDimentions, id),
+                                      levelTime: GetLevelTime(Maze.Instance.GetPathLength()),
                                       modeNames: combinedGM.GameModes.Select(gm => gm.GetType().Name).ToArray(),
                                       mobs: combinedGM.GetMovables(GetMobQuantity(mazeDimentions)),
                                       levelPoints: GetLevelPoints(mazeDimentions, id))
