@@ -14,6 +14,7 @@ public class MazeCell : System.IDisposable
     private List<GameObject> _walls;
     private static List<GameObject> _corners = new List<GameObject>();
     private static GameObject _wallTemplate = Resources.Load<GameObject>("Wall");
+    private static GameObject _cornerTemplate = Resources.Load<GameObject>("WallCorner");
 
     public static List<Vector2Int> neighbours = new List<Vector2Int> { Vector2Int.up,
                                                                        Vector2Int.left,
@@ -125,7 +126,7 @@ public class MazeCell : System.IDisposable
         {
             for (int y = 0; y <= Maze.Instance.Dimensions.Height; y++)
             {
-                GameObject corner = Object.Instantiate(_wallTemplate);
+                GameObject corner = Object.Instantiate(_cornerTemplate);
                 corner.transform.position = new Vector3(x * CELL_WIDTH, 0, y * CELL_WIDTH);
                 corner.transform.localScale = new Vector3(WALL_WIDTH, WALL_HEIGHT, WALL_WIDTH);
                 SceneManager.MoveGameObjectToScene(corner, SceneManager.GetSceneByName("Maze"));
