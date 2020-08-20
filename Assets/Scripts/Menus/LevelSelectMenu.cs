@@ -5,10 +5,12 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class LevelSelectMenu : Menu<LevelSelectMenu>
+public class LevelSelectMenu : MonoBehaviour //Menu<LevelSelectMenu>
 {
-    public GameObject ButtonsPanel;
-    public Button ButtonTemplate;
+    public GameObject LevelSizePanel;
+    public Button levelSizeButtonTemplate;
+    public GameObject levelSelectButtonsPanel;
+    public Button levelSelectButtonTemplate;
     public TMP_Text ModeName;
 
     private List<Button> buttonList;
@@ -16,7 +18,7 @@ public class LevelSelectMenu : Menu<LevelSelectMenu>
     private void Start()
     {
         ModeName.text = GameManager.Instance.CurrentSettings.GetReadableGameMode();
-        LoadLevels();
+        //LoadLevels();
     }
 
     /// <summary>
@@ -39,11 +41,11 @@ public class LevelSelectMenu : Menu<LevelSelectMenu>
 
     private Button CreateLevelButton(int levelReached, int level)
     {
-        Button newButton = Instantiate(ButtonTemplate);
+        Button newButton = Instantiate(levelSelectButtonTemplate);
         newButton.GetComponentInChildren<Text>().text = level.ToString();
         newButton.onClick.AddListener(OnLevelOptionClick(level));
         newButton.interactable = (level <= levelReached);
-        newButton.transform.SetParent(ButtonsPanel.transform, false);
+        newButton.transform.SetParent(levelSelectButtonsPanel.transform, false);
         return newButton;
     }
 

@@ -20,7 +20,7 @@ public class DimensionsMenu : Menu<DimensionsMenu>
 
     public void OnDimensionPressed()
     {
-        LevelSelectMenu.Open();
+        //LevelSelectMenu.Open();
     }
 
     /// <summary>
@@ -58,7 +58,7 @@ public class DimensionsMenu : Menu<DimensionsMenu>
         return () =>
         {
             GameManager.Instance.CurrentSettings.dimensions = new Dimensions(dimensionWidth, dimensionHeight);
-            LevelSelectMenu.Open();
+            //LevelSelectMenu.Open();
         };
     }
 }
