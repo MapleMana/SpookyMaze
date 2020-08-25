@@ -153,6 +153,7 @@ public static class LevelIO
 
     private static string GetFilePath(LevelSettings levelSettings)
     {
+        Debug.Log($"{Root}/{levelSettings}.maze");
         return $"{Root}/{levelSettings}.maze";
     }
 

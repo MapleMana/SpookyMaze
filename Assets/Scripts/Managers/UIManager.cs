@@ -64,12 +64,13 @@ public class UIManager : Singleton<UIManager>
     {
         if (levelSelectMenu.activeInHierarchy)
         {
-            GameManager.Instance.CurrentSettings.gameMode = modeName;
-            //levelSelectMenu.GetComponent<LevelSelectMenu>().LoadLevels();
+            levelSelectMenu.GetComponent<LevelSelectMenu>().ClearPanel();
             levelSelectMenu.SetActive(false);
         }
         else
         {
+            GameManager.Instance.CurrentSettings.gameMode = modeName;
+            levelSelectMenu.GetComponent<LevelSelectMenu>().LoadDimensions();
             levelSelectMenu.SetActive(true);
         }
     }
