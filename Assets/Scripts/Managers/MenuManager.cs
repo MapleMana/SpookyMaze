@@ -6,6 +6,7 @@ public class MenuManager : Singleton<MenuManager>
 {
     public AboutMenu AboutMenuPrefab;
     public DimensionsMenu DimensionsMenuPrefab;
+    public DailyMenu DailyMenuPrefab;
     public EndGameMenu EndGameMenuPrefab;
     public LevelSelectMenu LevelSelectMenuPrefab;
     public MainMenu MainMenuPrefab;

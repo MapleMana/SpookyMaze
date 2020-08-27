@@ -35,9 +35,9 @@ public class MainMenu : Menu<MainMenu>
         SettingsMenu.Open();
     }
 
-    public void OnDimensionPressed()
+    public void OnDailyPressed()
     {
-        LevelSelectMenu.Open();
+        DailyMenu.Open();
     }
 
     public override void OnBackPressed()

@@ -260,6 +260,8 @@ MonoBehaviour:
     type: 3}
   DimensionsMenuPrefab: {fileID: 6929987564755497002, guid: 628210e5f11f0d249b92a05b8fc386b3,
     type: 3}
+  DailyMenuPrefab: {fileID: -653092268322499072, guid: d0bc6b138b0a2e64e8c907a043fd0429,
+    type: 3}
   EndGameMenuPrefab: {fileID: 1588959527956654672, guid: d6d8fdb78235c5e43a7ed46a21f56af2,
     type: 3}
   LevelSelectMenuPrefab: {fileID: 5917160879899057118, guid: a6ce5a271e0ff9e4cb738235e8ff16a7,
@@ -267,8 +269,6 @@ MonoBehaviour:
   MainMenuPrefab: {fileID: 6813214519199201444, guid: 8a22d3220cf5aaa44ae5382c1923c0b8,
     type: 3}
   OnReplayMenuPrefab: {fileID: 7861223854276550378, guid: 4a2d269c74c17814f8eee8bfe1606f3c,
-    type: 3}
-  ScoreMenuPrefab: {fileID: 949968651268128081, guid: afb2b2847a0b89c4e96167ae3b402c75,
     type: 3}
   SettingsMenuPrefab: {fileID: 6600607643221304524, guid: 25601a9772674124e93beaf2c37050e3,
     type: 3}
