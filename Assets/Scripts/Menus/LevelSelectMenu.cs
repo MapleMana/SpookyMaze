@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class LevelSelectMenu : MonoBehaviour //Menu<LevelSelectMenu>
+public class LevelSelectMenu : MonoBehaviour
 {
     public GameObject levelSizePanel;
     public Button levelSizeButtonTemplate;
@@ -17,15 +17,8 @@ public class LevelSelectMenu : MonoBehaviour //Menu<LevelSelectMenu>
     private List<GameObject> panelList;
     private List<Button> levelButtonList;
 
-    private void Start()
-    {
-        //ModeName.text = GameManager.Instance.CurrentSettings.GetReadableGameMode();
-    }
-
-
     public void LoadDimensions()
     {
-        Debug.Log(GameManager.Instance.CurrentSettings.GetReadableGameMode());
         ModeName.text = GameManager.Instance.CurrentSettings.GetReadableGameMode();
 
         buttonList = new List<Button>();
@@ -40,19 +33,21 @@ public class LevelSelectMenu : MonoBehaviour //Menu<LevelSelectMenu>
         {
             int width = dimensions.Width;
             int height = dimensions.Height;
+            string panelName = dimensions.Width + "x" + dimensions.Height;
             Button newButton = Instantiate(levelSizeButtonTemplate);
             newButton.GetComponentInChildren<Text>().text = dimensions.ToString();
-            newButton.onClick.AddListener(OnDimensionsOptionClick(width, height));
+            newButton.onClick.AddListener(OnDimensionsOptionClick(width, height, panelName));
             newButton.transform.SetParent(levelSizePanel.transform, false);
-
             buttonList.Add(newButton);
 
             GameObject newPanel = Instantiate(levelSelectButtonsPanel);
             newPanel.transform.SetParent(levelSizePanel.transform, false);
-
+            newPanel.name = panelName;
             panelList.Add(newPanel);
 
+            GameManager.Instance.CurrentSettings.dimensions = new Dimensions(width, height);
             LoadLevels(newPanel);
+            newPanel.SetActive(false);
         }
     }
 
@@ -108,14 +103,24 @@ public class LevelSelectMenu : MonoBehaviour //Menu<LevelSelectMenu>
     /// <summary>
     /// Executed when one of the level select buttons is pressed
     /// </summary>
-    /// <param name="dimensionNumber">The dimensions to load</param>
+    /// <param name="panelName">The name of the panel to open</param>
     /// <returns></returns>
-    public UnityEngine.Events.UnityAction OnDimensionsOptionClick(int dimensionWidth, int dimensionHeight)
+    public UnityEngine.Events.UnityAction OnDimensionsOptionClick(int dimensionWidth, int dimensionHeight, string panelName)
     {
         return () =>
         {
             GameManager.Instance.CurrentSettings.dimensions = new Dimensions(dimensionWidth, dimensionHeight);
-            //LevelSelectMenu.Open();
+            foreach (GameObject panel in panelList)
+            {
+                if (panel.name == panelName)
+                {
+                    panel.SetActive(true);
+                }
+                else
+                {
+                    panel.SetActive(false);
+                }                
+            }
         };
     }
 

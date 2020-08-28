@@ -33,10 +33,10 @@ public class CameraManager : Singleton<CameraManager>
         transform.position = new Vector3(mazeWidth / 2, Mathf.Abs(cameraHeight), mazeHeight / 2);
     }
 
-    public void FocusOnMenu(Vector3 menuPosition)
+    /*public void FocusOnMenu(Vector3 menuPosition)
     {
         transform.position = new Vector3(menuPosition.x, menuPosition.y + MAIN_MENU_CAMERA_HEIGHT, menuPosition.z);
-    }
+    } */
 
     public void FocusOnPlayer()
     {
