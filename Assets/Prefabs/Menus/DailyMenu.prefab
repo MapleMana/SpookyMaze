@@ -428,7 +428,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: -653092268322499072}
         m_MethodName: OnModePressed
         m_Mode: 5
         m_Arguments:
@@ -757,7 +757,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 275}
+  m_AnchoredPosition: {x: -7, y: 275}
   m_SizeDelta: {x: 200, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8785079553827491811
@@ -1151,7 +1151,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: -653092268322499072}
         m_MethodName: OnModePressed
         m_Mode: 5
         m_Arguments:
@@ -1280,7 +1280,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: -653092268322499072}
         m_MethodName: OnModePressed
         m_Mode: 5
         m_Arguments:
@@ -1409,4 +1409,3 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DestroyWhenClosed: 1
   DisableMenusUnderneath: 1
-  Coins: {fileID: 4926199390477448993, guid: a535fec7fd39fe146b0cbff27315bd0b, type: 3}
