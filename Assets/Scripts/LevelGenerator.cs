@@ -22,6 +22,11 @@ public static class LevelGenerator
         new CombinedGM("Cursed House", new OilGM(), new GhostGM()),
     };
 
+    internal static void GenerateDailyLevel(int i)
+    {
+        // TODO: generate and save level
+    }
+
     private static int GetLevelTime(int pathLength)
     {
         return pathLength * 3;
