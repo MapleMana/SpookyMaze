@@ -37,6 +37,7 @@ public class MainMenu : Menu<MainMenu>
 
     public void OnDailyPressed()
     {
+        GameManager.Instance.CurrentSettings.isDaily = true;
         DailyMenu.Open();
     }
 

@@ -109,10 +109,7 @@ public class LevelData
     {
         return new CombinedGM(
             name: "", 
-            gameModes.Select(name => {
-                Type GMType = Type.GetType(name);
-                return (GameMode)Activator.CreateInstance(GMType);
-            }).ToArray()
+            gameModes.Select(GameMode.FromName).ToArray()
         );
     }
 }
@@ -122,15 +119,18 @@ public class LevelSettings
     public string gameMode;
     public Dimensions dimensions;
     public int id;
+    public bool isDaily;
+
     public string ModeDimensions => $"{this.gameMode}{this.dimensions}";
 
     public LevelSettings() { }
 
-    public LevelSettings(string gameMode, Dimensions dimensions, int id)
+    public LevelSettings(string gameMode, Dimensions dimensions, int id, bool isDaily=false)
     {
         this.gameMode = gameMode;
         this.dimensions = dimensions;
         this.id = id;
+        this.isDaily = isDaily;
     }
 
     public string GetReadableGameMode()
@@ -143,7 +143,7 @@ public class LevelSettings
 
     public override string ToString()
     {
-        return $"{gameMode}/{dimensions}/{id}";
+        return isDaily ? $"Daily/{gameMode}/{id}" : $"/{gameMode}/{dimensions}/{id}";
     }
 }
 

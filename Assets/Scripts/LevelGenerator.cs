@@ -22,9 +22,10 @@ public static class LevelGenerator
         new CombinedGM("Cursed House", new OilGM(), new GhostGM()),
     };
 
-    internal static void GenerateDailyLevel(int i)
+    private static Dimensions GetMazeDimensions(int id)
     {
-        // TODO: generate and save level
+        // TODO: figure out a better formula
+        return new Dimensions(8, 8);
     }
 
     private static int GetLevelTime(int pathLength)
@@ -75,5 +76,31 @@ public static class LevelGenerator
                 mazeDimentions.Height += MAZE_HEIGHT_INCREMENT;
             }
         }
+    }
+
+    internal static void GenerateDailyLevel(int id)
+    {
+        int dailySeed = (int)(DateTimeOffset.Now.ToUnixTimeSeconds() / (3600 * 24));
+        UnityEngine.Random.InitState(dailySeed);
+
+        Dimensions mazeDimentions = GetMazeDimensions(id);
+        GameManager.Instance.CurrentSettings.dimensions = mazeDimentions;
+        GameManager.Instance.CurrentSettings.id = id;
+        CombinedGM combinedGM = new CombinedGM("", GameMode.FromName(GameManager.Instance.CurrentSettings.gameMode + "GM"));
+
+        Maze.Instance.Dimensions = mazeDimentions;
+
+        new BranchedDFSGeneration(Maze.Instance).Generate();
+        combinedGM.PlaceItems(Maze.Instance);
+        LevelIO.SaveLevel(
+            GameManager.Instance.CurrentSettings,
+            new LevelData(maze: Maze.Instance,
+                            levelTime: GetLevelTime(Maze.Instance.GetPathLength()),
+                            modeNames: combinedGM.GameModes.Select(gm => gm.GetType().Name).ToArray(),
+                            mobs: combinedGM.GetMovables(GetMobQuantity(mazeDimentions)),
+                            levelPoints: GetLevelPoints(mazeDimentions, id))
+        );
+
+        Maze.Instance.Clear();
     }
 }
