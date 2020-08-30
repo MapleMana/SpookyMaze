@@ -260,6 +260,8 @@ MonoBehaviour:
     type: 3}
   DimensionsMenuPrefab: {fileID: 6929987564755497002, guid: 628210e5f11f0d249b92a05b8fc386b3,
     type: 3}
+  DailyLevelSelectMenuPrefab: {fileID: 7191052877211156316, guid: 2090c82355e2a594392670f77c465424,
+    type: 3}
   DailyMenuPrefab: {fileID: -653092268322499072, guid: d0bc6b138b0a2e64e8c907a043fd0429,
     type: 3}
   EndGameMenuPrefab: {fileID: 1588959527956654672, guid: d6d8fdb78235c5e43a7ed46a21f56af2,
