@@ -104,38 +104,17 @@ public class UIManager : Singleton<UIManager>
     /// </summary>
     public void ToggleMainMenu()
     {
-        if (mainMenu.activeInHierarchy)
-        {
-            mainMenu.SetActive(false);
-        }
-        else
-        {
-            mainMenu.SetActive(true);
-        }
+        mainMenu.SetActive(!mainMenu.activeInHierarchy);
     }
 
     public void ToggleAboutMenu()
     {
-        if (aboutMenu.activeInHierarchy)
-        {
-            aboutMenu.SetActive(false);
-        }
-        else
-        {
-            aboutMenu.SetActive(true);
-        }
+        aboutMenu.SetActive(!aboutMenu.activeInHierarchy);
     }
 
     public void ToggleSettingsMenu()
     {
-        if (settingsMenu.activeInHierarchy)
-        {
-            settingsMenu.SetActive(false);
-        }
-        else
-        {
-            settingsMenu.SetActive(true);
-        }
+        settingsMenu.SetActive(!settingsMenu.activeInHierarchy);
     }
 
     public void ToggleLevelSelectMenu(string modeName)
@@ -155,50 +134,22 @@ public class UIManager : Singleton<UIManager>
 
     public void TogglePurchaseMenu()
     {
-        if (purchaseMenu.activeInHierarchy)
-        {
-            purchaseMenu.SetActive(false);
-        }
-        else
-        {
-            purchaseMenu.SetActive(true);
-        }
+        purchaseMenu.SetActive(!purchaseMenu.activeInHierarchy);
     }
 
     public void ToggleStatsMenu()
     {
-        if (statsMenu.activeInHierarchy)
-        {
-            statsMenu.SetActive(false);
-        }
-        else
-        {
-            statsMenu.SetActive(true);
-        }
+        statsMenu.SetActive(!statsMenu.activeInHierarchy);
     }
 
     public void ToggleEndGameMenu()
     {
-        if (endGameMenu.activeInHierarchy)
-        {
-            endGameMenu.SetActive(false);
-        }
-        else
-        {
-            endGameMenu.SetActive(true);
-        }
+        endGameMenu.SetActive(!endGameMenu.activeInHierarchy);
     }
 
     public void ToggleOnReplyMenu()
     {
-        if (onReplyMenu.activeInHierarchy)
-        {
-            onReplyMenu.SetActive(false);
-        }
-        else
-        {
-            onReplyMenu.SetActive(true);
-        }
+        onReplyMenu.SetActive(!onReplyMenu.activeInHierarchy);
     }
 
     public void HideAllMenus()

@@ -33,16 +33,15 @@ public class LevelSelectMenu : MonoBehaviour
         {
             int width = dimensions.Width;
             int height = dimensions.Height;
-            string panelName = dimensions.Width + "x" + dimensions.Height;
             Button newButton = Instantiate(levelSizeButtonTemplate);
             newButton.GetComponentInChildren<Text>().text = dimensions.ToString();
-            newButton.onClick.AddListener(OnDimensionsOptionClick(width, height, panelName));
+            newButton.onClick.AddListener(OnDimensionsOptionClick(width, height, dimensions.ToString()));
             newButton.transform.SetParent(levelSizePanel.transform, false);
             buttonList.Add(newButton);
 
             GameObject newPanel = Instantiate(levelSelectButtonsPanel);
             newPanel.transform.SetParent(levelSizePanel.transform, false);
-            newPanel.name = panelName;
+            newPanel.name = dimensions.ToString();
             panelList.Add(newPanel);
 
             GameManager.Instance.CurrentSettings.dimensions = new Dimensions(width, height);
@@ -112,14 +111,7 @@ public class LevelSelectMenu : MonoBehaviour
             GameManager.Instance.CurrentSettings.dimensions = new Dimensions(dimensionWidth, dimensionHeight);
             foreach (GameObject panel in panelList)
             {
-                if (panel.name == panelName)
-                {
-                    panel.SetActive(true);
-                }
-                else
-                {
-                    panel.SetActive(false);
-                }                
+                panel.SetActive(panel.name == panelName);
             }
         };
     }
