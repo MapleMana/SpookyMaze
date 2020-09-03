@@ -35,11 +35,6 @@ public class MainMenu : Menu<MainMenu>
         SettingsMenu.Open();
     }
 
-    public void OnDimensionPressed()
-    {
-        //LevelSelectMenu.Open();
-    }
-
     public override void OnBackPressed()
     {
         Application.Quit();

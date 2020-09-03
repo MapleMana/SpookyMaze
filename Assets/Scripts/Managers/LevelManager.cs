@@ -156,7 +156,7 @@ public class LevelManager : Singleton<LevelManager>
             Destroy(mob.gameObject);
         }
         _mobs.Clear();
-        UIManager.Instance.onReplyMenu.SetActive(false);
+        UIManager.Instance.onReplayMenu.SetActive(false);
     }
 
     protected override void OnDestroy()

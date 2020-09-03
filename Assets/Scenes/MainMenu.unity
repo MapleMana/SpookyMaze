@@ -5494,7 +5494,7 @@ MonoBehaviour:
   statsMenu: {fileID: 1323885243}
   endGameMenu: {fileID: 2787141332529181379}
   nextPlayButtonText: {fileID: 2787141332014819972}
-  onReplyMenu: {fileID: 5041049726618815164}
+  onReplayMenu: {fileID: 5041049726618815164}
   coinText: {fileID: 1188219113}
 --- !u!4 &1977626364
 Transform:

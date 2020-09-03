@@ -16,7 +16,7 @@ public class UIManager : Singleton<UIManager>
     public GameObject statsMenu;
     public GameObject endGameMenu;
     public TMP_Text nextPlayButtonText;
-    public GameObject onReplyMenu;
+    public GameObject onReplayMenu;
 
     public TMP_Text coinText;
 
@@ -149,7 +149,7 @@ public class UIManager : Singleton<UIManager>
 
     public void ToggleOnReplyMenu()
     {
-        onReplyMenu.SetActive(!onReplyMenu.activeInHierarchy);
+        onReplayMenu.SetActive(!onReplayMenu.activeInHierarchy);
     }
 
     public void HideAllMenus()
@@ -162,6 +162,6 @@ public class UIManager : Singleton<UIManager>
         purchaseMenu.SetActive(false);
         statsMenu.SetActive(false);
         endGameMenu.SetActive(false);
-        onReplyMenu.SetActive(false);
+        onReplayMenu.SetActive(false);
     }
 }

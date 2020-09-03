@@ -18,11 +18,6 @@ public class DimensionsMenu : Menu<DimensionsMenu>
         LoadDimensions();
     }
 
-    public void OnDimensionPressed()
-    {
-        //LevelSelectMenu.Open();
-    }
-
     /// <summary>
     /// Invoked when the game starts and loads dimensions buttons to the Dimension Select screen
     /// </summary>
@@ -58,7 +53,6 @@ public class DimensionsMenu : Menu<DimensionsMenu>
         return () =>
         {
             GameManager.Instance.CurrentSettings.dimensions = new Dimensions(dimensionWidth, dimensionHeight);
-            //LevelSelectMenu.Open();
         };
     }
 }
