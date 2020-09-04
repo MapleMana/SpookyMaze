@@ -14,6 +14,7 @@ public class MazeCell : System.IDisposable
     private List<GameObject> _walls;
     private static List<GameObject> _corners = new List<GameObject>();
     private static GameObject _wallTemplate = Resources.Load<GameObject>("Wall");
+    private static GameObject _cornerTemplate = Resources.Load<GameObject>("WallCorner");
 
     public static List<Vector2Int> neighbours = new List<Vector2Int> { Vector2Int.up,
                                                                        Vector2Int.left,
@@ -84,10 +85,9 @@ public class MazeCell : System.IDisposable
     private void PutWall(Vector3 pos, bool horizontal = true)
     {
         GameObject wall = Object.Instantiate(_wallTemplate, pos, Quaternion.identity);
-        float wallX = horizontal ? CELL_WIDTH - WALL_WIDTH : WALL_WIDTH;
-        float wallY = horizontal ? WALL_WIDTH              : CELL_WIDTH - WALL_WIDTH;
-
-        wall.transform.localScale = new Vector3(wallX, WALL_HEIGHT, wallY);
+        wall.transform.localScale = new Vector3(CELL_WIDTH - WALL_WIDTH, WALL_HEIGHT, WALL_WIDTH);
+        float rotation = horizontal ? 0 : 90;
+        wall.transform.Rotate(0, rotation, 0);
         SceneManager.MoveGameObjectToScene(wall, SceneManager.GetSceneByName("Maze"));
         _walls.Add(wall);
     }
@@ -126,7 +126,7 @@ public class MazeCell : System.IDisposable
         {
             for (int y = 0; y <= Maze.Instance.Dimensions.Height; y++)
             {
-                GameObject corner = Object.Instantiate(_wallTemplate);
+                GameObject corner = Object.Instantiate(_cornerTemplate);
                 corner.transform.position = new Vector3(x * CELL_WIDTH, 0, y * CELL_WIDTH);
                 corner.transform.localScale = new Vector3(WALL_WIDTH, WALL_HEIGHT, WALL_WIDTH);
                 SceneManager.MoveGameObjectToScene(corner, SceneManager.GetSceneByName("Maze"));
