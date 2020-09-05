@@ -6,8 +6,8 @@ using UnityEngine.SceneManagement;
 public class MazeCell : System.IDisposable
 {
     public const float CELL_WIDTH = 10;
-    public const float WALL_WIDTH = 1.5f;
-    public const float WALL_HEIGHT = 5f;
+    public const float WALL_WIDTH = 2.78f;
+    public const float WALL_HEIGHT = 2.78f;
 
     private Dictionary<Vector2Int, WallState> _wallState = new Dictionary<Vector2Int, WallState>();
     private Vector2Int _position;
@@ -85,7 +85,7 @@ public class MazeCell : System.IDisposable
     private void PutWall(Vector3 pos, bool horizontal = true)
     {
         GameObject wall = Object.Instantiate(_wallTemplate, pos, Quaternion.identity);
-        wall.transform.localScale = new Vector3(CELL_WIDTH - WALL_WIDTH, WALL_HEIGHT, WALL_WIDTH);
+        wall.transform.localScale = new Vector3(WALL_WIDTH, WALL_HEIGHT, WALL_WIDTH);
         float rotation = horizontal ? 0 : 90;
         wall.transform.Rotate(0, rotation, 0);
         SceneManager.MoveGameObjectToScene(wall, SceneManager.GetSceneByName("Maze"));
