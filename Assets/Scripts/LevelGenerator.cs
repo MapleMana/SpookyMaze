@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -7,12 +7,12 @@ using UnityEngine;
 
 public static class LevelGenerator
 {
-    public const int NUM_OF_LEVELS = 10;
-    const int MAZE_WIDTH_INCREMENT = 8;
-    const int MAZE_HEIGHT_INCREMENT = 8;
+    public const int NUM_OF_LEVELS = 20;
+    const int MAZE_WIDTH_INCREMENT = 2;
+    const int MAZE_HEIGHT_INCREMENT = 2;
     const int INITIAL_MAZE_WIDTH = 8;
     const int INITIAL_MAZE_HEIGHT = 8;
-    const int DIMENTIONS_COUNT = 3;
+    const int DIMENTIONS_COUNT = 10;
     const int SEED = 145;
     
     private static readonly List<CombinedGM> gameModes = new List<CombinedGM>()
@@ -32,9 +32,10 @@ public static class LevelGenerator
         return (mazeDimensions.Width + mazeDimensions.Height) / 16; 
     }
 
-    private static int GetLevelPoints(Dimensions dimensions, int id)
+    private static int GetLevelPoints()
     {
-        return (dimensions.Width + dimensions.Height) * id;
+        // same number of points / coins for each level 
+        return 4;
     }
 
     public static void GenerateLevels()
@@ -60,7 +61,7 @@ public static class LevelGenerator
                                       levelTime: GetLevelTime(Maze.Instance.GetPathLength()),
                                       modeNames: combinedGM.GameModes.Select(gm => gm.GetType().Name).ToArray(),
                                       mobs: combinedGM.GetMovables(GetMobQuantity(mazeDimentions)),
-                                      levelPoints: GetLevelPoints(mazeDimentions, id))
+                                      levelPoints: GetLevelPoints())
                     );
 
                     Maze.Instance.Clear();
