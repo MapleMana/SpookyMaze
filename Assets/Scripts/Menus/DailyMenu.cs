@@ -5,8 +5,6 @@ using UnityEngine;
 
 public class DailyMenu : Menu<DailyMenu>
 {
-    public int levelsToUnlock = 4;
-
     public void OnModePressed(string modeName)
     {
         GameManager.Instance.CurrentSettings.gameMode = modeName;
@@ -17,6 +15,8 @@ public class DailyMenu : Menu<DailyMenu>
 
     private void HandleAdWatched()
     {
-        // TODO: open new levels
+        int openedDailyLevels = PlayerPrefs.GetInt("OpenedDailyLevels");
+        openedDailyLevels += 4;
+        PlayerPrefs.SetInt("OpenedDailyLevels", openedDailyLevels);
     }
 }

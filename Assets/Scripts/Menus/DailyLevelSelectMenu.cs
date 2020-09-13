@@ -22,7 +22,7 @@ public class DailyLevelSelectMenu : Menu<DailyLevelSelectMenu>
     public void LoadLevels()
     {
         buttonList = new List<Button>();
-        int openedLevels = 4;
+        int openedLevels = PlayerPrefs.GetInt("OpenedDailyLevels");
 
         int possibleLevels = LevelGenerator.NUM_OF_DAILY_LEVELS;
 
