@@ -26,6 +26,7 @@ public class MainMenu : Menu<MainMenu>
 
     public void OnModePressed(string modeName)
     {
+        GameManager.Instance.CurrentSettings.isDaily = false;
         GameManager.Instance.CurrentSettings.gameMode = modeName;
         DimensionsMenu.Open();
     }
@@ -37,6 +38,7 @@ public class MainMenu : Menu<MainMenu>
 
     public void OnDailyPressed()
     {
+        GameManager.Instance.CurrentSettings.isDaily = true;
         LevelGenerator.GenerateDailyLevels();
         DailyMenu.Open();
     }

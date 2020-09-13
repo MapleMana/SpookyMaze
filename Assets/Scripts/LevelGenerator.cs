@@ -92,7 +92,6 @@ public static class LevelGenerator
                 GameManager.Instance.CurrentSettings.id = id;
 
                 Maze.Instance.Dimensions = mazeDimentions;
-
                 new BranchedDFSGeneration(Maze.Instance).Generate();
                 combinedGM.PlaceItems(Maze.Instance);
                 LevelIO.SaveLevel(
