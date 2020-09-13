@@ -8,6 +8,7 @@ using UnityEngine;
 public static class LevelGenerator
 {
     public const int NUM_OF_LEVELS = 10;
+    public const int NUM_OF_DAILY_LEVELS = 20;
     const int MAZE_WIDTH_INCREMENT = 8;
     const int MAZE_HEIGHT_INCREMENT = 8;
     const int INITIAL_MAZE_WIDTH = 8;
@@ -51,7 +52,6 @@ public static class LevelGenerator
         foreach (CombinedGM combinedGM in gameModes)
         {
             Dimensions mazeDimentions = new Dimensions(INITIAL_MAZE_WIDTH, INITIAL_MAZE_HEIGHT);
-            string gameModeName = combinedGM.Name;
 
             for (int i = 0; i < DIMENTIONS_COUNT; i++)
             {
@@ -61,7 +61,7 @@ public static class LevelGenerator
                     new BranchedDFSGeneration(Maze.Instance).Generate();
                     combinedGM.PlaceItems(Maze.Instance);
                     LevelIO.SaveLevel(
-                        new LevelSettings(gameModeName, mazeDimentions, id),
+                        new LevelSettings(combinedGM.Name, mazeDimentions, id),
                         new LevelData(maze: Maze.Instance,
                                       levelTime: GetLevelTime(Maze.Instance.GetPathLength()),
                                       modeNames: combinedGM.GameModes.Select(gm => gm.GetType().Name).ToArray(),
@@ -76,31 +76,37 @@ public static class LevelGenerator
                 mazeDimentions.Height += MAZE_HEIGHT_INCREMENT;
             }
         }
-    }
 
-    internal static void GenerateDailyLevel(int id)
+    }
+    internal static void GenerateDailyLevels()
     {
         int dailySeed = (int)(DateTimeOffset.Now.ToUnixTimeSeconds() / (3600 * 24));
         UnityEngine.Random.InitState(dailySeed);
 
-        Dimensions mazeDimentions = GetMazeDimensions(id);
-        GameManager.Instance.CurrentSettings.dimensions = mazeDimentions;
-        GameManager.Instance.CurrentSettings.id = id;
-        CombinedGM combinedGM = new CombinedGM("", GameMode.FromName(GameManager.Instance.CurrentSettings.gameMode + "GM"));
+        foreach (CombinedGM combinedGM in gameModes)
+        {
+            for (int id = 1; id <= NUM_OF_DAILY_LEVELS; id++)
+            {
+                Dimensions mazeDimentions = GetMazeDimensions(id);
+                GameManager.Instance.CurrentSettings.dimensions = mazeDimentions;
+                GameManager.Instance.CurrentSettings.id = id;
 
-        Maze.Instance.Dimensions = mazeDimentions;
+                Maze.Instance.Dimensions = mazeDimentions;
 
-        new BranchedDFSGeneration(Maze.Instance).Generate();
-        combinedGM.PlaceItems(Maze.Instance);
-        LevelIO.SaveLevel(
-            GameManager.Instance.CurrentSettings,
-            new LevelData(maze: Maze.Instance,
-                            levelTime: GetLevelTime(Maze.Instance.GetPathLength()),
-                            modeNames: combinedGM.GameModes.Select(gm => gm.GetType().Name).ToArray(),
-                            mobs: combinedGM.GetMovables(GetMobQuantity(mazeDimentions)),
-                            levelPoints: GetLevelPoints(mazeDimentions, id))
-        );
+                new BranchedDFSGeneration(Maze.Instance).Generate();
+                combinedGM.PlaceItems(Maze.Instance);
+                LevelIO.SaveLevel(
+                    new LevelSettings(combinedGM.Name, mazeDimentions, id, isDaily: true),
+                    new LevelData(maze: Maze.Instance,
+                                    levelTime: GetLevelTime(Maze.Instance.GetPathLength()),
+                                    modeNames: combinedGM.GameModes.Select(gm => gm.GetType().Name).ToArray(),
+                                    mobs: combinedGM.GetMovables(GetMobQuantity(mazeDimentions)),
+                                    levelPoints: GetLevelPoints(mazeDimentions, id))
+                );
 
-        Maze.Instance.Clear();
+                Maze.Instance.Clear();
+            }
+        }
+
     }
 }

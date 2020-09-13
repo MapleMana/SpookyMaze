@@ -116,6 +116,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DestroyWhenClosed: 1
   DisableMenusUnderneath: 1
+  ModeName: {fileID: 6155673759827551405}
 --- !u!1 &2471235640913540352
 GameObject:
   m_ObjectHideFlags: 0

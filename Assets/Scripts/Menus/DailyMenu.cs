@@ -17,9 +17,6 @@ public class DailyMenu : Menu<DailyMenu>
 
     private void HandleAdWatched()
     {
-        for (int i = 1; i <= levelsToUnlock; i++)
-        {
-            LevelGenerator.GenerateDailyLevel(i);
-        }
+        // TODO: open new levels
     }
 }

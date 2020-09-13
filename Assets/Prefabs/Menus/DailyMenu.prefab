@@ -1409,3 +1409,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DestroyWhenClosed: 1
   DisableMenusUnderneath: 1
+  levelsToUnlock: 4
