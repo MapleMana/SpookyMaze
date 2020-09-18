@@ -7,16 +7,21 @@ public class ExitDoor : MonoBehaviour
 {
     public GameObject door;
     public Transform rotatePoint;
+    public GameObject lockImage;
 
     private bool openDoor;
 
-    private void Start()
-    {
-        openDoor = true;
-    }
-
     private void Update()
     {
+        if (lockImage.activeInHierarchy)
+        {
+            if (Player.Instance.Inventory.Contains(ItemType.Key))
+            {
+                lockImage.SetActive(false);
+                openDoor = true;
+            }
+            MoveLockImageOverDoor();
+        }        
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, 8f, LayerMask.GetMask("Player"));
         if (hitColliders.Length > 0)
         {
@@ -37,7 +42,17 @@ public class ExitDoor : MonoBehaviour
 
     public void MoveToExit(Maze maze)
     {
-        openDoor = true;
+        if (GameManager.Instance.CurrentSettings.GetReadableGameMode() != "Dungeon")
+        {
+            lockImage.SetActive(false);
+            openDoor = true;
+        }
+        else
+        {
+            // in Dungeon mode, door won't open until key is in player inventory
+            lockImage.SetActive(true);
+            openDoor = false;
+        }
         MazeCell currentCell = Maze.Instance[maze.EndPos];
         transform.position = currentCell.CellCenter(y: transform.position.y);
     }
@@ -46,5 +61,10 @@ public class ExitDoor : MonoBehaviour
     {
         door.transform.localPosition = new Vector3(0f, 0.1f, 0f);
         door.transform.localRotation = new Quaternion(0f, 0f, 0f, 0f);
+    }
+
+    private void MoveLockImageOverDoor()
+    {
+        lockImage.transform.position = Camera.main.WorldToScreenPoint(new Vector3(transform.position.x, transform.position.y + 2f, transform.position.z));
     }
 }
