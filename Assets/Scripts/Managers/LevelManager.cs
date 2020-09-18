@@ -14,6 +14,8 @@ public class LevelManager : Singleton<LevelManager>
     public GameMode GameMode { get; set; }
     public LevelData LevelData { get => _levelData; }
 
+    public GameObject exitDoor;
+
     public bool LevelIs(LevelState state) => (_levelState & state) != 0;
 
     public void Initialize(LevelData levelData)
@@ -26,6 +28,8 @@ public class LevelManager : Singleton<LevelManager>
         Maze.Instance.Load(levelData.mazeState);
 
         Player.Instance.PlaceOn(Maze.Instance);
+        exitDoor.GetComponent<ExitDoor>().MoveToExit(Maze.Instance);
+
         _mobs = levelData.SpawnMovables();
         Movable.ClearHistory();
     }
