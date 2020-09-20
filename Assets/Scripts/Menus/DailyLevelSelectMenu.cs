@@ -4,9 +4,13 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using GoogleMobileAds.Api;
+
 
 public class DailyLevelSelectMenu : Menu<DailyLevelSelectMenu>
 {
+    InterstitialAd interstitial;
+
     public GameObject ButtonsPanel;
     public Button ButtonTemplate;
     public TMP_Text ModeName;
@@ -33,6 +37,15 @@ public class DailyLevelSelectMenu : Menu<DailyLevelSelectMenu>
         }
     }
 
+    public UnityAction OnLevelOptionClick(int levelNumber)
+    {
+        return () =>
+        {
+            GameManager.Instance.CurrentSettings.id = levelNumber;
+            UIManager.Instance.StartGame();
+        };
+    }
+
     private Button CreateLevelButton(int openedLevels, int level)
     {
         Button newButton = Instantiate(ButtonTemplate);
@@ -43,12 +56,31 @@ public class DailyLevelSelectMenu : Menu<DailyLevelSelectMenu>
         return newButton;
     }
 
-    public UnityAction OnLevelOptionClick(int levelNumber)
+    public void UnlockLevels()
     {
-        return () =>
+        //StartAd();
+        HandleAdWatched();
+    }
+
+    private void StartAd()
+    {
+        string adUnitId = "ca-app-pub-3940256099942544/1033173712";
+        AdRequest request = new AdRequest.Builder().Build();
+        interstitial = new InterstitialAd(adUnitId);
+        interstitial.LoadAd(request);
+        if (interstitial.IsLoaded())
         {
-            GameManager.Instance.CurrentSettings.id = levelNumber;
-            UIManager.Instance.StartGame();
-        };
+            interstitial.Show();
+            //interstitial.OnAdClosed += HandleAdWatched;
+        }
+    }
+
+    //private void HandleAdWatched(object sender, EventArgs args)
+    private void HandleAdWatched()
+    {
+        int openedDailyLevels = PlayerPrefs.GetInt($"OpenedDailyLevels{GameManager.Instance.CurrentSettings.gameMode}");
+        openedDailyLevels += 4;
+        PlayerPrefs.SetInt($"OpenedDailyLevels{GameManager.Instance.CurrentSettings.gameMode}", openedDailyLevels);
+        //interstitial.Destroy();
     }
 }

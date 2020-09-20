@@ -41,7 +41,9 @@ public class GameManager : Singleton<GameManager>
         if (currentDayNumber != lastVisited)
         {
             PlayerPrefs.SetInt("LastVisited", currentDayNumber);
-            PlayerPrefs.SetInt("OpenedDailyLevels", 0);
+            PlayerPrefs.SetInt("OpenedDailyLevelsClassic", 0);
+            PlayerPrefs.SetInt("OpenedDailyLevelsDungeon", 0);
+            PlayerPrefs.SetInt("OpenedDailyLevelsCursed House", 0);
         }
     }
 
