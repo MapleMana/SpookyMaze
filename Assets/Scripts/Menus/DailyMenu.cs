@@ -11,7 +11,8 @@ public class DailyMenu : Menu<DailyMenu>
     public void OnModePressed(string modeName)
     {
         GameManager.Instance.CurrentSettings.gameMode = modeName;
-        StartAd();
+        //StartAd();
+        HandleAdWatched();
     }
 
     private void StartAd()
@@ -23,11 +24,12 @@ public class DailyMenu : Menu<DailyMenu>
         if (interstitial.IsLoaded())
         {
             interstitial.Show();
-            interstitial.OnAdClosed += HandleAdWatched;
+            //interstitial.OnAdClosed += HandleAdWatched;
         }
     }
 
-    private void HandleAdWatched(object sender, EventArgs args)
+    //private void HandleAdWatched(object sender, EventArgs args)
+    private void HandleAdWatched()
     {
         int openedDailyLevels = PlayerPrefs.GetInt("OpenedDailyLevels");
         openedDailyLevels += 4;

@@ -8,7 +8,7 @@ using UnityEngine;
 public static class LevelGenerator
 {
     public const int NUM_OF_LEVELS = 10;
-    public const int NUM_OF_DAILY_LEVELS = 20;
+    public const int NUM_OF_DAILY_LEVELS = 4;
     const int MAZE_WIDTH_INCREMENT = 8;
     const int MAZE_HEIGHT_INCREMENT = 8;
     const int INITIAL_MAZE_WIDTH = 8;
