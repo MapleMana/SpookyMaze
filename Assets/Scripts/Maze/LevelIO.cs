@@ -122,15 +122,19 @@ public class LevelSettings
     public string gameMode;
     public Dimensions dimensions;
     public int id;
-    public string ModeDimensions => $"{this.gameMode}{this.dimensions}";
+    public string packId;
+    public bool unlocked;
+    public string ModeDimensions => $"{this.gameMode}{this.dimensions}{this.packId}";
 
     public LevelSettings() { }
 
-    public LevelSettings(string gameMode, Dimensions dimensions, int id)
+    public LevelSettings(string gameMode, Dimensions dimensions, int id, string packId, bool unlocked)
     {
         this.gameMode = gameMode;
         this.dimensions = dimensions;
         this.id = id;
+        this.packId = packId;
+        this.unlocked = unlocked;
     }
 
     public string GetReadableGameMode()
@@ -143,7 +147,7 @@ public class LevelSettings
 
     public override string ToString()
     {
-        return $"{gameMode}/{dimensions}/{id}";
+        return $"{gameMode}/{dimensions}/{packId}/{id}";
     }
 }
 
@@ -207,9 +211,17 @@ public static class LevelIO
 
     public static List<int> GetPossibleIds(LevelSettings levelSettings)
     {
-        List<string> mazeFiles = GetSubdirectoryNames($"{Root}/{levelSettings.gameMode}/{levelSettings.dimensions}");
+        List<string> mazeFiles = GetSubdirectoryNames($"{Root}/{levelSettings.gameMode}/{levelSettings.dimensions}/{levelSettings.packId}");
         return mazeFiles
             .Select(mazeFile => int.Parse(mazeFile))
+            .ToList();
+    }
+
+    public static List<string> GetPossiblePackIds(LevelSettings levelSettings)
+    {
+        List<string> packIds = GetSubdirectoryNames($"{Root}/{levelSettings.gameMode}/{levelSettings.dimensions}");
+        return packIds
+            .Select(packId => packId)
             .ToList();
     }
 }
