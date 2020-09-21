@@ -26,7 +26,7 @@ public class DailyLevelSelectMenu : Menu<DailyLevelSelectMenu>
     public void LoadLevels()
     {
         buttonList = new List<Button>();
-        int openedLevels = PlayerPrefs.GetInt("OpenedDailyLevels");
+        int openedLevels = PlayerPrefs.GetInt($"OpenedDailyLevels{GameManager.Instance.CurrentSettings.gameMode}");
 
         int possibleLevels = LevelGenerator.NUM_OF_DAILY_LEVELS;
 
@@ -81,6 +81,16 @@ public class DailyLevelSelectMenu : Menu<DailyLevelSelectMenu>
         int openedDailyLevels = PlayerPrefs.GetInt($"OpenedDailyLevels{GameManager.Instance.CurrentSettings.gameMode}");
         openedDailyLevels += 4;
         PlayerPrefs.SetInt($"OpenedDailyLevels{GameManager.Instance.CurrentSettings.gameMode}", openedDailyLevels);
+        ClearButtonsPanel();
+        LoadLevels();
         //interstitial.Destroy();
+    }
+
+    private void ClearButtonsPanel()
+    {
+        foreach (Transform child in ButtonsPanel.transform)
+        {
+            Destroy(child.gameObject);
+        }
     }
 }
