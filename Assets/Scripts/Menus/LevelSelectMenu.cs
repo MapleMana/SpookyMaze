@@ -42,7 +42,7 @@ public class LevelSelectMenu : MonoBehaviour
                 Button newButton = Instantiate(levelSizeButtonTemplate);
                 newButton.GetComponentInChildren<Text>().text = dimensions.ToString() + pack;
                 newButton.onClick.AddListener(OnDimensionsOptionClick(width, height, pack, dimensions.ToString() + pack));
-                newButton.transform.SetParent(levelSizePanel.transform, false);
+                newButton.transform.SetParent(levelSizePanel.transform, false);                
                 buttonList.Add(newButton);
 
                 GameObject newPanel = Instantiate(levelSelectButtonsPanel);
@@ -51,6 +51,11 @@ public class LevelSelectMenu : MonoBehaviour
                 panelList.Add(newPanel);
 
                 GameManager.Instance.CurrentSettings.packId = pack;
+                if (GetLevelUnlocked() == 1)
+                {
+                    newButton.GetComponentsInChildren<Image>()[1].gameObject.SetActive(false);
+                    
+                }
                 LoadLevels(newPanel);
                 newPanel.SetActive(false);
             }            
@@ -91,6 +96,21 @@ public class LevelSelectMenu : MonoBehaviour
         string modeDimension = currentLevelSettings.ModeDimensions;
         return PlayerPrefs.GetInt(modeDimension, 1);
     }
+
+    private static int GetLevelUnlocked()
+    {
+        // 0 for locked, 1 for unlocked
+        LevelSettings currentLevelSettings = GameManager.Instance.CurrentSettings;
+        string modeDimension = currentLevelSettings.ModeDimensions;
+        return PlayerPrefs.GetInt($"{modeDimension}unlocked");
+    }
+
+    /*private static int GetPackUnlocked()
+    {
+        LevelSettings currentLevelSettings = GameManager.Instance.CurrentSettings;
+
+        return PlayerPrefs.GetInt();
+    }*/
 
     /// <summary>
     /// Executed when one of the level select buttons is pressed

@@ -123,18 +123,16 @@ public class LevelSettings
     public Dimensions dimensions;
     public int id;
     public string packId;
-    public bool unlocked;
     public string ModeDimensions => $"{this.gameMode}{this.dimensions}{this.packId}";
 
     public LevelSettings() { }
 
-    public LevelSettings(string gameMode, Dimensions dimensions, int id, string packId, bool unlocked)
+    public LevelSettings(string gameMode, Dimensions dimensions, int id, string packId)
     {
         this.gameMode = gameMode;
         this.dimensions = dimensions;
         this.id = id;
         this.packId = packId;
-        this.unlocked = unlocked;
     }
 
     public string GetReadableGameMode()

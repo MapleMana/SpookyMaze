@@ -13,7 +13,6 @@ public class GameManager : Singleton<GameManager>
     private void OnEnable()
     {
         SceneManager.sceneLoaded += OnFullLoad;
-        //ScoreMenu.Open();
     }
 
     private void OnDisable()

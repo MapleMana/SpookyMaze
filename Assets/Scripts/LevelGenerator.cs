@@ -44,7 +44,7 @@ public static class LevelGenerator
         UnityEngine.Random.InitState(SEED);
         LevelIO.ClearAll();
         string packId;
-        bool unlocked;
+        int unlocked; // 0 for locked, 1 for unlocked
         foreach (CombinedGM combinedGM in gameModes)
         {
             Dimensions mazeDimentions = new Dimensions(INITIAL_MAZE_WIDTH, INITIAL_MAZE_HEIGHT);
@@ -61,36 +61,37 @@ public static class LevelGenerator
                             case 0:
                             default:
                                 packId = "A";
-                                unlocked = true;
+                                unlocked = 1;
                                 break;
                             case 1:
                                 packId = "B";
-                                unlocked = false;
+                                unlocked = 0;
                                 break;
                             case 2:
                                 packId = "C";
-                                unlocked = false;
+                                unlocked = 0;
                                 break;
                             case 3:
                                 packId = "D";
-                                unlocked = false;
+                                unlocked = 0;
                                 break;
                             case 4:
                                 packId = "E";
-                                unlocked = false;
+                                unlocked = 0;
                                 break;
                         }
                         Maze.Instance.Dimensions = mazeDimentions;
                         new BranchedDFSGeneration(Maze.Instance).Generate();
                         combinedGM.PlaceItems(Maze.Instance);
                         LevelIO.SaveLevel(
-                            new LevelSettings(gameModeName, mazeDimentions, id, packId, unlocked),
+                            new LevelSettings(gameModeName, mazeDimentions, id, packId),
                             new LevelData(maze: Maze.Instance,
                                           levelTime: GetLevelTime(Maze.Instance.GetPathLength()),
                                           modeNames: combinedGM.GameModes.Select(gm => gm.GetType().Name).ToArray(),
                                           mobs: combinedGM.GetMovables(GetMobQuantity(mazeDimentions)),
                                           levelPoints: GetLevelPoints())
                         );
+                        PlayerPrefs.SetInt($"{gameModeName}{ mazeDimentions}{packId}unlocked", unlocked);
                         Maze.Instance.Clear();
                     }
                 }              
