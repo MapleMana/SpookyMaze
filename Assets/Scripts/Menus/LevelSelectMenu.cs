@@ -50,13 +50,20 @@ public class LevelSelectMenu : MonoBehaviour
                 newPanel.name = dimensions.ToString() + pack;
                 panelList.Add(newPanel);
 
+                GameObject subNewPanel = newPanel.transform.GetChild(0).gameObject;
+
                 GameManager.Instance.CurrentSettings.packId = pack;
                 if (GetLevelUnlocked() == 1)
                 {
                     newButton.GetComponentsInChildren<Image>()[1].gameObject.SetActive(false);
-                    
+                    newPanel.transform.GetChild(1).gameObject.SetActive(false);                    
                 }
-                LoadLevels(newPanel);
+                else
+                {
+                    Button purchaseButton = newPanel.transform.GetChild(1).GetChild(0).GetComponent<Button>();
+                    purchaseButton.onClick.AddListener(OnPurchasePackOptionClick(width, height, pack));
+                }
+                LoadLevels(subNewPanel);
                 newPanel.SetActive(false);
             }            
         }
@@ -105,13 +112,6 @@ public class LevelSelectMenu : MonoBehaviour
         return PlayerPrefs.GetInt($"{modeDimension}unlocked");
     }
 
-    /*private static int GetPackUnlocked()
-    {
-        LevelSettings currentLevelSettings = GameManager.Instance.CurrentSettings;
-
-        return PlayerPrefs.GetInt();
-    }*/
-
     /// <summary>
     /// Executed when one of the level select buttons is pressed
     /// </summary>
@@ -141,6 +141,23 @@ public class LevelSelectMenu : MonoBehaviour
             {
                 panel.SetActive(panel.name == panelName);
             }
+        };
+    }
+
+    /// <summary>
+    /// Executed when one of the purchase level pack buttons is pressed
+    /// </summary>
+    /// <returns></returns>
+    public UnityEngine.Events.UnityAction OnPurchasePackOptionClick(int dimensionWidth, int dimensionHeight, string packId)
+    {
+        return () =>
+        {
+            Debug.Log("Purchase button clicked for:" + dimensionWidth + " x " + dimensionHeight + " - " + packId);
+            /*GameManager.Instance.CurrentSettings.dimensions = new Dimensions(dimensionWidth, dimensionHeight);
+            GameManager.Instance.CurrentSettings.packId = packId;
+            LevelSettings currentLevelSettings = GameManager.Instance.CurrentSettings;
+            string modeDimension = currentLevelSettings.ModeDimensions;
+            PlayerPrefs.SetInt($"{modeDimension}unlocked", 1);*/
         };
     }
 
