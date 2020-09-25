@@ -3349,7 +3349,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_textAlignment: 513
+  m_textAlignment: 516
   m_characterSpacing: 0
   m_wordSpacing: 0
   m_lineSpacing: 0
@@ -6976,6 +6976,7 @@ MonoBehaviour:
   endGameMenu: {fileID: 2787141332529181379}
   nextPlayButtonText: {fileID: 2787141332014819972}
   onReplayMenu: {fileID: 5041049726618815164}
+  purchaseBtnCoinsText: {fileID: 906253007}
   coinText: {fileID: 1188219113}
 --- !u!4 &1977626364
 Transform:

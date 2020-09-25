@@ -17,6 +17,8 @@ public class LevelSelectMenu : MonoBehaviour
     private List<GameObject> panelList;
     private List<Button> levelButtonList;
 
+    private const int COST_PER_PACK = 200;
+
     public void LoadDimensions()
     {
         ModeName.text = GameManager.Instance.CurrentSettings.GetReadableGameMode();
@@ -61,7 +63,7 @@ public class LevelSelectMenu : MonoBehaviour
                 else
                 {
                     Button purchaseButton = newPanel.transform.GetChild(1).GetChild(0).GetComponent<Button>();
-                    purchaseButton.onClick.AddListener(OnPurchasePackOptionClick(width, height, pack));
+                    purchaseButton.onClick.AddListener(OnPurchasePackOptionClick(width, height, pack, newPanel, newButton));
                 }
                 LoadLevels(subNewPanel);
                 newPanel.SetActive(false);
@@ -92,7 +94,7 @@ public class LevelSelectMenu : MonoBehaviour
         Button newButton = Instantiate(levelSelectButtonTemplate);
         newButton.GetComponentInChildren<Text>().text = level.ToString();
         newButton.onClick.AddListener(OnLevelOptionClick(level));
-        newButton.interactable = (level <= levelReached);
+        //newButton.interactable = (level <= levelReached);
         newButton.transform.SetParent(panel.transform, false);
         return newButton;
     }
@@ -146,18 +148,25 @@ public class LevelSelectMenu : MonoBehaviour
 
     /// <summary>
     /// Executed when one of the purchase level pack buttons is pressed
+    /// unlocks pack if player has at least 200 coins
     /// </summary>
     /// <returns></returns>
-    public UnityEngine.Events.UnityAction OnPurchasePackOptionClick(int dimensionWidth, int dimensionHeight, string packId)
+    public UnityEngine.Events.UnityAction OnPurchasePackOptionClick(int dimensionWidth, int dimensionHeight, string packId, GameObject panel, Button levelPackButton)
     {
         return () =>
         {
-            Debug.Log("Purchase button clicked for:" + dimensionWidth + " x " + dimensionHeight + " - " + packId);
-            /*GameManager.Instance.CurrentSettings.dimensions = new Dimensions(dimensionWidth, dimensionHeight);
-            GameManager.Instance.CurrentSettings.packId = packId;
-            LevelSettings currentLevelSettings = GameManager.Instance.CurrentSettings;
-            string modeDimension = currentLevelSettings.ModeDimensions;
-            PlayerPrefs.SetInt($"{modeDimension}unlocked", 1);*/
+            int currentAmount = PlayerPrefs.GetInt("PlayersCoins", 0);
+            if (currentAmount >= COST_PER_PACK)
+            {
+                PlayerPrefs.SetInt("PlayerCoins", currentAmount - COST_PER_PACK);
+                GameManager.Instance.CurrentSettings.dimensions = new Dimensions(dimensionWidth, dimensionHeight);
+                GameManager.Instance.CurrentSettings.packId = packId;
+                LevelSettings currentLevelSettings = GameManager.Instance.CurrentSettings;
+                string modeDimension = currentLevelSettings.ModeDimensions;
+                PlayerPrefs.SetInt($"{modeDimension}unlocked", 1);
+                panel.transform.GetChild(1).gameObject.SetActive(false);
+                levelPackButton.GetComponentsInChildren<Image>()[1].gameObject.SetActive(false);
+            }            
         };
     }
 
