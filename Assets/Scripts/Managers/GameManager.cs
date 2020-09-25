@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Advertisements;
 using UnityEngine.SceneManagement;
 
 public class GameManager : Singleton<GameManager>
@@ -19,6 +20,8 @@ public class GameManager : Singleton<GameManager>
     {
         SceneManager.sceneLoaded -= OnFullLoad;
     }
+
+
 
     private void Start()
     {

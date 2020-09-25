@@ -1,7 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Advertisements;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
@@ -55,18 +57,16 @@ public class DailyLevelSelectMenu : Menu<DailyLevelSelectMenu>
 
     public void UnlockLevels()
     {
-        HandleAdWatched();
+        Advertisement.Show();
     }
 
-    //private void HandleAdWatched(object sender, EventArgs args)
-    private void HandleAdWatched()
+    public void HandleAdWatched()
     {
         int openedDailyLevels = PlayerPrefs.GetInt($"OpenedDailyLevels{GameManager.Instance.CurrentSettings.gameMode}");
         openedDailyLevels += 4;
         PlayerPrefs.SetInt($"OpenedDailyLevels{GameManager.Instance.CurrentSettings.gameMode}", openedDailyLevels);
         ClearButtonsPanel();
         LoadLevels();
-        //interstitial.Destroy();
     }
 
     private void ClearButtonsPanel()
