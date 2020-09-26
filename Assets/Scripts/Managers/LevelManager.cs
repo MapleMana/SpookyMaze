@@ -108,6 +108,7 @@ public class LevelManager : Singleton<LevelManager>
             LightManager.Instance.TurnOn();
             CameraManager.Instance.FocusOnMaze(Maze.Instance);
             SaveLevelProgress();
+            GameManager.Instance.CurrentSettings.id++;
         }
         UIManager.Instance.ShowFinishMenu(mazeCompleted);
     }
@@ -115,12 +116,13 @@ public class LevelManager : Singleton<LevelManager>
     private void SaveLevelProgress()
     {
         LevelSettings currentLevelSettings = GameManager.Instance.CurrentSettings;
-        string modeDimension = currentLevelSettings.ModeDimensions;
-        if (PlayerPrefs.GetInt(modeDimension) < ++currentLevelSettings.id)
+        LevelData currentLevelData = LevelIO.LoadLevel(currentLevelSettings);
+        if (!currentLevelData.complete)
         {
-            PlayerPrefs.SetInt(modeDimension, currentLevelSettings.id);
             IncreasePlayerScore();
-        }
+            currentLevelData.complete = true;            
+            LevelIO.SaveLevel(currentLevelSettings, currentLevelData);            
+        }       
     }
 
     private void IncreasePlayerScore()

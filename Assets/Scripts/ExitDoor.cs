@@ -28,7 +28,7 @@ public class ExitDoor : MonoBehaviour
             if (openDoor)
             {
                 door.transform.RotateAround(rotatePoint.transform.position, Vector3.back, 700 * Time.deltaTime);
-                if (Mathf.Abs(TransformUtils.GetInspectorRotation(door.transform).x) > 92.5f)
+                if (door.transform.rotation.eulerAngles.x < 274f)
                 {
                     openDoor = false;
                 }

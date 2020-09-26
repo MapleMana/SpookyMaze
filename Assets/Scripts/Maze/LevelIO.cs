@@ -90,14 +90,18 @@ public class LevelData
     public string[] gameModes;
     public List<SerMovable> movables;
     public int points;
+    public bool unlocked;
+    public bool complete;
 
-    public LevelData(Maze maze, float levelTime, string[] modeNames, List<SerMovable> mobs, int levelPoints)
+    public LevelData(Maze maze, float levelTime, string[] modeNames, List<SerMovable> mobs, int levelPoints, bool levelUnlocked, bool levelComplete)
     {
         mazeState = new MazeState(maze);
         time = levelTime;
         gameModes = modeNames;
         movables = mobs;
         points = levelPoints;
+        unlocked = levelUnlocked;
+        complete = levelComplete;
     }
 
     public List<Movable> SpawnMovables()
