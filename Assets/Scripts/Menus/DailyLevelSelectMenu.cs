@@ -1,16 +1,15 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Advertisements;
 using UnityEngine.Events;
 using UnityEngine.UI;
-using GoogleMobileAds.Api;
 
 
 public class DailyLevelSelectMenu : Menu<DailyLevelSelectMenu>
 {
-    InterstitialAd interstitial;
-
     public GameObject ButtonsPanel;
     public Button ButtonTemplate;
     public TMP_Text ModeName;
@@ -58,32 +57,16 @@ public class DailyLevelSelectMenu : Menu<DailyLevelSelectMenu>
 
     public void UnlockLevels()
     {
-        //StartAd();
-        HandleAdWatched();
+        Advertisement.Show();
     }
 
-    private void StartAd()
-    {
-        string adUnitId = "ca-app-pub-3940256099942544/1033173712";
-        AdRequest request = new AdRequest.Builder().Build();
-        interstitial = new InterstitialAd(adUnitId);
-        interstitial.LoadAd(request);
-        if (interstitial.IsLoaded())
-        {
-            interstitial.Show();
-            //interstitial.OnAdClosed += HandleAdWatched;
-        }
-    }
-
-    //private void HandleAdWatched(object sender, EventArgs args)
-    private void HandleAdWatched()
+    public void HandleAdWatched()
     {
         int openedDailyLevels = PlayerPrefs.GetInt($"OpenedDailyLevels{GameManager.Instance.CurrentSettings.gameMode}");
         openedDailyLevels += 4;
         PlayerPrefs.SetInt($"OpenedDailyLevels{GameManager.Instance.CurrentSettings.gameMode}", openedDailyLevels);
         ClearButtonsPanel();
         LoadLevels();
-        //interstitial.Destroy();
     }
 
     private void ClearButtonsPanel()

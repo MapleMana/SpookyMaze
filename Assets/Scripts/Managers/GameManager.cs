@@ -1,8 +1,8 @@
-﻿using GoogleMobileAds.Api;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Advertisements;
 using UnityEngine.SceneManagement;
 
 public class GameManager : Singleton<GameManager>
@@ -20,6 +20,8 @@ public class GameManager : Singleton<GameManager>
     {
         SceneManager.sceneLoaded -= OnFullLoad;
     }
+
+
 
     private void Start()
     {
@@ -51,7 +53,6 @@ public class GameManager : Singleton<GameManager>
     {
         if (scene.name == "Maze")
         {
-            MobileAds.Initialize(initStatus => { });
             LoadLevel();
         }
     }
