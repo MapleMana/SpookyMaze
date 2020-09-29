@@ -132,6 +132,7 @@ GameObject:
   - component: {fileID: 10891671}
   - component: {fileID: 10891673}
   - component: {fileID: 10891674}
+  - component: {fileID: 10891672}
   m_Layer: 5
   m_Name: MainMenu
   m_TagString: Untagged
@@ -167,6 +168,20 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &10891672
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 10891670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ec12783f23d9c44a96e77c23766cb9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DestroyWhenClosed: 1
+  DisableMenusUnderneath: 1
 --- !u!222 &10891673
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -551,7 +566,6 @@ GameObject:
   m_Component:
   - component: {fileID: 228353061}
   - component: {fileID: 228353064}
-  - component: {fileID: 228353063}
   - component: {fileID: 228353062}
   m_Layer: 5
   m_Name: Ghost
@@ -592,53 +606,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AboutMenuPrefab: {fileID: 8994445263102251638, guid: c794a8909fb39aa4887306c7cee15d7a,
-    type: 3}
-  DimensionsMenuPrefab: {fileID: 6929987564755497002, guid: 628210e5f11f0d249b92a05b8fc386b3,
-    type: 3}
-  DailyLevelSelectMenuPrefab: {fileID: 7191052877211156316, guid: 2090c82355e2a594392670f77c465424,
-    type: 3}
-  DailyMenuPrefab: {fileID: -653092268322499072, guid: d0bc6b138b0a2e64e8c907a043fd0429,
-    type: 3}
-  EndGameMenuPrefab: {fileID: 1588959527956654672, guid: d6d8fdb78235c5e43a7ed46a21f56af2,
-    type: 3}
-  LevelSelectMenuPrefab: {fileID: 5917160879899057118, guid: a6ce5a271e0ff9e4cb738235e8ff16a7,
-    type: 3}
-  MainMenuPrefab: {fileID: 6813214519199201444, guid: 8a22d3220cf5aaa44ae5382c1923c0b8,
-    type: 3}
-  OnReplayMenuPrefab: {fileID: 7861223854276550378, guid: 4a2d269c74c17814f8eee8bfe1606f3c,
-    type: 3}
-  SettingsMenuPrefab: {fileID: 6600607643221304524, guid: 25601a9772674124e93beaf2c37050e3,
-    type: 3}
---- !u!4 &477270716
-Transform
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 228353060}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_Maskable: 1
-  m_OnCullStateChanged:
+  m_Navigation:
+    m_Mode: 3
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 0}
+  m_OnClick:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 1
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 0.25
 --- !u!222 &228353064
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1265,7 +1263,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &477270715
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1282,6 +1280,8 @@ MonoBehaviour:
     type: 3}
   DimensionsMenuPrefab: {fileID: 6929987564755497002, guid: 628210e5f11f0d249b92a05b8fc386b3,
     type: 3}
+  DailyLevelSelectMenuPrefab: {fileID: 0}
+  DailyMenuPrefab: {fileID: 0}
   EndGameMenuPrefab: {fileID: 1588959527956654672, guid: d6d8fdb78235c5e43a7ed46a21f56af2,
     type: 3}
   LevelSelectMenuPrefab: {fileID: 5917160879899057118, guid: a6ce5a271e0ff9e4cb738235e8ff16a7,
@@ -5035,8 +5035,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1977626363}
-        m_MethodName: 
+      - m_Target: {fileID: 10891672}
+        m_MethodName: OnDailyPressed
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
