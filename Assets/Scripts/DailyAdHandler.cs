@@ -12,11 +12,11 @@ public class DailyAdHandler : MonoBehaviour, IUnityAdsListener
     void Start()
     {
 #if UNITY_EDITOR
-        gameId = "3837005";
+        gameId = "3809985";
 #elif UNITY_ANDROID
-        gameId = "3837005";
+        gameId = "3809985";
 #elif UNITY_IOS
-        gameId = "3837004";
+        gameId = "3809984";
 #endif
         Advertisement.AddListener(this);
         Advertisement.Initialize(gameId, testMode);
