@@ -8,15 +8,17 @@ using TMPro;
 
 public class UIManager : Singleton<UIManager>
 {
-    public GameObject mainMenu;
     public GameObject aboutMenu;
-    public GameObject settingsMenu;
-    public GameObject levelSelectMenu;
-    public GameObject purchaseMenu;
-    public GameObject statsMenu;
+    public GameObject dailyMenu;
+    public GameObject dailySelectMenu;
     public GameObject endGameMenu;
-    public TMP_Text nextPlayButtonText;
+    public GameObject levelSelectMenu;
+    public GameObject mainMenu;
     public GameObject onReplayMenu;
+    public GameObject purchaseMenu;
+    public GameObject settingsMenu;
+    public GameObject statsMenu;
+    public TMP_Text nextPlayButtonText;
 
     public TMP_Text coinText;
 
@@ -152,6 +154,29 @@ public class UIManager : Singleton<UIManager>
         onReplayMenu.SetActive(!onReplayMenu.activeInHierarchy);
     }
 
+    public void ToggleDailyMenu()
+    {
+        mainMenu.SetActive(!mainMenu.activeInHierarchy);
+        dailyMenu.SetActive(!dailyMenu.activeInHierarchy);
+    }
+
+    public void ToggleDailySelectMenu(string modeName)
+    {
+        dailySelectMenu.SetActive(!dailySelectMenu.activeInHierarchy);
+
+        if (dailySelectMenu.activeInHierarchy)
+        {
+            // dailySelectMenu.GetComponent<DailyLevelSelectMenu>().ClearPanel();
+            dailySelectMenu.SetActive(false);
+        }
+        else
+        {
+            GameManager.Instance.CurrentSettings.gameMode = modeName;
+            // dailySelectMenu.GetComponent<DailyLevelSelectMenu>().LoadDimensions();
+            dailySelectMenu.SetActive(true);
+        }
+    }
+
     public void HideAllMenus()
     {
         levelSelectMenu.GetComponent<LevelSelectMenu>().ClearPanel();
@@ -163,5 +188,7 @@ public class UIManager : Singleton<UIManager>
         statsMenu.SetActive(false);
         endGameMenu.SetActive(false);
         onReplayMenu.SetActive(false);
+        dailyMenu.SetActive(false);
+        dailySelectMenu.SetActive(false);
     }
 }
