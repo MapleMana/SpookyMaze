@@ -45,9 +45,10 @@ public static class LevelGenerator
         LevelIO.ClearAll();
         string packId;
         bool unlocked;
+        int j = 0;
         foreach (CombinedGM combinedGM in gameModes)
         {
-            Dimensions mazeDimentions = new Dimensions(INITIAL_MAZE_WIDTH, INITIAL_MAZE_HEIGHT);
+            Dimensions mazeDimenions = new Dimensions(INITIAL_MAZE_WIDTH, INITIAL_MAZE_HEIGHT);
             string gameModeName = combinedGM.Name;
 
             for (int i = 0; i < DIMENTIONS_COUNT; i++)
@@ -80,25 +81,48 @@ public static class LevelGenerator
                                 unlocked = false;
                                 break;
                         }
-                        Maze.Instance.Dimensions = mazeDimentions;
+                        Maze.Instance.Dimensions = mazeDimenions;
                         new BranchedDFSGeneration(Maze.Instance).Generate();
                         combinedGM.PlaceItems(Maze.Instance);
                         LevelIO.SaveLevel(
-                            new LevelSettings(gameModeName, mazeDimentions, id, packId),
+                            new LevelSettings(gameModeName, mazeDimenions, id, packId),
                             new LevelData(maze: Maze.Instance,
                                           levelTime: GetLevelTime(Maze.Instance.GetPathLength()),
                                           modeNames: combinedGM.GameModes.Select(gm => gm.GetType().Name).ToArray(),
-                                          mobs: combinedGM.GetMovables(GetMobQuantity(mazeDimentions)),
+                                          mobs: combinedGM.GetMovables(GetMobQuantity(mazeDimenions)),
                                           levelPoints: GetLevelPoints(),
                                           levelUnlocked: unlocked,
                                           levelComplete: false)
                         );
+                        if (gameModeName == "Classic")
+                        {
+                            LevelIO.levelInfosClassic.Add(new LevelInfo(name: $"levelInfo/{gameModeName}/{mazeDimenions}/{packId}/{id}",
+                                                            unlocked: unlocked,
+                                                            complete: false));
+                        }
+                        else if (gameModeName == "Dungeon")
+                        {
+                            LevelIO.levelInfosDungeon.Add(new LevelInfo(name: $"levelInfo/{gameModeName}/{mazeDimenions}/{packId}/{id}",
+                                                            unlocked: unlocked,
+                                                            complete: false));
+                        }
+                        else
+                        {
+                            LevelIO.levelInfosCursedHouse.Add(new LevelInfo(name: $"levelInfo/{gameModeName}/{mazeDimenions}/{packId}/{id}",
+                                                            unlocked: unlocked,
+                                                            complete: false));
+                        }
+                        
                         Maze.Instance.Clear();
                     }
                 }              
-                mazeDimentions.Width += MAZE_WIDTH_INCREMENT;
-                mazeDimentions.Height += MAZE_HEIGHT_INCREMENT;
+                mazeDimenions.Width += MAZE_WIDTH_INCREMENT;
+                mazeDimenions.Height += MAZE_HEIGHT_INCREMENT;
             }
+            j++;
         }
+        LevelIO.SaveLevelInfo(LevelIO.levelInfosClassic, LevelIO.levelInfoPathClassic);
+        LevelIO.SaveLevelInfo(LevelIO.levelInfosDungeon, LevelIO.levelInfoPathDungeon);
+        LevelIO.SaveLevelInfo(LevelIO.levelInfosCursedHouse, LevelIO.levelInfoPathCursedHouse);
     }
 }
