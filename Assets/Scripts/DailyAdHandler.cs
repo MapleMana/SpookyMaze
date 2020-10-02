@@ -8,6 +8,7 @@ public class DailyAdHandler : MonoBehaviour, IUnityAdsListener
     private static string gameId = "0";
     public static string placementId = "daily_unlock";
     public static bool testMode = true;
+    public DailyLevelSelectMenu DailyLevelSelectMenu;
 
     void Start()
     {
@@ -36,7 +37,7 @@ public class DailyAdHandler : MonoBehaviour, IUnityAdsListener
             case ShowResult.Skipped:
             case ShowResult.Finished:
             default:
-                DailyLevelSelectMenu.Instance.HandleAdWatched();
+                DailyLevelSelectMenu.HandleAdWatched();
                 break;
         }
     }

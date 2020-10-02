@@ -8,31 +8,37 @@ using UnityEngine.Events;
 using UnityEngine.UI;
 
 
-public class DailyLevelSelectMenu : Menu<DailyLevelSelectMenu>
+public class DailyLevelSelectMenu : MonoBehaviour
 {
-    public GameObject ButtonsPanel;
+    public GameObject ClassicPanel;
+    public GameObject DungeonPanel;
+    public GameObject CursedHousePanel;
     public Button ButtonTemplate;
-    public TMP_Text ModeName;
 
-    private List<Button> buttonList;
+    private List<Button> classicButtonList = new List<Button>();
+    private List<Button> dungeonButtonList = new List<Button>();
+    private List<Button> cursedHouseButtonList = new List<Button>();
+
+    private string modeToUnlock;
 
     private void Start()
     {
-        ModeName.text = GameManager.Instance.CurrentSettings.GetReadableGameMode();
-        LoadLevels();
+        LoadLevels(ClassicPanel, classicButtonList, "Classic");
+        LoadLevels(DungeonPanel, dungeonButtonList, "Dungeon");
+        LoadLevels(CursedHousePanel, cursedHouseButtonList, "Cursed House");
     }
 
-    public void LoadLevels()
+    public void LoadLevels(GameObject panel, List<Button> list, string modeName)
     {
-        buttonList = new List<Button>();
+        GameManager.Instance.CurrentSettings.gameMode = modeName;
         int openedLevels = PlayerPrefs.GetInt($"OpenedDailyLevels{GameManager.Instance.CurrentSettings.gameMode}");
 
         int possibleLevels = LevelGenerator.NUM_OF_DAILY_LEVELS;
 
         for (int i = 1; i <= possibleLevels; i++)
         {
-            Button newButton = CreateLevelButton(openedLevels, i);
-            buttonList.Add(newButton);
+            Button newButton = CreateLevelButton(panel, openedLevels, i);
+            list.Add(newButton);
         }
     }
 
@@ -45,19 +51,20 @@ public class DailyLevelSelectMenu : Menu<DailyLevelSelectMenu>
         };
     }
 
-    private Button CreateLevelButton(int openedLevels, int level)
+    private Button CreateLevelButton(GameObject panel, int openedLevels, int level)
     {
         Button newButton = Instantiate(ButtonTemplate);
         newButton.GetComponentInChildren<Text>().text = level.ToString();
         newButton.onClick.AddListener(OnLevelOptionClick(level));
-        newButton.interactable = (level <= openedLevels);
-        newButton.transform.SetParent(ButtonsPanel.transform, false);
+        newButton.interactable = false;
+        newButton.transform.SetParent(panel.transform, false);
         return newButton;
     }
 
-    public void UnlockLevels()
+    public void UnlockLevels(string modeName)
     {
         Advertisement.Show();
+        modeToUnlock = modeName;
     }
 
     public void HandleAdWatched()
@@ -65,13 +72,35 @@ public class DailyLevelSelectMenu : Menu<DailyLevelSelectMenu>
         int openedDailyLevels = PlayerPrefs.GetInt($"OpenedDailyLevels{GameManager.Instance.CurrentSettings.gameMode}");
         openedDailyLevels += 4;
         PlayerPrefs.SetInt($"OpenedDailyLevels{GameManager.Instance.CurrentSettings.gameMode}", openedDailyLevels);
-        ClearButtonsPanel();
-        LoadLevels();
+        switch (modeToUnlock)
+        {
+            case "Classic":
+                foreach (Button button in classicButtonList)
+                {
+                    button.interactable = true;
+                }
+                break;
+            case "Dungeon":
+                foreach (Button button in dungeonButtonList)
+                {
+                    button.interactable = true;
+                }
+                break;
+            case "Cursed House":
+                foreach (Button button in cursedHouseButtonList)
+                {
+                    button.interactable = true;
+                }
+                break;
+            default:
+                Debug.Log("buttons didn't unlock :(");
+                break;
+        }
     }
 
-    private void ClearButtonsPanel()
+    private void ClearButtonsPanel(GameObject panel)
     {
-        foreach (Transform child in ButtonsPanel.transform)
+        foreach (Transform child in panel.transform)
         {
             Destroy(child.gameObject);
         }

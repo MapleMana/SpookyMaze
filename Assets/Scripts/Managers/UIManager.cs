@@ -10,7 +10,6 @@ public class UIManager : Singleton<UIManager>
 {
     public GameObject aboutMenu;
     public GameObject dailyMenu;
-    public GameObject dailySelectMenu;
     public GameObject endGameMenu;
     public GameObject levelSelectMenu;
     public GameObject mainMenu;
@@ -160,23 +159,6 @@ public class UIManager : Singleton<UIManager>
         dailyMenu.SetActive(!dailyMenu.activeInHierarchy);
     }
 
-    public void ToggleDailySelectMenu(string modeName)
-    {
-        dailySelectMenu.SetActive(!dailySelectMenu.activeInHierarchy);
-
-        if (dailySelectMenu.activeInHierarchy)
-        {
-            // dailySelectMenu.GetComponent<DailyLevelSelectMenu>().ClearPanel();
-            dailySelectMenu.SetActive(false);
-        }
-        else
-        {
-            GameManager.Instance.CurrentSettings.gameMode = modeName;
-            // dailySelectMenu.GetComponent<DailyLevelSelectMenu>().LoadDimensions();
-            dailySelectMenu.SetActive(true);
-        }
-    }
-
     public void HideAllMenus()
     {
         levelSelectMenu.GetComponent<LevelSelectMenu>().ClearPanel();
@@ -189,6 +171,5 @@ public class UIManager : Singleton<UIManager>
         endGameMenu.SetActive(false);
         onReplayMenu.SetActive(false);
         dailyMenu.SetActive(false);
-        dailySelectMenu.SetActive(false);
     }
 }
