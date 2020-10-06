@@ -37,26 +37,27 @@ public class DailyLevelSelectMenu : MonoBehaviour
 
         for (int i = 1; i <= possibleLevels; i++)
         {
-            Button newButton = CreateLevelButton(panel, openedLevels, i);
+            Button newButton = CreateLevelButton(panel, modeName, openedLevels, i);
             list.Add(newButton);
         }
     }
 
-    public UnityAction OnLevelOptionClick(int levelNumber)
+    public UnityAction OnLevelOptionClick(string modeName, int levelNumber)
     {
         return () =>
         {
+            GameManager.Instance.CurrentSettings.gameMode = modeName;
             GameManager.Instance.CurrentSettings.id = levelNumber;
             GameManager.Instance.CurrentSettings.isDaily = true;
             UIManager.Instance.StartGame();
         };
     }
 
-    private Button CreateLevelButton(GameObject panel, int openedLevels, int level)
+    private Button CreateLevelButton(GameObject panel, string modeName, int openedLevels, int level)
     {
         Button newButton = Instantiate(ButtonTemplate);
         newButton.GetComponentInChildren<Text>().text = level.ToString();
-        newButton.onClick.AddListener(OnLevelOptionClick(level));
+        newButton.onClick.AddListener(OnLevelOptionClick(modeName, level));
         newButton.interactable = false;
         newButton.transform.SetParent(panel.transform, false);
         return newButton;
