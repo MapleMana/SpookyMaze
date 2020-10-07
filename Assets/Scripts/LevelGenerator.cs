@@ -45,7 +45,6 @@ public static class LevelGenerator
         LevelIO.ClearAll();
         string packId;
         bool unlocked;
-        int j = 0;
         foreach (CombinedGM combinedGM in gameModes)
         {
             Dimensions mazeDimenions = new Dimensions(INITIAL_MAZE_WIDTH, INITIAL_MAZE_HEIGHT);
@@ -93,36 +92,13 @@ public static class LevelGenerator
                                           levelPoints: GetLevelPoints(),
                                           levelUnlocked: unlocked,
                                           levelComplete: false)
-                        );
-                        if (gameModeName == "Classic")
-                        {
-                            LevelIO.levelInfosClassic.Add(new LevelInfo(name: $"levelInfo/{gameModeName}/{mazeDimenions}/{packId}/{id}",
-                                                            unlocked: unlocked,
-                                                            complete: false));
-                        }
-                        else if (gameModeName == "Dungeon")
-                        {
-                            LevelIO.levelInfosDungeon.Add(new LevelInfo(name: $"levelInfo/{gameModeName}/{mazeDimenions}/{packId}/{id}",
-                                                            unlocked: unlocked,
-                                                            complete: false));
-                        }
-                        else
-                        {
-                            LevelIO.levelInfosCursedHouse.Add(new LevelInfo(name: $"levelInfo/{gameModeName}/{mazeDimenions}/{packId}/{id}",
-                                                            unlocked: unlocked,
-                                                            complete: false));
-                        }
-                        
+                        );                        
                         Maze.Instance.Clear();
                     }
                 }              
                 mazeDimenions.Width += MAZE_WIDTH_INCREMENT;
                 mazeDimenions.Height += MAZE_HEIGHT_INCREMENT;
             }
-            j++;
         }
-        LevelIO.SaveLevelInfo(LevelIO.levelInfosClassic, LevelIO.levelInfoPathClassic);
-        LevelIO.SaveLevelInfo(LevelIO.levelInfosDungeon, LevelIO.levelInfoPathDungeon);
-        LevelIO.SaveLevelInfo(LevelIO.levelInfosCursedHouse, LevelIO.levelInfoPathCursedHouse);
     }
 }

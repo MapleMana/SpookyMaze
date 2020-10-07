@@ -29,12 +29,6 @@ public class GameManager : Singleton<GameManager>
             LevelGenerator.GenerateLevels();
             PlayerPrefs.SetInt("generated", 1);
         }
-        else
-        {
-            LevelIO.levelInfosClassic = LevelIO.LoadLevelInfo(LevelIO.levelInfoPathClassic);
-            LevelIO.levelInfosDungeon = LevelIO.LoadLevelInfo(LevelIO.levelInfoPathDungeon);
-            LevelIO.levelInfosCursedHouse = LevelIO.LoadLevelInfo(LevelIO.levelInfoPathCursedHouse);
-        }
     }
 
     private void OnFullLoad(Scene scene, LoadSceneMode mode)

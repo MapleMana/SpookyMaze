@@ -108,64 +108,15 @@ public class LevelSelectMenu : MonoBehaviour
     private static bool GetLevelUnlocked(int level)
     {
         GameManager.Instance.CurrentSettings.id = level;
-        /*LevelSettings currentLevelSettings = GameManager.Instance.CurrentSettings;
-        return LevelIO.LoadLevel(currentLevelSettings).unlocked;*/
-        List<LevelInfo> listToSearch;
-        if (GameManager.Instance.CurrentSettings.gameMode == "Classic")
-        {
-            listToSearch = LevelIO.levelInfosClassic;
-        }
-        else if (GameManager.Instance.CurrentSettings.gameMode == "Dungeon")
-        {
-            listToSearch = LevelIO.levelInfosDungeon;
-        }
-        else
-        {
-            listToSearch = LevelIO.levelInfosCursedHouse;
-        }
-        foreach (LevelInfo levelInfo in listToSearch)
-        {
-            if(levelInfo.levelName == $"levelInfo/{GameManager.Instance.CurrentSettings.gameMode}" +
-                $"/{GameManager.Instance.CurrentSettings.dimensions}" +
-                $"/{GameManager.Instance.CurrentSettings.packId}" +
-                $"/{GameManager.Instance.CurrentSettings.id}")
-            {
-                return levelInfo.levelUnlocked;
-            }
-        }
-        return false;
+        LevelSettings currentLevelSettings = GameManager.Instance.CurrentSettings;
+        return LevelIO.LoadLevel(currentLevelSettings).unlocked;
     }
 
     private static bool GetLevelCompete(int level)
     {        
         GameManager.Instance.CurrentSettings.id = level;
-        /*LevelSettings currentLevelSettings = GameManager.Instance.CurrentSettings;
-        return LevelIO.LoadLevel(currentLevelSettings).complete;*/
-        List<LevelInfo> listToSearch;
-        if (GameManager.Instance.CurrentSettings.gameMode == "Classic")
-        {
-            listToSearch = LevelIO.levelInfosClassic;
-        }
-        else if (GameManager.Instance.CurrentSettings.gameMode == "Dungeon")
-        {
-            listToSearch = LevelIO.levelInfosDungeon;
-        }
-        else
-        {
-            listToSearch = LevelIO.levelInfosCursedHouse;
-        }
-        foreach (LevelInfo levelInfo in listToSearch)
-        {
-            if (levelInfo.levelName == $"levelInfo/{GameManager.Instance.CurrentSettings.gameMode}" +
-                $"/{GameManager.Instance.CurrentSettings.dimensions}" +
-                $"/{GameManager.Instance.CurrentSettings.packId}" +
-                $"/{GameManager.Instance.CurrentSettings.id}")
-            {
-                //Debug.Log($"{levelInfo.levelName}: {levelInfo.levelComlete}");
-                return levelInfo.levelComlete;
-            }
-        }
-        return false;
+        LevelSettings currentLevelSettings = GameManager.Instance.CurrentSettings;
+        return LevelIO.LoadLevel(currentLevelSettings).complete;
     }
 
     /// <summary>

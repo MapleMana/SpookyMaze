@@ -153,31 +153,9 @@ public class LevelSettings
     }
 }
 
-[Serializable]
-public class LevelInfo
-{
-    public string levelName;
-    public bool levelUnlocked;
-    public bool levelComlete;
-
-    public LevelInfo(string name, bool unlocked, bool complete)
-    {
-        levelName = name;
-        levelUnlocked = unlocked;
-        levelComlete = complete;
-    }
-}
-
 public static class LevelIO
 {
     private static readonly string Root = Application.persistentDataPath;
-
-    public static List<LevelInfo> levelInfosClassic = new List<LevelInfo>();
-    public static List<LevelInfo> levelInfosDungeon = new List<LevelInfo>();
-    public static List<LevelInfo> levelInfosCursedHouse = new List<LevelInfo>();
-    public static string levelInfoPathClassic = $"{Root}/ClassiclevelInfo.maze";
-    public static string levelInfoPathDungeon = $"{Root}/DungeonlevelInfo.maze";
-    public static string levelInfoPathCursedHouse = $"{Root}/CursedHouselevelInfo.maze";
 
     private static string GetFilePath(LevelSettings levelSettings)
     {
@@ -214,29 +192,6 @@ public static class LevelIO
         using (FileStream stream = new FileStream(path, FileMode.Open)) 
         {
             return formatter.Deserialize(stream) as LevelData;
-        }
-    }
-
-    public static void SaveLevelInfo(List<LevelInfo> list, string filePath)
-    {
-        BinaryFormatter formatter = new BinaryFormatter();
-        string dir = Path.GetDirectoryName(filePath);
-        if (!Directory.Exists(dir))
-        {
-            Directory.CreateDirectory(dir);
-        }
-        using (FileStream stream = new FileStream(filePath, FileMode.OpenOrCreate))
-        {
-            formatter.Serialize(stream, list);
-        }
-    }
-
-    public static List<LevelInfo> LoadLevelInfo(string filePath)
-    {
-        BinaryFormatter formatter = new BinaryFormatter();
-        using (FileStream stream = new FileStream(filePath, FileMode.Open))
-        {
-            return formatter.Deserialize(stream) as List<LevelInfo>;
         }
     }
 
