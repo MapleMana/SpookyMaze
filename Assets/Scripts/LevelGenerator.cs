@@ -131,7 +131,9 @@ public static class LevelGenerator
                                     levelTime: GetLevelTime(Maze.Instance.GetPathLength()),
                                     modeNames: combinedGM.GameModes.Select(gm => gm.GetType().Name).ToArray(),
                                     mobs: combinedGM.GetMovables(GetMobQuantity(mazeDimentions)),
-                                    levelPoints: GetLevelPoints(mazeDimentions, id))
+                                    levelPoints: GetLevelPoints(),
+                                    levelUnlocked: true,
+                                    levelComplete: false)
                 );
 
                 Maze.Instance.Clear();

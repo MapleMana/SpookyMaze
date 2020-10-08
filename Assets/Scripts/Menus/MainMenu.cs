@@ -30,7 +30,6 @@ public class MainMenu : Menu<MainMenu>
     public void OnDailyPressed()
     {
         GameManager.Instance.CurrentSettings.isDaily = true;
-        LevelGenerator.GenerateDailyLevels();
         DailyMenu.Open();
     }
 

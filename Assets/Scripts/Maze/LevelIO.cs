@@ -129,7 +129,7 @@ public class LevelSettings
 
     public LevelSettings() { }
 
-    public LevelSettings(string gameMode, Dimensions dimensions, int id, string packId, bool isDaily=false)
+    public LevelSettings(string gameMode, Dimensions dimensions, int id, string packId="", bool isDaily=false)
     {
         this.gameMode = gameMode;
         this.dimensions = dimensions;
@@ -148,7 +148,7 @@ public class LevelSettings
 
     public override string ToString()
     {
-        return isDaily ? $"Daily/{gameMode}/{packId}/{id}" : $"/{gameMode}/{dimensions}/{packId}/{id}";
+        return isDaily ? $"/Daily/{gameMode}/{id}" : $"/{gameMode}/{dimensions}/{packId}/{id}";
     }
 }
 

@@ -107,6 +107,11 @@ public class UIManager : Singleton<UIManager>
         GameManager.Instance.LoadLevel();
     }
 
+    public void OnDailyPressed() {
+        LevelGenerator.GenerateDailyLevels();
+        ToggleDailyMenu();
+    }
+
     /// <summary>
     /// Shows or hide panel functions
     /// Let as separate functions in case a unique action is required when showing or closing
