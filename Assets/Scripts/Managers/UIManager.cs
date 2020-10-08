@@ -8,15 +8,16 @@ using TMPro;
 
 public class UIManager : Singleton<UIManager>
 {
-    public GameObject mainMenu;
     public GameObject aboutMenu;
-    public GameObject settingsMenu;
-    public GameObject levelSelectMenu;
-    public GameObject purchaseMenu;
-    public GameObject statsMenu;
+    public GameObject dailyMenu;
     public GameObject endGameMenu;
-    public TMP_Text nextPlayButtonText;
+    public GameObject levelSelectMenu;
+    public GameObject mainMenu;
     public GameObject onReplayMenu;
+    public GameObject purchaseMenu;
+    public GameObject settingsMenu;
+    public GameObject statsMenu;
+    public TMP_Text nextPlayButtonText;
 
     public TMP_Text purchaseBtnCoinsText;
 
@@ -106,6 +107,11 @@ public class UIManager : Singleton<UIManager>
         GameManager.Instance.LoadLevel();
     }
 
+    public void OnDailyPressed() {
+        LevelGenerator.GenerateDailyLevels();
+        ToggleDailyMenu();
+    }
+
     /// <summary>
     /// Shows or hide panel functions
     /// Let as separate functions in case a unique action is required when showing or closing
@@ -135,6 +141,7 @@ public class UIManager : Singleton<UIManager>
         else
         {
             GameManager.Instance.CurrentSettings.gameMode = modeName;
+            GameManager.Instance.CurrentSettings.isDaily = false;
             levelSelectMenu.GetComponent<LevelSelectMenu>().LoadDimensions();
             levelSelectMenu.SetActive(true);
         }
@@ -160,6 +167,12 @@ public class UIManager : Singleton<UIManager>
         onReplayMenu.SetActive(!onReplayMenu.activeInHierarchy);
     }
 
+    public void ToggleDailyMenu()
+    {
+        mainMenu.SetActive(!mainMenu.activeInHierarchy);
+        dailyMenu.SetActive(!dailyMenu.activeInHierarchy);
+    }
+
     public void HideAllMenus()
     {
         levelSelectMenu.GetComponent<LevelSelectMenu>().ClearPanel();
@@ -171,6 +184,7 @@ public class UIManager : Singleton<UIManager>
         statsMenu.SetActive(false);
         endGameMenu.SetActive(false);
         onReplayMenu.SetActive(false);
+        dailyMenu.SetActive(false);
     }
 
     public void UpdateTextOnPurchaseMenuButton()

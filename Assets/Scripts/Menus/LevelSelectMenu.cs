@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -124,7 +125,7 @@ public class LevelSelectMenu : MonoBehaviour
     /// </summary>
     /// <param name="levelNumber">The level number to load</param>
     /// <returns></returns>
-    public UnityEngine.Events.UnityAction OnLevelOptionClick(int levelNumber)
+    public UnityAction OnLevelOptionClick(int levelNumber)
     {
         return () =>
         {

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Advertisements;
 using UnityEngine.SceneManagement;
 
 public class GameManager : Singleton<GameManager>
@@ -20,14 +21,31 @@ public class GameManager : Singleton<GameManager>
         SceneManager.sceneLoaded -= OnFullLoad;
     }
 
+
+
     private void Start()
     {
         Maze.Initialize();
-        int levelsGenerated = PlayerPrefs.GetInt("generated", 0);
+        UpdateDailyLevels();
+        int levelsGenerated = PlayerPrefs.GetInt("Generated", 0);
         if (levelsGenerated == 0)
         {
             LevelGenerator.GenerateLevels();
-            PlayerPrefs.SetInt("generated", 1);
+            PlayerPrefs.SetInt("Generated", 1);
+        }
+    }
+
+    private void UpdateDailyLevels()
+    {
+        int currentDayNumber = (int)(DateTimeOffset.Now.ToUnixTimeSeconds() / (3600 * 24));
+        int lastVisited = PlayerPrefs.GetInt("LastVisited");
+
+        if (currentDayNumber != lastVisited)
+        {
+            PlayerPrefs.SetInt("LastVisited", currentDayNumber);
+            PlayerPrefs.SetInt("OpenedDailyLevelsClassic", 0);
+            PlayerPrefs.SetInt("OpenedDailyLevelsDungeon", 0);
+            PlayerPrefs.SetInt("OpenedDailyLevelsCursed House", 0);
         }
     }
 

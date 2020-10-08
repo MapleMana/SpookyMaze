@@ -7,6 +7,7 @@ using UnityEngine;
 
 public static class LevelGenerator
 {
+    public const int NUM_OF_DAILY_LEVELS = 4;
     public const int NUM_OF_LEVELS = 20;
     const int MAZE_WIDTH_INCREMENT = 2;
     const int MAZE_HEIGHT_INCREMENT = 2;
@@ -22,6 +23,12 @@ public static class LevelGenerator
         new CombinedGM("Dungeon", new DoorKeyGM()),
         new CombinedGM("Cursed House", new OilGM(), new GhostGM()),
     };
+
+    private static Dimensions GetMazeDimensions(int id)
+    {
+        // TODO: figure out a better formula
+        return new Dimensions(8, 8);
+    }
 
     private static int GetLevelTime(int pathLength)
     {
@@ -47,7 +54,7 @@ public static class LevelGenerator
         bool unlocked;
         foreach (CombinedGM combinedGM in gameModes)
         {
-            Dimensions mazeDimenions = new Dimensions(INITIAL_MAZE_WIDTH, INITIAL_MAZE_HEIGHT);
+            Dimensions mazeDimentions = new Dimensions(INITIAL_MAZE_WIDTH, INITIAL_MAZE_HEIGHT);
             string gameModeName = combinedGM.Name;
 
             for (int i = 0; i < DIMENTIONS_COUNT; i++)
@@ -80,15 +87,15 @@ public static class LevelGenerator
                                 unlocked = false;
                                 break;
                         }
-                        Maze.Instance.Dimensions = mazeDimenions;
+                        Maze.Instance.Dimensions = mazeDimentions;
                         new BranchedDFSGeneration(Maze.Instance).Generate();
                         combinedGM.PlaceItems(Maze.Instance);
                         LevelIO.SaveLevel(
-                            new LevelSettings(gameModeName, mazeDimenions, id, packId),
+                            new LevelSettings(gameModeName, mazeDimentions, id, packId),
                             new LevelData(maze: Maze.Instance,
                                           levelTime: GetLevelTime(Maze.Instance.GetPathLength()),
                                           modeNames: combinedGM.GameModes.Select(gm => gm.GetType().Name).ToArray(),
-                                          mobs: combinedGM.GetMovables(GetMobQuantity(mazeDimenions)),
+                                          mobs: combinedGM.GetMovables(GetMobQuantity(mazeDimentions)),
                                           levelPoints: GetLevelPoints(),
                                           levelUnlocked: unlocked,
                                           levelComplete: false)
@@ -96,9 +103,42 @@ public static class LevelGenerator
                         Maze.Instance.Clear();
                     }
                 }              
-                mazeDimenions.Width += MAZE_WIDTH_INCREMENT;
-                mazeDimenions.Height += MAZE_HEIGHT_INCREMENT;
+                mazeDimentions.Width += MAZE_WIDTH_INCREMENT;
+                mazeDimentions.Height += MAZE_HEIGHT_INCREMENT;
             }
         }
+
+    }
+    internal static void GenerateDailyLevels()
+    {
+        int dailySeed = (int)(DateTimeOffset.Now.ToUnixTimeSeconds() / (3600 * 24));
+        UnityEngine.Random.InitState(dailySeed);
+
+        foreach (CombinedGM combinedGM in gameModes)
+        {
+            for (int id = 1; id <= NUM_OF_DAILY_LEVELS; id++)
+            {
+                Dimensions mazeDimentions = GetMazeDimensions(id);
+                GameManager.Instance.CurrentSettings.dimensions = mazeDimentions;
+                GameManager.Instance.CurrentSettings.id = id;
+
+                Maze.Instance.Dimensions = mazeDimentions;
+                new BranchedDFSGeneration(Maze.Instance).Generate();
+                combinedGM.PlaceItems(Maze.Instance);
+                LevelIO.SaveLevel(
+                    new LevelSettings(combinedGM.Name, mazeDimentions, id, isDaily: true),
+                    new LevelData(maze: Maze.Instance,
+                                    levelTime: GetLevelTime(Maze.Instance.GetPathLength()),
+                                    modeNames: combinedGM.GameModes.Select(gm => gm.GetType().Name).ToArray(),
+                                    mobs: combinedGM.GetMovables(GetMobQuantity(mazeDimentions)),
+                                    levelPoints: GetLevelPoints(),
+                                    levelUnlocked: true,
+                                    levelComplete: false)
+                );
+
+                Maze.Instance.Clear();
+            }
+        }
+
     }
 }
