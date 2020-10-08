@@ -21,8 +21,6 @@ public class GameManager : Singleton<GameManager>
         SceneManager.sceneLoaded -= OnFullLoad;
     }
 
-
-
     private void Start()
     {
         Maze.Initialize();
@@ -75,5 +73,10 @@ public class GameManager : Singleton<GameManager>
         int currentAmount = PlayerPrefs.GetInt("PlayersCoins", 0);
         int newAmount = currentAmount + amount;
         PlayerPrefs.SetInt("PlayersCoins", newAmount);
+    }
+
+    public bool IsLastLevel()
+    {
+        return CurrentSettings.id == LevelGenerator.NUM_OF_LEVELS;
     }
 }

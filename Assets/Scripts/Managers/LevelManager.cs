@@ -108,7 +108,10 @@ public class LevelManager : Singleton<LevelManager>
             LightManager.Instance.TurnOn();
             CameraManager.Instance.FocusOnMaze(Maze.Instance);
             SaveLevelProgress();
-            GameManager.Instance.CurrentSettings.id++;
+            if (!GameManager.Instance.IsLastLevel())
+            {
+                GameManager.Instance.CurrentSettings.id++;
+            }
         }
         UIManager.Instance.ShowFinishMenu(mazeCompleted);
     }

@@ -107,11 +107,6 @@ public class UIManager : Singleton<UIManager>
         GameManager.Instance.LoadLevel();
     }
 
-    public void OnDailyPressed() {
-        LevelGenerator.GenerateDailyLevels();
-        ToggleDailyMenu();
-    }
-
     /// <summary>
     /// Shows or hide panel functions
     /// Let as separate functions in case a unique action is required when showing or closing
@@ -141,7 +136,6 @@ public class UIManager : Singleton<UIManager>
         else
         {
             GameManager.Instance.CurrentSettings.gameMode = modeName;
-            GameManager.Instance.CurrentSettings.isDaily = false;
             levelSelectMenu.GetComponent<LevelSelectMenu>().LoadDimensions();
             levelSelectMenu.SetActive(true);
         }
@@ -159,7 +153,18 @@ public class UIManager : Singleton<UIManager>
 
     public void ToggleEndGameMenu()
     {
-        endGameMenu.SetActive(!endGameMenu.activeInHierarchy);
+       if(!endGameMenu.activeInHierarchy)
+       {
+            endGameMenu.SetActive(true);
+            if (GameManager.Instance.IsLastLevel()) {
+                Debug.Log("Last level");
+                // TODO: hide next level button
+            }
+       }
+       else
+       {
+            endGameMenu.SetActive(false);
+       }
     }
 
     public void ToggleOnReplyMenu()
