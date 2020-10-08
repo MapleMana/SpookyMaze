@@ -141,6 +141,7 @@ public class UIManager : Singleton<UIManager>
         else
         {
             GameManager.Instance.CurrentSettings.gameMode = modeName;
+            GameManager.Instance.CurrentSettings.isDaily = false;
             levelSelectMenu.GetComponent<LevelSelectMenu>().LoadDimensions();
             levelSelectMenu.SetActive(true);
         }
