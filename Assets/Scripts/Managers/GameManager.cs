@@ -65,4 +65,15 @@ public class GameManager : Singleton<GameManager>
         LevelData levelData = LevelIO.LoadLevel(CurrentSettings);
         LevelManager.Instance.Initialize(levelData);
     }
+
+    /// <summary>
+    /// Called in purchase menu
+    /// Adds coins to player's total after purchase
+    /// </summary>
+    public void PurchaseCoins(int amount)
+    {
+        int currentAmount = PlayerPrefs.GetInt("PlayersCoins", 0);
+        int newAmount = currentAmount + amount;
+        PlayerPrefs.SetInt("PlayersCoins", newAmount);
+    }
 }

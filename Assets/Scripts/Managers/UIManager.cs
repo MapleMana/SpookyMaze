@@ -19,10 +19,17 @@ public class UIManager : Singleton<UIManager>
     public GameObject statsMenu;
     public TMP_Text nextPlayButtonText;
 
+    public TMP_Text purchaseBtnCoinsText;
+
     public TMP_Text coinText;
 
     private bool _levelCompleted;
     public bool LevelCompleted { get => _levelCompleted; set => _levelCompleted = value; }
+
+    private void Start()
+    {
+        UpdateTextOnPurchaseMenuButton();
+    }
 
     /// <summary>
     /// This method loads the new maze and starts the game
@@ -66,6 +73,7 @@ public class UIManager : Singleton<UIManager>
         SceneManager.UnloadSceneAsync("Maze");
         HideAllMenus();
         ToggleMainMenu();
+        UpdateTextOnPurchaseMenuButton();
     }
 
     /// <summary>
@@ -171,5 +179,10 @@ public class UIManager : Singleton<UIManager>
         endGameMenu.SetActive(false);
         onReplayMenu.SetActive(false);
         dailyMenu.SetActive(false);
+    }
+
+    public void UpdateTextOnPurchaseMenuButton()
+    {
+        purchaseBtnCoinsText.text = $"{PlayerPrefs.GetInt("PlayersCoins", 0)}";
     }
 }

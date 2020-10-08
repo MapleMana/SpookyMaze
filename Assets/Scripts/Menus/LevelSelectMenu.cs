@@ -18,6 +18,11 @@ public class LevelSelectMenu : MonoBehaviour
     private List<GameObject> panelList;
     private List<Button> levelButtonList;
 
+    private Color orange = new Color(248f/255f, 148f/255f, 6f/255f);
+    private Slider currentSlider;
+
+    private const int COST_PER_PACK = 0; //200;
+
     public void LoadDimensions()
     {
         ModeName.text = GameManager.Instance.CurrentSettings.GetReadableGameMode();
@@ -34,20 +39,40 @@ public class LevelSelectMenu : MonoBehaviour
         {
             int width = dimensions.Width;
             int height = dimensions.Height;
-            Button newButton = Instantiate(levelSizeButtonTemplate);
-            newButton.GetComponentInChildren<Text>().text = dimensions.ToString();
-            newButton.onClick.AddListener(OnDimensionsOptionClick(width, height, dimensions.ToString()));
-            newButton.transform.SetParent(levelSizePanel.transform, false);
-            buttonList.Add(newButton);
-
-            GameObject newPanel = Instantiate(levelSelectButtonsPanel);
-            newPanel.transform.SetParent(levelSizePanel.transform, false);
-            newPanel.name = dimensions.ToString();
-            panelList.Add(newPanel);
-
             GameManager.Instance.CurrentSettings.dimensions = new Dimensions(width, height);
-            LoadLevels(newPanel);
-            newPanel.SetActive(false);
+
+            List<string> possiblePacks = LevelIO.GetPossiblePackIds(GameManager.Instance.CurrentSettings);
+
+            foreach(string pack in possiblePacks)
+            {
+                Button newButton = Instantiate(levelSizeButtonTemplate);
+                newButton.GetComponentInChildren<Text>().text = dimensions.ToString() + pack;
+                newButton.onClick.AddListener(OnDimensionsOptionClick(width, height, pack, dimensions.ToString() + pack));
+                newButton.transform.SetParent(levelSizePanel.transform, false);                
+                buttonList.Add(newButton);
+                currentSlider = newButton.transform.GetChild(0).GetComponent<Slider>();
+
+                GameObject newPanel = Instantiate(levelSelectButtonsPanel);
+                newPanel.transform.SetParent(levelSizePanel.transform, false);
+                newPanel.name = dimensions.ToString() + pack;
+                panelList.Add(newPanel);
+
+                GameObject subNewPanel = newPanel.transform.GetChild(0).gameObject;
+
+                GameManager.Instance.CurrentSettings.packId = pack;
+                if (GetLevelUnlocked(1))
+                {
+                    newButton.GetComponentsInChildren<Image>()[2].gameObject.SetActive(false);
+                    newPanel.transform.GetChild(1).gameObject.SetActive(false);                    
+                }
+                else
+                {
+                    Button purchaseButton = newPanel.transform.GetChild(1).GetChild(0).GetComponent<Button>();
+                    purchaseButton.onClick.AddListener(OnPurchasePackOptionClick(width, height, pack, newPanel, newButton));
+                }
+                LoadLevels(subNewPanel);
+                newPanel.SetActive(false);
+            }            
         }
     }
 
@@ -57,33 +82,42 @@ public class LevelSelectMenu : MonoBehaviour
     public void LoadLevels(GameObject panel)
     {
         levelButtonList = new List<Button>();
-        int levelReached = GetLevelProgress();
-
         List<int> possibleLevels = LevelIO.GetPossibleIds(GameManager.Instance.CurrentSettings);
         possibleLevels.Sort();
 
         foreach (int level in possibleLevels)
         {
-            Button newButton = CreateLevelButton(levelReached, level, panel);
+            Button newButton = CreateLevelButton(level, panel);
             levelButtonList.Add(newButton);
         }
     }
 
-    private Button CreateLevelButton(int levelReached, int level, GameObject panel)
+    private Button CreateLevelButton(int level, GameObject panel)
     {
         Button newButton = Instantiate(levelSelectButtonTemplate);
         newButton.GetComponentInChildren<Text>().text = level.ToString();
+        if (GetLevelCompete(level))
+        {
+            currentSlider.value += 0.05f;
+            newButton.GetComponent<Image>().color = orange;
+        }
         newButton.onClick.AddListener(OnLevelOptionClick(level));
-        newButton.interactable = (level <= levelReached);
         newButton.transform.SetParent(panel.transform, false);
         return newButton;
     }
 
-    private static int GetLevelProgress()
+    private static bool GetLevelUnlocked(int level)
     {
+        GameManager.Instance.CurrentSettings.id = level;
         LevelSettings currentLevelSettings = GameManager.Instance.CurrentSettings;
-        string modeDimension = currentLevelSettings.ModeDimensions;
-        return PlayerPrefs.GetInt(modeDimension, 1);
+        return LevelIO.LoadLevel(currentLevelSettings).unlocked;
+    }
+
+    private static bool GetLevelCompete(int level)
+    {        
+        GameManager.Instance.CurrentSettings.id = level;
+        LevelSettings currentLevelSettings = GameManager.Instance.CurrentSettings;
+        return LevelIO.LoadLevel(currentLevelSettings).complete;
     }
 
     /// <summary>
@@ -105,15 +139,48 @@ public class LevelSelectMenu : MonoBehaviour
     /// </summary>
     /// <param name="panelName">The name of the panel to open</param>
     /// <returns></returns>
-    public UnityEngine.Events.UnityAction OnDimensionsOptionClick(int dimensionWidth, int dimensionHeight, string panelName)
+    public UnityEngine.Events.UnityAction OnDimensionsOptionClick(int dimensionWidth, int dimensionHeight, string packId, string panelName)
     {
         return () =>
         {
             GameManager.Instance.CurrentSettings.dimensions = new Dimensions(dimensionWidth, dimensionHeight);
+            GameManager.Instance.CurrentSettings.packId = packId;
             foreach (GameObject panel in panelList)
             {
                 panel.SetActive(panel.name == panelName);
             }
+        };
+    }
+
+    /// <summary>
+    /// Executed when one of the purchase level pack buttons is pressed
+    /// unlocks pack if player has at least 200 coins
+    /// </summary>
+    /// <returns></returns>
+    public UnityEngine.Events.UnityAction OnPurchasePackOptionClick(int dimensionWidth, int dimensionHeight, string packId, GameObject panel, Button levelPackButton)
+    {
+        return () =>
+        {
+            int currentAmount = PlayerPrefs.GetInt("PlayersCoins", 0);
+            if (currentAmount >= COST_PER_PACK)
+            {
+                PlayerPrefs.SetInt("PlayerCoins", currentAmount - COST_PER_PACK);
+                GameManager.Instance.CurrentSettings.dimensions = new Dimensions(dimensionWidth, dimensionHeight);
+                GameManager.Instance.CurrentSettings.packId = packId;
+                LevelSettings currentLevelSettings = GameManager.Instance.CurrentSettings;
+
+                List<int> possibleLevels = LevelIO.GetPossibleIds(GameManager.Instance.CurrentSettings);
+                possibleLevels.Sort();
+                foreach (int level in possibleLevels)
+                {
+                    currentLevelSettings.id = level;
+                    LevelData currentLevelData = LevelIO.LoadLevel(currentLevelSettings);
+                    currentLevelData.unlocked = true;
+                    LevelIO.SaveLevel(currentLevelSettings, currentLevelData);
+                }
+                panel.transform.GetChild(1).gameObject.SetActive(false);
+                levelPackButton.GetComponentsInChildren<Image>()[2].gameObject.SetActive(false);
+            }            
         };
     }
 

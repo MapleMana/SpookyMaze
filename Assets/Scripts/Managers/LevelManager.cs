@@ -14,6 +14,8 @@ public class LevelManager : Singleton<LevelManager>
     public GameMode GameMode { get; set; }
     public LevelData LevelData { get => _levelData; }
 
+    public GameObject exitDoor;
+
     public bool LevelIs(LevelState state) => (_levelState & state) != 0;
 
     public void Initialize(LevelData levelData)
@@ -26,6 +28,8 @@ public class LevelManager : Singleton<LevelManager>
         Maze.Instance.Load(levelData.mazeState);
 
         Player.Instance.PlaceOn(Maze.Instance);
+        exitDoor.GetComponent<ExitDoor>().MoveToExit(Maze.Instance);
+
         _mobs = levelData.SpawnMovables();
         Movable.ClearHistory();
     }
@@ -104,6 +108,7 @@ public class LevelManager : Singleton<LevelManager>
             LightManager.Instance.TurnOn();
             CameraManager.Instance.FocusOnMaze(Maze.Instance);
             SaveLevelProgress();
+            GameManager.Instance.CurrentSettings.id++;
         }
         UIManager.Instance.ShowFinishMenu(mazeCompleted);
     }
@@ -111,12 +116,13 @@ public class LevelManager : Singleton<LevelManager>
     private void SaveLevelProgress()
     {
         LevelSettings currentLevelSettings = GameManager.Instance.CurrentSettings;
-        string modeDimension = currentLevelSettings.ModeDimensions;
-        if (PlayerPrefs.GetInt(modeDimension) < ++currentLevelSettings.id)
+        LevelData currentLevelData = LevelIO.LoadLevel(currentLevelSettings);
+        if (!currentLevelData.complete)
         {
-            PlayerPrefs.SetInt(modeDimension, currentLevelSettings.id);
             IncreasePlayerScore();
-        }
+            currentLevelData.complete = true;            
+            LevelIO.SaveLevel(currentLevelSettings, currentLevelData);            
+        }       
     }
 
     private void IncreasePlayerScore()
