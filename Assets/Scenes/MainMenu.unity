@@ -7306,7 +7306,7 @@ MonoBehaviour:
   aboutMenu: {fileID: 4110085474245129659}
   dailyMenu: {fileID: 7442371728724961538}
   endGameMenu: {fileID: 2787141332529181379}
-  endGameNextLevelButton: {fileID: 2787141332630427994}
+  endGameNextLevelButton: {fileID: 2787141332630427972}
   levelSelectMenu: {fileID: 6096362744912558406}
   mainMenu: {fileID: 10891670}
   onReplayMenu: {fileID: 5041049726618815164}

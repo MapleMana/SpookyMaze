@@ -11,7 +11,7 @@ public class UIManager : Singleton<UIManager>
     public GameObject aboutMenu;
     public GameObject dailyMenu;
     public GameObject endGameMenu;
-    public GameObject endGameNextLevelButton;
+    public Button endGameNextLevelButton;
     public GameObject levelSelectMenu;
     public GameObject mainMenu;
     public GameObject onReplayMenu;
@@ -158,7 +158,7 @@ public class UIManager : Singleton<UIManager>
        if(!endGameMenu.activeInHierarchy)
        {
             endGameMenu.SetActive(true);
-            endGameNextLevelButton.SetActive(!GameManager.Instance.IsLastLevel());
+            endGameNextLevelButton.interactable = !GameManager.Instance.IsLastLevel();
        }
        else
        {
