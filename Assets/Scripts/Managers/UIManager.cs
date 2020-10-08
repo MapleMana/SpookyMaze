@@ -11,6 +11,7 @@ public class UIManager : Singleton<UIManager>
     public GameObject aboutMenu;
     public GameObject dailyMenu;
     public GameObject endGameMenu;
+    public GameObject endGameNextLevelButton;
     public GameObject levelSelectMenu;
     public GameObject mainMenu;
     public GameObject onReplayMenu;
@@ -20,6 +21,7 @@ public class UIManager : Singleton<UIManager>
     public TMP_Text nextPlayButtonText;
 
     public TMP_Text purchaseBtnCoinsText;
+
 
     public TMP_Text coinText;
 
@@ -156,10 +158,7 @@ public class UIManager : Singleton<UIManager>
        if(!endGameMenu.activeInHierarchy)
        {
             endGameMenu.SetActive(true);
-            if (GameManager.Instance.IsLastLevel()) {
-                Debug.Log("Last level");
-                // TODO: hide next level button
-            }
+            endGameNextLevelButton.SetActive(!GameManager.Instance.IsLastLevel());
        }
        else
        {
@@ -174,8 +173,14 @@ public class UIManager : Singleton<UIManager>
 
     public void ToggleDailyMenu()
     {
-        mainMenu.SetActive(!mainMenu.activeInHierarchy);
         dailyMenu.SetActive(!dailyMenu.activeInHierarchy);
+    }
+
+    public void GoToDailyMenu()
+    {
+        LevelGenerator.GenerateDailyLevels();
+        mainMenu.SetActive(false);
+        dailyMenu.SetActive(true);
     }
 
     public void HideAllMenus()

@@ -77,6 +77,10 @@ public class GameManager : Singleton<GameManager>
 
     public bool IsLastLevel()
     {
+        if (CurrentSettings.isDaily)
+        {
+            return CurrentSettings.id == LevelGenerator.NUM_OF_DAILY_LEVELS;
+        }
         return CurrentSettings.id == LevelGenerator.NUM_OF_LEVELS;
     }
 }

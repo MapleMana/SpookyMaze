@@ -148,7 +148,7 @@ public class LevelManager : Singleton<LevelManager>
             if (Player.Instance.TimeLeft < Mathf.Epsilon)
             {
                 EndLevel(mazeCompleted: false);
-            }
+            }   
 
             if (GameMode.GameEnded())
             {
