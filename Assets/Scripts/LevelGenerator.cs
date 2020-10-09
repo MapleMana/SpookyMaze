@@ -16,6 +16,7 @@ public static class LevelGenerator
     const int DIMENTIONS_COUNT = 10;
     const int NUM_OF_PACKS_PER_SIZE = 5;
     const int SEED = 145;
+    const int LEVEL_REWARD = 4;
     
     private static readonly List<CombinedGM> gameModes = new List<CombinedGM>()
     {
@@ -38,12 +39,6 @@ public static class LevelGenerator
     private static int GetMobQuantity(Dimensions mazeDimensions)
     {
         return (mazeDimensions.Width + mazeDimensions.Height) / 16; 
-    }
-
-    private static int GetLevelPoints()
-    {
-        // same number of points / coins for each level 
-        return 4;
     }
 
     public static void GenerateLevels()
@@ -96,7 +91,7 @@ public static class LevelGenerator
                                           levelTime: GetLevelTime(Maze.Instance.GetPathLength()),
                                           modeNames: combinedGM.GameModes.Select(gm => gm.GetType().Name).ToArray(),
                                           mobs: combinedGM.GetMovables(GetMobQuantity(mazeDimentions)),
-                                          levelPoints: GetLevelPoints(),
+                                          levelPoints: LEVEL_REWARD,
                                           levelUnlocked: unlocked,
                                           levelComplete: false)
                         );                        
@@ -131,7 +126,7 @@ public static class LevelGenerator
                                     levelTime: GetLevelTime(Maze.Instance.GetPathLength()),
                                     modeNames: combinedGM.GameModes.Select(gm => gm.GetType().Name).ToArray(),
                                     mobs: combinedGM.GetMovables(GetMobQuantity(mazeDimentions)),
-                                    levelPoints: GetLevelPoints(),
+                                    levelPoints: LEVEL_REWARD,
                                     levelUnlocked: true,
                                     levelComplete: false)
                 );
