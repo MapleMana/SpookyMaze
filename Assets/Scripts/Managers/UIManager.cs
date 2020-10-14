@@ -202,6 +202,7 @@ public class UIManager : Singleton<UIManager>
         endGameMenu.SetActive(false);
         onReplayMenu.SetActive(false);
         dailyMenu.SetActive(false);
+        inGameMenu.SetActive(false);
     }
 
     public void UpdateTextOnPurchaseMenuButton()
