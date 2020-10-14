@@ -18,6 +18,7 @@ public class UIManager : Singleton<UIManager>
     public GameObject purchaseMenu;
     public GameObject settingsMenu;
     public GameObject statsMenu;
+    public GameObject inGameMenu;
     public TMP_Text nextPlayButtonText;
 
     public TMP_Text purchaseBtnCoinsText;
@@ -116,6 +117,11 @@ public class UIManager : Singleton<UIManager>
     public void ToggleMainMenu()
     {
         mainMenu.SetActive(!mainMenu.activeInHierarchy);
+    }
+
+    public void ToggleInGameMenu()
+    {
+        inGameMenu.SetActive(!inGameMenu.activeInHierarchy);
     }
 
     public void ToggleAboutMenu()

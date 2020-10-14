@@ -33,7 +33,7 @@ public static class LevelGenerator
 
     private static int GetLevelTime(int pathLength)
     {
-        return pathLength * 3;
+        return (int)(pathLength * 0.9);
     }
 
     private static int GetMobQuantity(Dimensions mazeDimensions)
