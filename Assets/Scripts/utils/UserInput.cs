@@ -9,6 +9,7 @@ using UnityEngine;
 static class PlayerActionDetector
 {
     static private Vector3 touchStart;
+    static private Vector3 touchEnd;
     const double minSwipeDistance = 0.1;  //minimum distance for a swipe to be registered (fraction of screen height)
 
     public static MovableMovementCommand Detect()
@@ -34,9 +35,9 @@ static class PlayerActionDetector
             {
                 touchStart = touch.position;
             }
-            else if (touch.phase == TouchPhase.Ended)
+            else if (touch.phase == TouchPhase.Ended && (touchStart != Vector3.zero))
             {
-                Vector3 touchEnd = touch.position;
+                touchEnd = touch.position;
 
                 if (Vector3.Distance(touchStart, touchEnd) > minSwipeDistance * Screen.height)
                 {
@@ -45,14 +46,20 @@ static class PlayerActionDetector
                     {
                         return (touchEnd.x > touchStart.x) ? MovableMovementCommand.MoveRight : MovableMovementCommand.MoveLeft;
                     }
-                    else
+                    else if (Mathf.Abs(touchEnd.y - touchStart.y) > Mathf.Abs(touchEnd.x - touchStart.x))
                     {
                         return (touchEnd.y > touchStart.y) ? MovableMovementCommand.MoveUp : MovableMovementCommand.MoveDown;
                     }
                 }
             }
-        }
+        }        
         return null;
+    }
+
+    public static void ResetTouches()
+    {
+        touchStart = Vector3.zero;
+        touchEnd = Vector3.zero;
     }
 
     /// <summary>

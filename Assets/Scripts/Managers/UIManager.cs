@@ -19,6 +19,7 @@ public class UIManager : Singleton<UIManager>
     public GameObject settingsMenu;
     public GameObject statsMenu;
     public GameObject inGameMenu;
+    public GameObject helpMenu;
     public TMP_Text nextPlayButtonText;
 
     public TMP_Text purchaseBtnCoinsText;
@@ -186,8 +187,12 @@ public class UIManager : Singleton<UIManager>
     public void GoToDailyMenu()
     {
         LevelGenerator.GenerateDailyLevels();
-        mainMenu.SetActive(false);
         dailyMenu.SetActive(true);
+    }
+
+    public void ToggleHelpMenu()
+    {
+        helpMenu.SetActive(!helpMenu.activeInHierarchy);
     }
 
     public void HideAllMenus()
@@ -203,6 +208,7 @@ public class UIManager : Singleton<UIManager>
         onReplayMenu.SetActive(false);
         dailyMenu.SetActive(false);
         inGameMenu.SetActive(false);
+        helpMenu.SetActive(false);
     }
 
     public void UpdateTextOnPurchaseMenuButton()
