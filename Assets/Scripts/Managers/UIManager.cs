@@ -24,7 +24,6 @@ public class UIManager : Singleton<UIManager>
 
     public TMP_Text purchaseBtnCoinsText;
 
-
     public TMP_Text coinText;
 
     private bool _levelCompleted;

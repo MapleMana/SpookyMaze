@@ -8226,6 +8226,7 @@ MonoBehaviour:
   helpMenu: {fileID: 332256417}
   nextPlayButtonText: {fileID: 2787141332014819972}
   purchaseBtnCoinsText: {fileID: 906253007}
+  temptext: {fileID: 0}
   coinText: {fileID: 1188219113}
 --- !u!4 &1977626364
 Transform:

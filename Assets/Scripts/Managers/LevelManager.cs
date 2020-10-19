@@ -35,6 +35,7 @@ public class LevelManager : Singleton<LevelManager>
         Maze.Instance.Load(levelData.mazeState);
 
         Player.Instance.PlaceOn(Maze.Instance);
+        Player.Instance.Inventory.Clear();
         exitDoor.GetComponent<ExitDoor>().MoveToExit(Maze.Instance);
 
         _mobs = levelData.SpawnMovables();                
@@ -118,7 +119,6 @@ public class LevelManager : Singleton<LevelManager>
                 {"Time taken", timeAllowed - Player.Instance.TimeLeft},
                 {"TIme allowed", timeAllowed}
             });
-            
             LightManager.Instance.TurnOn();
             CameraManager.Instance.FocusOnMaze(Maze.Instance);
             SaveLevelProgress();
