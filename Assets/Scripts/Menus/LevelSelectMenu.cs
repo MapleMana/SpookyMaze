@@ -42,6 +42,7 @@ public class LevelSelectMenu : MonoBehaviour
             GameManager.Instance.CurrentSettings.dimensions = new Dimensions(width, height);
 
             List<string> possiblePacks = LevelIO.GetPossiblePackIds(GameManager.Instance.CurrentSettings);
+            possiblePacks.Sort();
 
             foreach(string pack in possiblePacks)
             {
