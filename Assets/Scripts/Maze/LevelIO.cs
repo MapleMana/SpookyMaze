@@ -90,14 +90,18 @@ public class LevelData
     public string[] gameModes;
     public List<SerMovable> movables;
     public int points;
+    public bool unlocked;
+    public bool complete;
 
-    public LevelData(Maze maze, float levelTime, string[] modeNames, List<SerMovable> mobs, int levelPoints)
+    public LevelData(Maze maze, float levelTime, string[] modeNames, List<SerMovable> mobs, int levelPoints, bool levelUnlocked, bool levelComplete)
     {
         mazeState = new MazeState(maze);
         time = levelTime;
         gameModes = modeNames;
         movables = mobs;
         points = levelPoints;
+        unlocked = levelUnlocked;
+        complete = levelComplete;
     }
 
     public List<Movable> SpawnMovables()
@@ -109,10 +113,7 @@ public class LevelData
     {
         return new CombinedGM(
             name: "", 
-            gameModes.Select(name => {
-                Type GMType = Type.GetType(name);
-                return (GameMode)Activator.CreateInstance(GMType);
-            }).ToArray()
+            gameModes.Select(GameMode.FromName).ToArray()
         );
     }
 }
@@ -122,15 +123,19 @@ public class LevelSettings
     public string gameMode;
     public Dimensions dimensions;
     public int id;
-    public string ModeDimensions => $"{this.gameMode}{this.dimensions}";
+    public bool isDaily;
+    public string packId;
+    public string ModeDimensions => $"{this.gameMode}{this.dimensions}{this.packId}";
 
     public LevelSettings() { }
 
-    public LevelSettings(string gameMode, Dimensions dimensions, int id)
+    public LevelSettings(string gameMode, Dimensions dimensions, int id, string packId="", bool isDaily=false)
     {
         this.gameMode = gameMode;
         this.dimensions = dimensions;
         this.id = id;
+        this.isDaily = isDaily;
+        this.packId = packId;
     }
 
     public string GetReadableGameMode()
@@ -143,7 +148,7 @@ public class LevelSettings
 
     public override string ToString()
     {
-        return $"{gameMode}/{dimensions}/{id}";
+        return isDaily ? $"/Daily/{gameMode}/{id}" : $"/{gameMode}/{dimensions}/{packId}/{id}";
     }
 }
 
@@ -207,9 +212,17 @@ public static class LevelIO
 
     public static List<int> GetPossibleIds(LevelSettings levelSettings)
     {
-        List<string> mazeFiles = GetSubdirectoryNames($"{Root}/{levelSettings.gameMode}/{levelSettings.dimensions}");
+        List<string> mazeFiles = GetSubdirectoryNames($"{Root}/{levelSettings.gameMode}/{levelSettings.dimensions}/{levelSettings.packId}");
         return mazeFiles
             .Select(mazeFile => int.Parse(mazeFile))
+            .ToList();
+    }
+
+    public static List<string> GetPossiblePackIds(LevelSettings levelSettings)
+    {
+        List<string> packIds = GetSubdirectoryNames($"{Root}/{levelSettings.gameMode}/{levelSettings.dimensions}");
+        return packIds
+            .Select(packId => packId)
             .ToList();
     }
 }

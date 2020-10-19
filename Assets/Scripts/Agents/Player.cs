@@ -20,6 +20,11 @@ public class Player : Movable
     public Stack<ItemType> Inventory { get; private set; }
     public float TimeLeft { get => _time; set => _time = value; }
 
+    public ParticleSystem torchParticleSystem;
+    private ParticleSystem.EmissionModule torchParticleSystemEmission;
+    private const float EMISSION_CONSTANT = 1.25f;
+    private const float MAX_EMISSION = 80f;
+
     protected override void Awake()
     {
         base.Awake();
@@ -44,6 +49,9 @@ public class Player : Movable
     {
         Light = GetComponentInChildren<Light>();
         DefaultLightIntensity = Light.intensity;
+
+        // set new emission for torch particle system
+        torchParticleSystemEmission = torchParticleSystem.emission;
     }
 
     public void SubtractTime(float power=1)
@@ -53,6 +61,9 @@ public class Player : Movable
             float dt = LevelManager.Instance.LevelIs(LevelState.InReplayReversed) ? -1 : 1;
             TimeLeft = Mathf.Clamp(TimeLeft - power * Speed / 30 * dt * Time.deltaTime, 0, LevelManager.Instance.LevelData.time);
             Light.spotAngle = Mathf.Lerp(minLightAngle, maxLightAngle, TimeLeft / LevelManager.Instance.LevelData.time);
+
+            // diminish torch particle system as light diminishes
+            torchParticleSystemEmission.rateOverTime = Mathf.Clamp(TimeLeft * EMISSION_CONSTANT, 0, MAX_EMISSION);
         }
     }
 

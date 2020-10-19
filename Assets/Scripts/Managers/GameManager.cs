@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Advertisements;
 using UnityEngine.SceneManagement;
 
 public class GameManager : Singleton<GameManager>
@@ -13,7 +14,6 @@ public class GameManager : Singleton<GameManager>
     private void OnEnable()
     {
         SceneManager.sceneLoaded += OnFullLoad;
-        //ScoreMenu.Open();
     }
 
     private void OnDisable()
@@ -24,11 +24,26 @@ public class GameManager : Singleton<GameManager>
     private void Start()
     {
         Maze.Initialize();
-        int levelsGenerated = PlayerPrefs.GetInt("generated", 0);
+        UpdateDailyLevels();
+        int levelsGenerated = PlayerPrefs.GetInt("Generated", 0);
         if (levelsGenerated == 0)
         {
             LevelGenerator.GenerateLevels();
-            PlayerPrefs.SetInt("generated", 1);
+            PlayerPrefs.SetInt("Generated", 1);
+        }
+    }
+
+    private void UpdateDailyLevels()
+    {
+        int currentDayNumber = (int)(DateTimeOffset.Now.ToUnixTimeSeconds() / (3600 * 24));
+        int lastVisited = PlayerPrefs.GetInt("LastVisited");
+
+        if (currentDayNumber != lastVisited)
+        {
+            PlayerPrefs.SetInt("LastVisited", currentDayNumber);
+            PlayerPrefs.SetInt("OpenedDailyLevelsClassic", 0);
+            PlayerPrefs.SetInt("OpenedDailyLevelsDungeon", 0);
+            PlayerPrefs.SetInt("OpenedDailyLevelsCursed House", 0);
         }
     }
 
@@ -47,5 +62,25 @@ public class GameManager : Singleton<GameManager>
     {
         LevelData levelData = LevelIO.LoadLevel(CurrentSettings);
         LevelManager.Instance.Initialize(levelData);
+    }
+
+    /// <summary>
+    /// Called in purchase menu
+    /// Adds coins to player's total after purchase
+    /// </summary>
+    public void PurchaseCoins(int amount)
+    {
+        int currentAmount = PlayerPrefs.GetInt("PlayersCoins", 0);
+        int newAmount = currentAmount + amount;
+        PlayerPrefs.SetInt("PlayersCoins", newAmount);
+    }
+
+    public bool IsLastLevel()
+    {
+        if (CurrentSettings.isDaily)
+        {
+            return CurrentSettings.id == LevelGenerator.NUM_OF_DAILY_LEVELS;
+        }
+        return CurrentSettings.id == LevelGenerator.NUM_OF_LEVELS;
     }
 }

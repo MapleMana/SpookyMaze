@@ -4,7 +4,14 @@ using UnityEngine;
 
 public abstract class GenerationStrategy
 {
+    protected Maze _maze;
+
     public abstract void Generate();
+
+    public GenerationStrategy(Maze maze)
+    {
+        _maze = maze;
+    }
     
     /// <summary>
     /// Changes the state of the specified wall
@@ -15,8 +22,8 @@ public abstract class GenerationStrategy
     internal void ChangeWall(Vector2Int position, Vector2Int direction, WallState wallState)
     {
         Vector2Int neighbour = position + direction;
-        Maze.Instance[position].SetWall(direction, wallState);
-        Maze.Instance[neighbour].SetWall(direction * -1, wallState);
+        _maze[position].SetWall(direction, wallState);
+        _maze[neighbour].SetWall(direction * -1, wallState);
     }
 }
 
@@ -24,7 +31,7 @@ public class DFSGeneration : GenerationStrategy
 {
     Dictionary<Vector2Int, bool> visited;
 
-    public DFSGeneration()
+    public DFSGeneration(Maze maze) : base(maze)
     {
         visited = new Dictionary<Vector2Int, bool>();
     }
@@ -41,7 +48,7 @@ public class DFSGeneration : GenerationStrategy
         foreach (Vector2Int direction in neighboursOrder)
         {
             Vector2Int newPos = curPos + direction;
-            if (Maze.Instance.InBounds(newPos) && !visited.ContainsKey(newPos))
+            if (_maze.InBounds(newPos) && !visited.ContainsKey(newPos))
             {
                 ChangeWall(curPos, direction, WallState.Destroyed);
                 DFS(newPos);
@@ -54,14 +61,16 @@ public class DFSGeneration : GenerationStrategy
     /// </summary>
     public override void Generate()
     {
-        Maze.Instance.Fill();
+        _maze.Fill();
         visited.Clear();
-        DFS(Maze.Instance.StartPos);
+        DFS(_maze.StartPos);
     }
 }
 
 public class BFSGeneration : GenerationStrategy
 {
+    public BFSGeneration(Maze maze) : base(maze) {}
+
     /// <summary>
     /// Generates the maze using the Breadth First Search algorithm. 
     /// Randomness is added by randomly selecting if the cell will proceed to the next stage of the BFS
@@ -69,11 +78,11 @@ public class BFSGeneration : GenerationStrategy
     /// </summary>
     public override void Generate()
     {
-        Maze.Instance.Fill();
+        _maze.Fill();
         Stack<Vector2Int> stage = new Stack<Vector2Int>();
         Dictionary<Vector2Int, bool> visited = new Dictionary<Vector2Int, bool>();
-        stage.Push(Maze.Instance.StartPos);
-        visited[Maze.Instance.StartPos] = true;
+        stage.Push(_maze.StartPos);
+        visited[_maze.StartPos] = true;
         while (stage.Count != 0)
         {
             Stack<Vector2Int> nextStage = new Stack<Vector2Int>();
@@ -85,7 +94,7 @@ public class BFSGeneration : GenerationStrategy
                 foreach (Vector2Int direction in MazeCell.neighbours)
                 {
                     Vector2Int newPos = curPos + direction;
-                    if (Maze.Instance.InBounds(newPos) && !visited.ContainsKey(newPos))
+                    if (_maze.InBounds(newPos) && !visited.ContainsKey(newPos))
                     {
                         visited[newPos] = true;
                         ChangeWall(curPos, direction, WallState.Destroyed);
@@ -101,6 +110,8 @@ public class BFSGeneration : GenerationStrategy
 
 public class BranchedDFSGeneration : GenerationStrategy
 {
+    public BranchedDFSGeneration(Maze maze) : base(maze) {}
+
     Stack<T> ReverseStack<T>(Stack<T> stack)
     {
         Stack<T> result = new Stack<T>();
@@ -116,18 +127,18 @@ public class BranchedDFSGeneration : GenerationStrategy
     /// </summary>
     public override void Generate()
     {
-        Maze.Instance.Fill();
+        _maze.Fill();
         Stack<Vector2Int> path = new Stack<Vector2Int>();
         Dictionary<Vector2Int, bool> visited = new Dictionary<Vector2Int, bool>();
-        path.Push(Maze.Instance.StartPos);
+        path.Push(_maze.StartPos);
         while (path.Count != 0)
         {
             Vector2Int curPos = path.Peek();
             visited[curPos] = true;
 
-            if (curPos == Maze.Instance.EndPos && path.Count > 1)
+            if (curPos == _maze.EndPos && path.Count > 1)
             {
-                path = ReverseStack<Vector2Int>(path);
+                path = ReverseStack(path);
                 continue;
             }
 
@@ -136,7 +147,7 @@ public class BranchedDFSGeneration : GenerationStrategy
             foreach (Vector2Int direction in MazeCell.neighbours)
             {
                 Vector2Int newPos = curPos + direction;
-                if (Maze.Instance.InBounds(newPos) && !visited.ContainsKey(newPos))
+                if (_maze.InBounds(newPos) && !visited.ContainsKey(newPos))
                 {
                     path.Push(newPos);
                     ChangeWall(curPos, direction, WallState.Destroyed);

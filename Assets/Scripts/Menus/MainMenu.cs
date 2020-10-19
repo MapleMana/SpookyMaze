@@ -5,18 +5,9 @@ using UnityEngine;
 
 public class MainMenu : Menu<MainMenu>
 {
-    public TMP_Text Coins;
-
     protected override void Awake()
     {
         base.Awake();
-        InstantiateScore();
-    }
-
-    private void InstantiateScore()
-    {
-        TMP_Text playerCoins = Instantiate(Coins, MainMenu.Instance.transform, false);
-        playerCoins.text = $"Coins: {PlayerPrefs.GetInt("PlayersCoins", 0)}";
     }
 
     public void OnAboutPressed()
@@ -26,6 +17,7 @@ public class MainMenu : Menu<MainMenu>
 
     public void OnModePressed(string modeName)
     {
+        GameManager.Instance.CurrentSettings.isDaily = false;
         GameManager.Instance.CurrentSettings.gameMode = modeName;
         DimensionsMenu.Open();
     }
@@ -35,9 +27,10 @@ public class MainMenu : Menu<MainMenu>
         SettingsMenu.Open();
     }
 
-    public void OnDimensionPressed()
+    public void OnDailyPressed()
     {
-        LevelSelectMenu.Open();
+        GameManager.Instance.CurrentSettings.isDaily = true;
+        DailyMenu.Open();
     }
 
     public override void OnBackPressed()

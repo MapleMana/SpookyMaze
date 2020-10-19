@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.Analytics;
 
 public class LevelManager : Singleton<LevelManager>
 {
@@ -11,23 +12,33 @@ public class LevelManager : Singleton<LevelManager>
     private LevelData _levelData;
     private List<Movable> _mobs;
 
+    private float timeAllowed = 0;
+
     public GameMode GameMode { get; set; }
     public LevelData LevelData { get => _levelData; }
+
+    public GameObject exitDoor;
 
     public bool LevelIs(LevelState state) => (_levelState & state) != 0;
 
     public void Initialize(LevelData levelData)
     {
+        UIManager.Instance.ToggleInGameMenu();
+        Movable.ClearHistory();
+        PlayerActionDetector.ResetTouches();
         _levelData = levelData;
         _levelState = LevelState.InProgress;
         Player.Instance.TimeLeft = levelData.time;
+        timeAllowed = levelData.time;
         GameMode = levelData.GetGameMode();
 
         Maze.Instance.Load(levelData.mazeState);
 
         Player.Instance.PlaceOn(Maze.Instance);
-        _mobs = levelData.SpawnMovables();
-        Movable.ClearHistory();
+        Player.Instance.Inventory.Clear();
+        exitDoor.GetComponent<ExitDoor>().MoveToExit(Maze.Instance);
+
+        _mobs = levelData.SpawnMovables();                
     }
 
     void ResetState()
@@ -97,26 +108,42 @@ public class LevelManager : Singleton<LevelManager>
     /// </summary>
     public void EndLevel(bool mazeCompleted)
     {
+        PlayerActionDetector.ResetTouches();
+        UIManager.Instance.ToggleInGameMenu();
         _levelState = mazeCompleted ? LevelState.Completed : LevelState.Failed;
-
+        //Debug.Log($"{GameManager.Instance.CurrentSettings.ToString()} - Time Taken: {timeAllowed - Player.Instance.TimeLeft} / Time Allowed: {timeAllowed}");
         if (mazeCompleted)
         {
+            AnalyticsEvent.LevelComplete(GameManager.Instance.CurrentSettings.ToString(), new Dictionary<string, object>
+            {
+                {"Time taken", timeAllowed - Player.Instance.TimeLeft},
+                {"TIme allowed", timeAllowed}
+            });
             LightManager.Instance.TurnOn();
             CameraManager.Instance.FocusOnMaze(Maze.Instance);
             SaveLevelProgress();
+            if (!GameManager.Instance.IsLastLevel())
+            {
+                GameManager.Instance.CurrentSettings.id++;
+            }
         }
+        else
+        {
+            AnalyticsEvent.LevelFail(GameManager.Instance.CurrentSettings.ToString());
+        }        
         UIManager.Instance.ShowFinishMenu(mazeCompleted);
     }
 
     private void SaveLevelProgress()
     {
         LevelSettings currentLevelSettings = GameManager.Instance.CurrentSettings;
-        string modeDimension = currentLevelSettings.ModeDimensions;
-        if (PlayerPrefs.GetInt(modeDimension) < ++currentLevelSettings.id)
+        LevelData currentLevelData = LevelIO.LoadLevel(currentLevelSettings);
+        if (!currentLevelData.complete)
         {
-            PlayerPrefs.SetInt(modeDimension, currentLevelSettings.id);
             IncreasePlayerScore();
-        }
+            currentLevelData.complete = true;            
+            LevelIO.SaveLevel(currentLevelSettings, currentLevelData);            
+        }       
     }
 
     private void IncreasePlayerScore()
@@ -139,7 +166,7 @@ public class LevelManager : Singleton<LevelManager>
             if (Player.Instance.TimeLeft < Mathf.Epsilon)
             {
                 EndLevel(mazeCompleted: false);
-            }
+            }   
 
             if (GameMode.GameEnded())
             {
@@ -156,11 +183,7 @@ public class LevelManager : Singleton<LevelManager>
             Destroy(mob.gameObject);
         }
         _mobs.Clear();
-
-        if (OnReplayMenu.Instance)
-        {
-            OnReplayMenu.Close();
-        }
+        UIManager.Instance.onReplayMenu.SetActive(false);
     }
 
     protected override void OnDestroy()
