@@ -116,8 +116,7 @@ public class LevelManager : Singleton<LevelManager>
         {
             AnalyticsEvent.LevelComplete(GameManager.Instance.CurrentSettings.ToString(), new Dictionary<string, object>
             {
-                {"Time taken", timeAllowed - Player.Instance.TimeLeft},
-                {"TIme allowed", timeAllowed}
+                {"Time", $"GameManager.Instance.CurrentSettings.ToString():{timeAllowed - Player.Instance.TimeLeft}/{timeAllowed}"}
             });
             LightManager.Instance.TurnOn();
             CameraManager.Instance.FocusOnMaze(Maze.Instance);

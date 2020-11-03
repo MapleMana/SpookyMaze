@@ -22,9 +22,9 @@ public class UIManager : Singleton<UIManager>
     public GameObject helpMenu;
     public TMP_Text nextPlayButtonText;
 
-    public TMP_Text purchaseBtnCoinsText;
+    public Text purchaseBtnCoinsText;
 
-    public TMP_Text coinText;
+    public Text coinText;
 
     private bool _levelCompleted;
     public bool LevelCompleted { get => _levelCompleted; set => _levelCompleted = value; }
