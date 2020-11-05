@@ -9,6 +9,8 @@ public class StatsMenu : MonoBehaviour
     public Text dungeonText;
     public Text cursedHouseText;
     public Text totalText;
+    public Text statsBtnText;
+    public Text statsEndGameBtnText;
 
     public void UpdateStatsText()
     {
@@ -35,6 +37,8 @@ public class StatsMenu : MonoBehaviour
         }
 
         totalText.text = $"TOTAL LEVELS COMPLETED: {total}";
+        statsBtnText.text = $"{total}";
+        statsEndGameBtnText.text = $"{total}";
     }
 
     public void OpenStatsMenu()

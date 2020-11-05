@@ -13,6 +13,8 @@ public class StatsManager : Singleton<StatsManager>
     [SerializeField]
     public Dictionary<string, int> cursedHouseStats = new Dictionary<string, int>();
 
+    public StatsMenu statsMenu;
+
     private string pathClassic;
     private string pathDungeon;
     private string pathCursedHouse;
@@ -25,7 +27,6 @@ public class StatsManager : Singleton<StatsManager>
 
         if (PlayerPrefs.GetInt("StatsGenerated", 0) == 0)
         {
-            Debug.Log("generate stats");
             GenerateStats();
             PlayerPrefs.SetInt("StatsGenerated", 1);
         }
@@ -33,6 +34,7 @@ public class StatsManager : Singleton<StatsManager>
         {
             LoadStats();
         }
+        statsMenu.UpdateStatsText();
     }
 
     private void GenerateStats()
@@ -57,7 +59,33 @@ public class StatsManager : Singleton<StatsManager>
 
     public void AddCompletedLevel(string gameMode, string dimensions)
     {
-
+        switch (gameMode)
+        {
+            case "Classic":
+                if (classicStats.ContainsKey(dimensions))
+                {
+                    classicStats[dimensions] += 1;
+                    SaveStats(pathClassic, classicStats);
+                }
+                break;
+            case "Dungeon":
+                if (dungeonStats.ContainsKey(dimensions))
+                {
+                    dungeonStats[dimensions] += 1;
+                    SaveStats(pathDungeon, dungeonStats);
+                }
+                break;
+            case "Cursed House":
+                if (cursedHouseStats.ContainsKey(dimensions))
+                {
+                    cursedHouseStats[dimensions] += 1;
+                    SaveStats(pathCursedHouse, cursedHouseStats);
+                }
+                break;
+            default:
+                break;
+        }
+        statsMenu.UpdateStatsText();
     }
 
     public void SaveStats(string path, Dictionary<string, int> dictionary)

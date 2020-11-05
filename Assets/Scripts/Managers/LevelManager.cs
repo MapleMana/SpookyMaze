@@ -111,13 +111,13 @@ public class LevelManager : Singleton<LevelManager>
         PlayerActionDetector.ResetTouches();
         UIManager.Instance.ToggleInGameMenu();
         _levelState = mazeCompleted ? LevelState.Completed : LevelState.Failed;
-        //Debug.Log($"{GameManager.Instance.CurrentSettings.ToString()} - Time Taken: {timeAllowed - Player.Instance.TimeLeft} / Time Allowed: {timeAllowed}");
         if (mazeCompleted)
         {
             AnalyticsEvent.LevelComplete(GameManager.Instance.CurrentSettings.ToString(), new Dictionary<string, object>
             {
                 {"Time", $"GameManager.Instance.CurrentSettings.ToString():{timeAllowed - Player.Instance.TimeLeft}/{timeAllowed}"}
             });
+            StatsManager.Instance.AddCompletedLevel(GameManager.Instance.CurrentSettings.gameMode, GameManager.Instance.CurrentSettings.dimensions.ToString());
             LightManager.Instance.TurnOn();
             CameraManager.Instance.FocusOnMaze(Maze.Instance);
             SaveLevelProgress();
