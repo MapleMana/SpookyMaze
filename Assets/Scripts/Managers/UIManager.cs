@@ -20,7 +20,9 @@ public class UIManager : Singleton<UIManager>
     public GameObject statsMenu;
     public GameObject inGameMenu;
     public GameObject helpMenu;
-    public TMP_Text nextPlayButtonText;
+    public Image nextPlayButtonImage;
+    public Sprite nextLevelImage;
+    public Sprite replayLevelImage;
 
     public Text purchaseBtnCoinsText;
 
@@ -64,7 +66,7 @@ public class UIManager : Singleton<UIManager>
     /// </summary>
     public void SetNextActionText()
     {
-        nextPlayButtonText.text = _levelCompleted ? "Go to the Next Level" : "Play Again";
+        nextPlayButtonImage.GetComponent<Image>().sprite = _levelCompleted ? nextLevelImage : replayLevelImage;
     }
 
     /// <summary>
@@ -88,6 +90,16 @@ public class UIManager : Singleton<UIManager>
         LevelManager.Instance.WatchReplay(
             onComplete: () => UIManager.Instance.ShowFinishMenu(_levelCompleted)
         );
+    }
+
+    /// <summary>
+    /// Restarts current level. Fired from InGamehMenu.
+    /// </summary>
+    public void RestartLevel()
+    {
+        Movable.ClearHistory();
+        ToggleInGameMenu();
+        GameManager.Instance.LoadLevel();
     }
 
     /// <summary>
