@@ -55,7 +55,11 @@ public class MazeCell : System.IDisposable
     /// <returns></returns>
     public bool WallExists(Vector2Int direction)
     {
-        return _wallState[direction] == WallState.Exists;
+        if (direction != Vector2Int.zero)
+        {
+            return _wallState[direction] == WallState.Exists;
+        }
+        return false;
     }
 
     /// <summary>

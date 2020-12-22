@@ -51,6 +51,10 @@ static class PlayerActionDetector
                         return (touchEnd.y > touchStart.y) ? MovableMovementCommand.MoveUp : MovableMovementCommand.MoveDown;
                     }
                 }
+                else if (touchStart == touchEnd)
+                {
+                    return MovableMovementCommand.Stop;
+                }
             }
         }        
         return null;
@@ -83,6 +87,10 @@ static class PlayerActionDetector
         if (Input.GetKeyUp(KeyCode.RightArrow))
         {
             return MovableMovementCommand.MoveRight;
+        }
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            return MovableMovementCommand.Stop;
         }
         return null;
     }

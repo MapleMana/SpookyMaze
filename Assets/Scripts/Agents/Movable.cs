@@ -102,13 +102,18 @@ public abstract class Movable : MonoBehaviour
         _commandHistory.Add(new KeyValuePair<Movable, MovableCommand>(movingObject, command));
     }
 
+    public void RemoveLastHistory(Movable movingObject)
+    {
+        //_commandHistory.Remove(movingObject.)
+    }
+
     /// <summary>
     /// Replays player command history
     /// </summary>
     /// <param name="reversed">Whether the execution should be reversed (both order and individual commands)</param>
     /// <param name="initialPosition">The starting position of the player. If null, current position is taken.</param>
     /// <param name="timeMultiplier">The number of times the replay should be sped up</param>
-    /// <param name="onComplete">Action to perform after the replay is comlete</param>
+    /// <param name="onComplete">Action to perform after the replay is complete</param>
     /// <returns>A coroutine to execute</returns>
     public static IEnumerator ReplayCommands(
         bool reversed = false,

@@ -78,6 +78,12 @@ public class Player : Movable
         MovableMovementCommand command = PlayerActionDetector.Detect();
         if (command != null && command.Execute(this).Succeeded)
         {
+            if (command == MovableMovementCommand.Stop)
+            {
+                // remove last command
+                // add new commend that moves player to their current position
+                transform.position = transform.position;
+            }
             AddToHistory(this, command);
             MoveToDecisionPoint(incomingDirection: command.Direction);
         }
@@ -88,10 +94,10 @@ public class Player : Movable
     /// </summary>
     private void MoveToDecisionPoint(Vector2Int incomingDirection)
     {
-        List<Vector2Int> movementSequence = Maze.Instance.GetSequenceToDicisionPoint(
+        List<Vector2Int> movementSequence = incomingDirection != Vector2Int.zero ? Maze.Instance.GetSequenceToDicisionPoint(
             position: MazePosition,
             incomingDirection: incomingDirection
-        );
+        ) : null;
         List<MovableCommand> commandSequence = new List<MovableCommand>();
         for (int i = 0; i < movementSequence.Count; i++)
         {
