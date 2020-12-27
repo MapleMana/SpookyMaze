@@ -73,19 +73,22 @@ public class Player : Movable
         base.Update();
     }
 
+    /*public override void PerformMovement()
+    {
+        MovableMovementCommand command = PlayerActionDetector.Detect();        
+        if ((command != null) && command.Execute(this).Succeeded)
+        {
+            AddToHistory(this, command);
+            MoveToDecisionPoint(incomingDirection: command.Direction);
+        }
+    }*/
     public override void PerformMovement()
     {
         MovableMovementCommand command = PlayerActionDetector.Detect();
-        if (command != null && command.Execute(this).Succeeded)
+        if ((command != null) && command.Execute(this).Succeeded)
         {
-            if (command == MovableMovementCommand.Stop)
-            {
-                // remove last command
-                // add new commend that moves player to their current position
-                transform.position = transform.position;
-            }
             AddToHistory(this, command);
-            MoveToDecisionPoint(incomingDirection: command.Direction);
+            MoveToNextSquare(incomingDirection: command.Direction);
         }
     }
 
@@ -94,10 +97,10 @@ public class Player : Movable
     /// </summary>
     private void MoveToDecisionPoint(Vector2Int incomingDirection)
     {
-        List<Vector2Int> movementSequence = incomingDirection != Vector2Int.zero ? Maze.Instance.GetSequenceToDicisionPoint(
+        List<Vector2Int> movementSequence = Maze.Instance.GetSequenceToDicisionPoint(
             position: MazePosition,
             incomingDirection: incomingDirection
-        ) : null;
+        );
         List<MovableCommand> commandSequence = new List<MovableCommand>();
         for (int i = 0; i < movementSequence.Count; i++)
         {
@@ -110,6 +113,27 @@ public class Player : Movable
             playerCommands: commandSequence,
             waitBefore: true
         ));
+    }
+
+    private void MoveToNextSquare(Vector2Int incomingDirection)
+    {
+        incomingDirection = Maze.Instance.GetNextPoint(
+                position: MazePosition,
+                incomingDirection: incomingDirection);
+        while (incomingDirection != Vector2Int.zero)
+        {
+            MovableMovementCommand newMovement = MovableMovementCommand.FromVector(incomingDirection);
+            if ((newMovement != null) && newMovement.Execute(this).Succeeded)
+            {
+                StartCoroutine(PlayCommandInRealTime(
+                    playerCommand: newMovement,
+                    waitBefore: true
+                ));                
+            }
+            incomingDirection = Maze.Instance.GetNextPoint(
+                    position: MazePosition,
+                    incomingDirection: incomingDirection);
+        }
     }
 
     public override bool Move(Vector2Int direction)

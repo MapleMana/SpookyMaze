@@ -102,11 +102,6 @@ public abstract class Movable : MonoBehaviour
         _commandHistory.Add(new KeyValuePair<Movable, MovableCommand>(movingObject, command));
     }
 
-    public void RemoveLastHistory(Movable movingObject)
-    {
-        //_commandHistory.Remove(movingObject.)
-    }
-
     /// <summary>
     /// Replays player command history
     /// </summary>
@@ -146,7 +141,6 @@ public abstract class Movable : MonoBehaviour
         bool waitBefore=false)
     {
         //pauseBetweenCommands -= Time.deltaTime;
-
         Moving = true;
 
         if (waitBefore)
@@ -163,6 +157,26 @@ public abstract class Movable : MonoBehaviour
 
                 yield return new WaitForSeconds(MazeCell.CELL_WIDTH / Speed);
             }
+        }
+        Moving = false;
+    }
+
+    protected IEnumerator PlayCommandInRealTime(
+        MovableCommand playerCommand,
+        bool waitBefore = false)
+    {
+        Moving = true;
+
+        if (waitBefore)
+        {
+            yield return new WaitForSeconds(MazeCell.CELL_WIDTH / Speed);
+        }
+        if (Moving)
+        {
+            playerCommand.Execute(this);
+            AddToHistory(this, playerCommand);
+
+            yield return new WaitForSeconds(MazeCell.CELL_WIDTH / Speed);
         }
         Moving = false;
     }
