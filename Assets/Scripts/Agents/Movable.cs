@@ -162,22 +162,38 @@ public abstract class Movable : MonoBehaviour
     }
 
     protected IEnumerator PlayCommandInRealTime(
-        MovableCommand playerCommand,
+        MovableMovementCommand playerCommand,
         bool waitBefore = false)
     {
         Moving = true;
-
+        MovableMovementCommand newMovement = playerCommand;
         if (waitBefore)
         {
             yield return new WaitForSeconds(MazeCell.CELL_WIDTH / Speed);
         }
-        if (Moving)
+        while (Moving)
         {
-            playerCommand.Execute(this);
-            AddToHistory(this, playerCommand);
+            newMovement.Execute(this);
+            AddToHistory(this, newMovement);
 
             yield return new WaitForSeconds(MazeCell.CELL_WIDTH / Speed);
-        }
-        Moving = false;
+
+            if (newMovement == MovableMovementCommand.Stop)
+            {
+                Moving = false;
+            }
+            if (Moving)
+            {                
+                Vector2Int incomingDirection = Maze.Instance.GetNextPoint(
+                                position: MazePosition,
+                                incomingDirection: playerCommand.Direction);
+                newMovement = MovableMovementCommand.FromVector(incomingDirection);
+                Debug.Log("next 3: " + MazePosition + ", incomingDirection " + incomingDirection);
+                
+            }            
+        } 
+
+        //Moving = false;
+        Debug.Log("end: " + MazePosition);
     }
 }

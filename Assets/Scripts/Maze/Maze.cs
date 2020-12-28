@@ -97,7 +97,7 @@ public class Maze
 
     public Vector2Int GetNextPoint(Vector2Int position, Vector2Int incomingDirection)
     {
-        return Grid[position].GetCorridorOpening(incomingDirection * -1);
+        return Grid[position += incomingDirection].GetCorridorOpening(incomingDirection * -1);
     }
 
     public List<Vector2Int> GetRandomPositions(int quantity)
