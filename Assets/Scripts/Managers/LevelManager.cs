@@ -21,6 +21,9 @@ public class LevelManager : Singleton<LevelManager>
 
     public bool LevelIs(LevelState state) => (_levelState & state) != 0;
 
+    private float frationOfTimeLeft = 0.15f;
+    private float endOfLevelSpeed = 1.25f;
+
     public void Initialize(LevelData levelData)
     {
         UIManager.Instance.ToggleInGameMenu();
@@ -61,6 +64,11 @@ public class LevelManager : Singleton<LevelManager>
         else if (LevelIs(LevelState.InReplayReversed))
         {
             return 1 / GameManager.Instance.reversedReplayMultiplier;
+        }
+        else if (LevelIs(LevelState.InProgress))
+        {
+            // increase player speed near end of allowed time
+            return Player.Instance.TimeLeft < (timeAllowed * frationOfTimeLeft) ? endOfLevelSpeed : 1f;
         }
         return 1;
     }
