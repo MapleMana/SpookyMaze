@@ -8,6 +8,8 @@ using UnityEngine.Analytics;
 
 public class LevelManager : Singleton<LevelManager>
 {
+    public GameObject plane;
+
     private LevelState _levelState;
     private LevelData _levelData;
     private List<Movable> _mobs;
@@ -41,7 +43,9 @@ public class LevelManager : Singleton<LevelManager>
         Player.Instance.Inventory.Clear();
         exitDoor.GetComponent<ExitDoor>().MoveToExit(Maze.Instance);
 
-        _mobs = levelData.SpawnMovables();                
+        _mobs = levelData.SpawnMovables();
+        plane.transform.localScale = new Vector3(Maze.Instance.Dimensions.Width, 1f, Maze.Instance.Dimensions.Height);
+        plane.transform.position = new Vector3(Maze.Instance.Dimensions.Width * 5f, 0f, Maze.Instance.Dimensions.Height * 5f);
     }
 
     void ResetState()
@@ -187,10 +191,16 @@ public class LevelManager : Singleton<LevelManager>
         Maze.Instance.Clear();
         foreach (Movable mob in _mobs)
         {
-            Destroy(mob.gameObject);
+            if (mob != null)
+            {
+                Destroy(mob.gameObject);
+            }            
         }
         _mobs.Clear();
-        UIManager.Instance.onReplayMenu.SetActive(false);
+        if (UIManager.Instance.onReplayMenu != null)
+        {
+            UIManager.Instance.onReplayMenu.SetActive(false);
+        }        
     }
 
     protected override void OnDestroy()

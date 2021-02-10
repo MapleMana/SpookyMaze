@@ -274,6 +274,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 469677f096e226c48b2c8c2ece988826, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  plane: {fileID: 39941531}
   exitDoor: {fileID: 2024332978}
 --- !u!4 &222210290
 Transform:
