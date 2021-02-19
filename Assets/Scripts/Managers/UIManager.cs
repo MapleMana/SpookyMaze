@@ -12,7 +12,9 @@ public class UIManager : Singleton<UIManager>
     public GameObject dailyMenu;
     public GameObject endGameMenu;
     public Button endGameNextLevelButton;
-    public GameObject levelSelectMenu;
+    public GameObject classicLevelSelectMenu;
+    public GameObject dungeonLevelSelectMenu;
+    public GameObject cursedHouseLevelSelectMenu;
     public GameObject mainMenu;
     public GameObject onReplayMenu;
     public GameObject purchaseMenu;
@@ -136,9 +138,9 @@ public class UIManager : Singleton<UIManager>
         inGameMenu.SetActive(!inGameMenu.activeInHierarchy);
     }
 
-    public void ToggleAboutMenu()
+    public void ToggleAboutMenu(bool active)
     {
-        aboutMenu.SetActive(!aboutMenu.activeInHierarchy);
+        aboutMenu.SetActive(active);
     }
 
     public void ToggleSettingsMenu()
@@ -148,17 +150,17 @@ public class UIManager : Singleton<UIManager>
 
     public void ToggleLevelSelectMenu(string modeName)
     {
-        if (levelSelectMenu.activeInHierarchy)
+        if (classicLevelSelectMenu.activeInHierarchy)
         {
-            levelSelectMenu.GetComponent<LevelSelectMenu>().ClearPanel();
-            levelSelectMenu.SetActive(false);
+            classicLevelSelectMenu.GetComponent<LevelSelectMenu>().ClearPanel();
+            classicLevelSelectMenu.SetActive(false);
         }
         else
         {
             GameManager.Instance.CurrentSettings.gameMode = modeName;
             GameManager.Instance.CurrentSettings.isDaily = false;
-            levelSelectMenu.GetComponent<LevelSelectMenu>().LoadDimensions();
-            levelSelectMenu.SetActive(true);
+            classicLevelSelectMenu.GetComponent<LevelSelectMenu>().LoadDimensions();
+            classicLevelSelectMenu.SetActive(true);
         }
     }
 
@@ -208,11 +210,11 @@ public class UIManager : Singleton<UIManager>
 
     public void HideAllMenus()
     {
-        levelSelectMenu.GetComponent<LevelSelectMenu>().ClearPanel();
+        classicLevelSelectMenu.GetComponent<LevelSelectMenu>().ClearPanel();
         mainMenu.SetActive(false);
         aboutMenu.SetActive(false);
         settingsMenu.SetActive(false);
-        levelSelectMenu.SetActive(false);
+        classicLevelSelectMenu.SetActive(false);
         purchaseMenu.SetActive(false);
         statsMenu.SetActive(false);
         endGameMenu.SetActive(false);
