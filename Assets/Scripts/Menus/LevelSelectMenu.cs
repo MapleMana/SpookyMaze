@@ -12,7 +12,6 @@ public class LevelSelectMenu : MonoBehaviour
     public Button levelSizeButtonTemplate;
     public GameObject levelSelectButtonsPanel;
     public Button levelSelectButtonTemplate;
-    public TMP_Text ModeName;
 
     private List<Button> buttonList;
     private List<GameObject> panelList;
@@ -25,13 +24,29 @@ public class LevelSelectMenu : MonoBehaviour
 
     private void Start()
     {
+        //LoadDimensions();
+    }
+
+    public void LoadMenu()
+    {
+        if (this.gameObject.name == "ClassicLevelSelectMenu")
+        {
+            GameManager.Instance.CurrentSettings.gameMode = "Classic";
+        }
+        else if (this.gameObject.name == "DungeonLevelSelectMenu")
+        {
+            GameManager.Instance.CurrentSettings.gameMode = "Dungeon";
+
+        }
+        else if (this.gameObject.name == "CursedHouseLevelSelectMenu")
+        {
+            GameManager.Instance.CurrentSettings.gameMode = "Cursed House";
+        }
         LoadDimensions();
     }
 
     public void LoadDimensions()
     {
-        ModeName.text = GameManager.Instance.CurrentSettings.GetReadableGameMode();
-
         buttonList = new List<Button>();
         panelList = new List<GameObject>();
         List<Dimensions> possibleDimensions = LevelIO.GetPossibleDimensions(GameManager.Instance.CurrentSettings);

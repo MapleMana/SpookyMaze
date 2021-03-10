@@ -36,6 +36,9 @@ public class UIManager : Singleton<UIManager>
     private void Start()
     {
         UpdateTextOnPurchaseMenuButton();
+        classicLevelSelectMenu.GetComponent<LevelSelectMenu>().LoadMenu();
+        dungeonLevelSelectMenu.GetComponent<LevelSelectMenu>().LoadMenu();
+        cursedHouseLevelSelectMenu.GetComponent<LevelSelectMenu>().LoadMenu();
     }
 
     /// <summary>
@@ -148,19 +151,45 @@ public class UIManager : Singleton<UIManager>
         settingsMenu.SetActive(!settingsMenu.activeInHierarchy);
     }
 
-    public void ToggleLevelSelectMenu(string modeName)
+    public void ToggleClassicLevelSelectMenu(string modeName)
     {
         if (classicLevelSelectMenu.activeInHierarchy)
         {
-            //classicLevelSelectMenu.GetComponent<LevelSelectMenu>().ClearPanel();
             classicLevelSelectMenu.SetActive(false);
         }
         else
         {
             GameManager.Instance.CurrentSettings.gameMode = modeName;
             GameManager.Instance.CurrentSettings.isDaily = false;
-            //classicLevelSelectMenu.GetComponent<LevelSelectMenu>().LoadDimensions();
             classicLevelSelectMenu.SetActive(true);
+        }
+    }
+
+    public void ToggleDungeonLevelSelectMenu(string modeName)
+    {
+        if (dungeonLevelSelectMenu.activeInHierarchy)
+        {
+            dungeonLevelSelectMenu.SetActive(false);
+        }
+        else
+        {
+            GameManager.Instance.CurrentSettings.gameMode = modeName;
+            GameManager.Instance.CurrentSettings.isDaily = false;
+            dungeonLevelSelectMenu.SetActive(true);
+        }
+    }
+
+    public void ToggleCursedHouseLevelSelectMenu(string modeName)
+    {
+        if (cursedHouseLevelSelectMenu.activeInHierarchy)
+        {
+            cursedHouseLevelSelectMenu.SetActive(false);
+        }
+        else
+        {
+            GameManager.Instance.CurrentSettings.gameMode = modeName;
+            GameManager.Instance.CurrentSettings.isDaily = false;
+            cursedHouseLevelSelectMenu.SetActive(true);
         }
     }
 
@@ -210,11 +239,12 @@ public class UIManager : Singleton<UIManager>
 
     public void HideAllMenus()
     {
-        classicLevelSelectMenu.GetComponent<LevelSelectMenu>().ClearPanel();
         mainMenu.SetActive(false);
         aboutMenu.SetActive(false);
         settingsMenu.SetActive(false);
         classicLevelSelectMenu.SetActive(false);
+        dungeonLevelSelectMenu.SetActive(false);
+        cursedHouseLevelSelectMenu.SetActive(false);
         purchaseMenu.SetActive(false);
         statsMenu.SetActive(false);
         endGameMenu.SetActive(false);

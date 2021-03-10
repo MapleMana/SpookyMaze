@@ -125,10 +125,10 @@ public class LevelManager : Singleton<LevelManager>
         _levelState = mazeCompleted ? LevelState.Completed : LevelState.Failed;
         if (mazeCompleted)
         {
-            AnalyticsEvent.LevelComplete(GameManager.Instance.CurrentSettings.ToString(), new Dictionary<string, object>
+            /*AnalyticsEvent.LevelComplete(GameManager.Instance.CurrentSettings.ToString(), new Dictionary<string, object>
             {
                 {"Time", $"GameManager.Instance.CurrentSettings.ToString():{timeAllowed - Player.Instance.TimeLeft}/{timeAllowed}"}
-            });
+            });*/
             StatsManager.Instance.AddCompletedLevel(GameManager.Instance.CurrentSettings.gameMode, GameManager.Instance.CurrentSettings.dimensions.ToString());
             LightManager.Instance.TurnOn();
             CameraManager.Instance.FocusOnMaze(Maze.Instance);
@@ -140,7 +140,7 @@ public class LevelManager : Singleton<LevelManager>
         }
         else
         {
-            AnalyticsEvent.LevelFail(GameManager.Instance.CurrentSettings.ToString());
+            //AnalyticsEvent.LevelFail(GameManager.Instance.CurrentSettings.ToString());
         }        
         UIManager.Instance.ShowFinishMenu(mazeCompleted);
     }
