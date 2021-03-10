@@ -152,14 +152,14 @@ public class UIManager : Singleton<UIManager>
     {
         if (classicLevelSelectMenu.activeInHierarchy)
         {
-            classicLevelSelectMenu.GetComponent<LevelSelectMenu>().ClearPanel();
+            //classicLevelSelectMenu.GetComponent<LevelSelectMenu>().ClearPanel();
             classicLevelSelectMenu.SetActive(false);
         }
         else
         {
             GameManager.Instance.CurrentSettings.gameMode = modeName;
             GameManager.Instance.CurrentSettings.isDaily = false;
-            classicLevelSelectMenu.GetComponent<LevelSelectMenu>().LoadDimensions();
+            //classicLevelSelectMenu.GetComponent<LevelSelectMenu>().LoadDimensions();
             classicLevelSelectMenu.SetActive(true);
         }
     }

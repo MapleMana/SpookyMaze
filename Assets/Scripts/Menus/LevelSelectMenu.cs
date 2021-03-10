@@ -21,7 +21,12 @@ public class LevelSelectMenu : MonoBehaviour
     private Color orange = new Color(248f/255f, 148f/255f, 6f/255f);
     private Slider currentSlider;
 
-    private const int COST_PER_PACK = 0; //200;
+    private const int COST_PER_PACK = 1; //200;
+
+    private void Start()
+    {
+        LoadDimensions();
+    }
 
     public void LoadDimensions()
     {
