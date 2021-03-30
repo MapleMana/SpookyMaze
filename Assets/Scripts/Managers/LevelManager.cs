@@ -149,11 +149,14 @@ public class LevelManager : Singleton<LevelManager>
     {
         LevelSettings currentLevelSettings = GameManager.Instance.CurrentSettings;
         LevelData currentLevelData = LevelIO.LoadLevel(currentLevelSettings);
+        LevelPackData currentlevelPackData = LevelIO.LoadLevelPackData(currentLevelSettings);
         if (!currentLevelData.complete)
         {
             IncreasePlayerScore();
-            currentLevelData.complete = true;            
-            LevelIO.SaveLevel(currentLevelSettings, currentLevelData);            
+            currentLevelData.complete = true;
+            currentlevelPackData.numLevelsComplete += 1;
+            LevelIO.SaveLevel(currentLevelSettings, currentLevelData);
+            LevelIO.SaveLevelPackData(currentLevelSettings, currentlevelPackData);
         }       
     }
 

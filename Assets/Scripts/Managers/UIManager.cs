@@ -36,9 +36,6 @@ public class UIManager : Singleton<UIManager>
     private void Start()
     {
         UpdateTextOnPurchaseMenuButton();
-        classicLevelSelectMenu.GetComponent<LevelSelectMenu>().LoadMenu();
-        dungeonLevelSelectMenu.GetComponent<LevelSelectMenu>().LoadMenu();
-        cursedHouseLevelSelectMenu.GetComponent<LevelSelectMenu>().LoadMenu();
     }
 
     /// <summary>
@@ -156,11 +153,13 @@ public class UIManager : Singleton<UIManager>
         if (classicLevelSelectMenu.activeInHierarchy)
         {
             classicLevelSelectMenu.SetActive(false);
+            classicLevelSelectMenu.GetComponent<LevelSelectMenu>().ClearPanel();
         }
         else
         {
             GameManager.Instance.CurrentSettings.gameMode = modeName;
             GameManager.Instance.CurrentSettings.isDaily = false;
+            classicLevelSelectMenu.GetComponent<LevelSelectMenu>().LoadMenu();
             classicLevelSelectMenu.SetActive(true);
         }
     }
@@ -170,11 +169,13 @@ public class UIManager : Singleton<UIManager>
         if (dungeonLevelSelectMenu.activeInHierarchy)
         {
             dungeonLevelSelectMenu.SetActive(false);
+            dungeonLevelSelectMenu.GetComponent<LevelSelectMenu>().ClearPanel();
         }
         else
         {
             GameManager.Instance.CurrentSettings.gameMode = modeName;
             GameManager.Instance.CurrentSettings.isDaily = false;
+            dungeonLevelSelectMenu.GetComponent<LevelSelectMenu>().LoadMenu();
             dungeonLevelSelectMenu.SetActive(true);
         }
     }
@@ -184,11 +185,13 @@ public class UIManager : Singleton<UIManager>
         if (cursedHouseLevelSelectMenu.activeInHierarchy)
         {
             cursedHouseLevelSelectMenu.SetActive(false);
+            cursedHouseLevelSelectMenu.GetComponent<LevelSelectMenu>().ClearPanel();
         }
         else
         {
             GameManager.Instance.CurrentSettings.gameMode = modeName;
             GameManager.Instance.CurrentSettings.isDaily = false;
+            cursedHouseLevelSelectMenu.GetComponent<LevelSelectMenu>().LoadMenu();
             cursedHouseLevelSelectMenu.SetActive(true);
         }
     }

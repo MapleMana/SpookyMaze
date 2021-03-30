@@ -6337,7 +6337,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1977626363}
-        m_MethodName: ToggleDungeonLevelSelectMenu
+        m_MethodName: ToggleClassicLevelSelectMenu
         m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

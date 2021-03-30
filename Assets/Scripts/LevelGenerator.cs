@@ -94,7 +94,11 @@ public static class LevelGenerator
                                           levelPoints: LEVEL_REWARD,
                                           levelUnlocked: unlocked,
                                           levelComplete: false)
-                        );                        
+                        );
+                        LevelIO.SaveLevelPackData(
+                            new LevelSettings(gameModeName, mazeDimentions, id, packId),
+                            new LevelPackData(complete: 0)
+                        );
                         Maze.Instance.Clear();
                     }
                 }              

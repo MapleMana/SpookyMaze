@@ -118,6 +118,17 @@ public class LevelData
     }
 }
 
+[System.Serializable()]
+public class LevelPackData
+{
+    public int numLevelsComplete;
+
+    public LevelPackData(int complete)
+    {
+        numLevelsComplete = complete;
+    }
+}
+
 public class LevelSettings
 {
     public string gameMode;
@@ -161,6 +172,12 @@ public static class LevelIO
         return $"{Root}/{levelSettings}.maze";
     }
 
+    private static string GetFilePathForPack(LevelSettings levelSettings)
+    {
+        //return $"{Root}/{levelSettings}.mazePack";
+        return $"{Root}/Pack/{levelSettings.gameMode}/{levelSettings.dimensions}/{levelSettings.packId}.mazePack";
+    }
+
     public static void ClearAll()
     {
         foreach (string subDir in Directory.GetDirectories(Root))
@@ -191,6 +208,33 @@ public static class LevelIO
         using (FileStream stream = new FileStream(path, FileMode.Open)) 
         {
             return formatter.Deserialize(stream) as LevelData;
+        }
+    }
+
+    // Save level data pack 
+    public static void SaveLevelPackData(LevelSettings levelSettings, LevelPackData levelPackData)
+    {
+        BinaryFormatter formatter = new BinaryFormatter();
+        string path = GetFilePathForPack(levelSettings);
+        string dir = Path.GetDirectoryName(path);
+        if (!Directory.Exists(dir))
+        {
+            Directory.CreateDirectory(dir);
+        }
+        using (FileStream stream = new FileStream(path, FileMode.OpenOrCreate))
+        {
+            formatter.Serialize(stream, levelPackData);
+        }
+    }
+
+    // Load level data pack
+    public static LevelPackData LoadLevelPackData(LevelSettings levelSettings)
+    {
+        BinaryFormatter formatter = new BinaryFormatter();
+        string path = GetFilePathForPack(levelSettings);
+        using (FileStream stream = new FileStream(path, FileMode.Open))
+        {
+            return formatter.Deserialize(stream) as LevelPackData;
         }
     }
 

@@ -64,7 +64,7 @@ public class LevelSelectMenu : MonoBehaviour
             List<string> possiblePacks = LevelIO.GetPossiblePackIds(GameManager.Instance.CurrentSettings);
             possiblePacks.Sort();
 
-            foreach(string pack in possiblePacks)
+            foreach (string pack in possiblePacks)
             {
                 Button newButton = Instantiate(levelSizeButtonTemplate);
                 newButton.GetComponentInChildren<Text>().text = dimensions.ToString() + pack;
@@ -72,6 +72,7 @@ public class LevelSelectMenu : MonoBehaviour
                 newButton.transform.SetParent(levelSizePanel.transform, false);                
                 buttonList.Add(newButton);
                 currentSlider = newButton.transform.GetChild(0).GetComponent<Slider>();
+                currentSlider.value = GetLevelPackComplete(pack) / 20f;
 
                 GameObject newPanel = Instantiate(levelSelectButtonsPanel);
                 newPanel.transform.SetParent(levelSizePanel.transform, false);
@@ -91,7 +92,7 @@ public class LevelSelectMenu : MonoBehaviour
                     Button purchaseButton = newPanel.transform.GetChild(1).GetChild(0).GetComponent<Button>();
                     purchaseButton.onClick.AddListener(OnPurchasePackOptionClick(width, height, pack, newPanel, newButton));
                 }
-                LoadLevels(subNewPanel);
+                
                 newPanel.SetActive(false);
             }            
         }
@@ -119,7 +120,7 @@ public class LevelSelectMenu : MonoBehaviour
         newButton.GetComponentInChildren<Text>().text = level.ToString();
         if (GetLevelCompete(level))
         {
-            currentSlider.value += 0.05f;
+            //currentSlider.value += 0.05f;
             newButton.GetComponent<Image>().color = orange;
         }
         newButton.onClick.AddListener(OnLevelOptionClick(level));
@@ -141,6 +142,13 @@ public class LevelSelectMenu : MonoBehaviour
         return LevelIO.LoadLevel(currentLevelSettings).complete;
     }
 
+    private static int GetLevelPackComplete(string pack)
+    {
+        GameManager.Instance.CurrentSettings.packId = pack;
+        LevelSettings currentLevelSettings = GameManager.Instance.CurrentSettings;
+        return LevelIO.LoadLevelPackData(currentLevelSettings).numLevelsComplete;
+    }
+
     /// <summary>
     /// Executed when one of the level select buttons is pressed
     /// </summary>
@@ -152,6 +160,7 @@ public class LevelSelectMenu : MonoBehaviour
         {
             GameManager.Instance.CurrentSettings.id = levelNumber;
             UIManager.Instance.StartGame();
+            ClearPanel();
         };
     }
 
@@ -168,7 +177,16 @@ public class LevelSelectMenu : MonoBehaviour
             GameManager.Instance.CurrentSettings.packId = packId;
             foreach (GameObject panel in panelList)
             {
-                panel.SetActive(panel.name == panelName);
+                if (panel.name == panelName)
+                {
+                    LoadLevels(panel.transform.GetChild(0).gameObject);
+                    panel.SetActive(true);
+                }
+                else
+                {
+                    panel.SetActive(false);
+                    ClearLevelPanel(panel.transform.GetChild(0).gameObject);
+                }
             }
         };
     }
@@ -208,6 +226,14 @@ public class LevelSelectMenu : MonoBehaviour
     public void ClearPanel()
     {
         foreach (Transform child in levelSizePanel.transform)
+        {
+            GameObject.Destroy(child.gameObject);
+        }
+    }
+
+    private void ClearLevelPanel(GameObject panel)
+    {
+        foreach (Transform child in panel.transform)
         {
             GameObject.Destroy(child.gameObject);
         }
