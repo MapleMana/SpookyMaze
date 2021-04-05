@@ -179,8 +179,11 @@ public class LevelSelectMenu : MonoBehaviour
             {
                 if (panel.name == panelName)
                 {
-                    LoadLevels(panel.transform.GetChild(0).gameObject);
-                    panel.SetActive(true);
+                    if(panel.transform.GetChild(0).childCount < 1)
+                    {
+                        LoadLevels(panel.transform.GetChild(0).gameObject);
+                        panel.SetActive(true);
+                    }                    
                 }
                 else
                 {

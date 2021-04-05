@@ -88,7 +88,7 @@ public static class LevelGenerator
                         LevelIO.SaveLevel(
                             new LevelSettings(gameModeName, mazeDimentions, id, packId),
                             new LevelData(maze: Maze.Instance,
-                                          levelTime: GetLevelTime(Maze.Instance.GetPathLength()),
+                                          levelTime: GetLevelTime(gameModeName == "Dungeon" ? Maze.Instance.GetPathLengthWithKey() : Maze.Instance.GetPathLength()),
                                           modeNames: combinedGM.GameModes.Select(gm => gm.GetType().Name).ToArray(),
                                           mobs: combinedGM.GetMovables(GetMobQuantity(mazeDimentions)),
                                           levelPoints: LEVEL_REWARD,
