@@ -22,6 +22,7 @@ public class Maze
             _dimensions = value;
             StartPos = new Vector2Int(0, value.Height - 1);
             EndPos = new Vector2Int(value.Width - 1, 0);
+            _keyPos = new Vector2Int(Mathf.RoundToInt((value.Width - 1) / 2), Mathf.RoundToInt((value.Height - 1) / 2));
         } 
     }
     public Dictionary<Vector2Int, MazeCell> Grid { get; private set; } = new Dictionary<Vector2Int, MazeCell>();
@@ -169,11 +170,14 @@ public class Maze
     {
         List<Vector2Int> itemPositions = GetRandomPositions(itemTypes.Count);
         for (int i = 0; i < Mathf.Min(itemPositions.Count, itemTypes.Count); i++)
-        {
-            Grid[itemPositions[i]].ItemType = itemTypes[i];
-            if (Grid[itemPositions[i]].ItemType == ItemType.Key)
+        {            
+            if (itemTypes[i] == ItemType.Key)
             {
-                _keyPos = Grid[itemPositions[i]].Position;
+                Grid[_keyPos].ItemType = itemTypes[i];
+            }
+            else
+            {
+                Grid[itemPositions[i]].ItemType = itemTypes[i];
             }
         }
     }
