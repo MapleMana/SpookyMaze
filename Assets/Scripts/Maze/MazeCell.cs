@@ -13,8 +13,8 @@ public class MazeCell : System.IDisposable
     private Vector2Int _position;
     private List<GameObject> _walls;
     private static List<GameObject> _corners = new List<GameObject>();
-    private static GameObject _wallTemplate = Resources.Load<GameObject>("Wall");
-    private static GameObject _cornerTemplate = Resources.Load<GameObject>("WallCorner");
+    private static GameObject _wallTemplate;// = Resources.Load<GameObject>("Wall");
+    private static GameObject _cornerTemplate;// = Resources.Load<GameObject>("WallCorner");
 
     public static List<Vector2Int> neighbours = new List<Vector2Int> { Vector2Int.up,
                                                                        Vector2Int.left,
@@ -27,6 +27,26 @@ public class MazeCell : System.IDisposable
     public Vector2Int Position => _position;
 
     public Vector3 CellCenter(float y) => new Vector3(CELL_WIDTH * (_position.x + 0.5f), y, CELL_WIDTH * (_position.y + 0.5f));
+
+    public static void LoadWallObjects()
+    {
+        switch (GameManager.Instance.CurrentSettings.gameMode)
+        {
+            case "Classic":
+            default:
+                _wallTemplate = Resources.Load<GameObject>("WheatWall");
+                _cornerTemplate = Resources.Load<GameObject>("WheatWallCorner");
+                break;
+            case "Dungeon":
+                _wallTemplate = Resources.Load<GameObject>("BrickWall");
+                _cornerTemplate = Resources.Load<GameObject>("BrickWallCorner");
+                break;
+            case "Cursed House":
+                _wallTemplate = Resources.Load<GameObject>("HouseWall");
+                _cornerTemplate = Resources.Load<GameObject>("HouseWallCorner");
+                break;
+        }
+    }
 
     public MazeCell(Vector2Int pos, WallState up, WallState left, WallState down, WallState right)
     {

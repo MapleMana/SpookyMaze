@@ -53,6 +53,7 @@ public class Maze
     public void Load(MazeState state)
     {
         Clear();
+        MazeCell.LoadWallObjects();
         Dimensions = state.dimensions;
         foreach (SerCell cell in state.cells)
         {

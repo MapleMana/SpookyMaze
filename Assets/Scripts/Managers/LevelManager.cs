@@ -44,6 +44,13 @@ public class LevelManager : Singleton<LevelManager>
         exitDoor.GetComponent<ExitDoor>().MoveToExit(Maze.Instance);
 
         _mobs = levelData.SpawnMovables();
+
+        LoadPlaneMaterial(GameManager.Instance.CurrentSettings.gameMode, GameManager.Instance.CurrentSettings.dimensions.Width);        
+    }
+
+    private void LoadPlaneMaterial(string mode, int dim)
+    {
+        plane.GetComponent<FloorPlane>().ChangeFloorMaterial(mode, dim);
         plane.transform.localScale = new Vector3(Maze.Instance.Dimensions.Width, 1f, Maze.Instance.Dimensions.Height);
         plane.transform.position = new Vector3(Maze.Instance.Dimensions.Width * 5f, 0f, Maze.Instance.Dimensions.Height * 5f);
     }
