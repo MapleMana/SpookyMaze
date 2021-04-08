@@ -33,10 +33,10 @@ public class DailyAdHandler : MonoBehaviour, IUnityAdsListener
         switch (showResult)
         {
             case ShowResult.Failed:
-                break;
             case ShowResult.Skipped:
-            case ShowResult.Finished:
             default:
+                break;
+            case ShowResult.Finished:
                 DailyLevelSelectMenu.HandleAdWatched();
                 break;
         }

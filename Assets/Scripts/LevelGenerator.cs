@@ -109,7 +109,15 @@ public static class LevelGenerator
 
     }
     internal static void GenerateDailyLevels()
-    {
+    {        
+        string currentDate = (DateTime.Now.Day.ToString() + DateTime.Now.Month.ToString());
+        if (currentDate == PlayerPrefs.GetString("currentDate",""))
+        {
+            return;
+        }
+        PlayerPrefs.SetString("currentDate", currentDate);
+        PlayerPrefs.Save();
+
         int dailySeed = (int)(DateTimeOffset.Now.ToUnixTimeSeconds() / (3600 * 24));
         UnityEngine.Random.InitState(dailySeed);
 
@@ -127,7 +135,7 @@ public static class LevelGenerator
                 LevelIO.SaveLevel(
                     new LevelSettings(combinedGM.Name, mazeDimentions, id, isDaily: true),
                     new LevelData(maze: Maze.Instance,
-                                    levelTime: GetLevelTime(Maze.Instance.GetPathLength()),
+                                    levelTime: GetLevelTime(combinedGM.Name == "Dungeon" ? Maze.Instance.GetPathLengthWithKey() : Maze.Instance.GetPathLength()),
                                     modeNames: combinedGM.GameModes.Select(gm => gm.GetType().Name).ToArray(),
                                     mobs: combinedGM.GetMovables(GetMobQuantity(mazeDimentions)),
                                     levelPoints: LEVEL_REWARD,

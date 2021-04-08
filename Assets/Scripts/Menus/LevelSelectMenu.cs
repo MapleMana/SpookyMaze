@@ -120,7 +120,6 @@ public class LevelSelectMenu : MonoBehaviour
         newButton.GetComponentInChildren<Text>().text = level.ToString();
         if (GetLevelCompete(level))
         {
-            //currentSlider.value += 0.05f;
             newButton.GetComponent<Image>().color = orange;
         }
         newButton.onClick.AddListener(OnLevelOptionClick(level));

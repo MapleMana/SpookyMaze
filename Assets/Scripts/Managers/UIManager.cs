@@ -57,10 +57,26 @@ public class UIManager : Singleton<UIManager>
     /// </summary>
     public void ShowFinishMenu(bool mazeCompleted)
     {
-        ToggleEndGameMenu();
         LevelCompleted = mazeCompleted;
+        ToggleEndGameMenu();        
         SetNextActionText();
         coinText.text = $"{PlayerPrefs.GetInt("PlayersCoins", 0)}";
+    }
+
+    public void ToggleEndGameMenu()
+    {
+        if (!endGameMenu.activeInHierarchy)
+        {
+            endGameMenu.SetActive(true);
+            if (LevelCompleted)
+            {
+                endGameNextLevelButton.interactable = !GameManager.Instance.IsLastLevel();
+            }
+        }
+        else
+        {
+            endGameMenu.SetActive(false);
+        }
     }
 
     /// <summary>
@@ -206,18 +222,7 @@ public class UIManager : Singleton<UIManager>
         statsMenu.SetActive(!statsMenu.activeInHierarchy);
     }
 
-    public void ToggleEndGameMenu()
-    {
-       if(!endGameMenu.activeInHierarchy)
-       {
-            endGameMenu.SetActive(true);
-            endGameNextLevelButton.interactable = !GameManager.Instance.IsLastLevel();
-       }
-       else
-       {
-            endGameMenu.SetActive(false);
-       }
-    }
+    
 
     public void ToggleOnReplyMenu()
     {
@@ -226,13 +231,17 @@ public class UIManager : Singleton<UIManager>
 
     public void ToggleDailyMenu()
     {
-        dailyMenu.SetActive(!dailyMenu.activeInHierarchy);
-    }
-
-    public void GoToDailyMenu()
-    {
-        LevelGenerator.GenerateDailyLevels();
-        dailyMenu.SetActive(true);
+        if (dailyMenu.activeInHierarchy)
+        {
+            dailyMenu.SetActive(false);
+            dailyMenu.GetComponent<DailyLevelSelectMenu>().ClearPanels();
+        }
+        else
+        {
+            LevelGenerator.GenerateDailyLevels();
+            dailyMenu.GetComponent<DailyLevelSelectMenu>().LoadDailyMenu();
+            dailyMenu.SetActive(true);
+        }
     }
 
     public void ToggleHelpMenu()

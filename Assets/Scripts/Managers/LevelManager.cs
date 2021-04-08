@@ -129,6 +129,7 @@ public class LevelManager : Singleton<LevelManager>
     {
         PlayerActionDetector.ResetTouches();
         UIManager.Instance.ToggleInGameMenu();
+        UIManager.Instance.ShowFinishMenu(mazeCompleted);
         _levelState = mazeCompleted ? LevelState.Completed : LevelState.Failed;
         if (mazeCompleted)
         {
@@ -149,21 +150,24 @@ public class LevelManager : Singleton<LevelManager>
         {
             //AnalyticsEvent.LevelFail(GameManager.Instance.CurrentSettings.ToString());
         }        
-        UIManager.Instance.ShowFinishMenu(mazeCompleted);
+        
     }
 
     private void SaveLevelProgress()
     {
         LevelSettings currentLevelSettings = GameManager.Instance.CurrentSettings;
-        LevelData currentLevelData = LevelIO.LoadLevel(currentLevelSettings);
-        LevelPackData currentlevelPackData = LevelIO.LoadLevelPackData(currentLevelSettings);
+        LevelData currentLevelData = LevelIO.LoadLevel(currentLevelSettings);        
         if (!currentLevelData.complete)
         {
             IncreasePlayerScore();
             currentLevelData.complete = true;
-            currentlevelPackData.numLevelsComplete += 1;
             LevelIO.SaveLevel(currentLevelSettings, currentLevelData);
-            LevelIO.SaveLevelPackData(currentLevelSettings, currentlevelPackData);
+            if (!GameManager.Instance.CurrentSettings.isDaily)
+            {
+                LevelPackData currentlevelPackData = LevelIO.LoadLevelPackData(currentLevelSettings);
+                currentlevelPackData.numLevelsComplete += 1;
+                LevelIO.SaveLevelPackData(currentLevelSettings, currentlevelPackData);
+            }          
         }       
     }
 

@@ -775,7 +775,7 @@ MonoBehaviour:
     m_Right: 50
     m_Top: 50
     m_Bottom: 50
-  m_ChildAlignment: 0
+  m_ChildAlignment: 4
   m_StartCorner: 0
   m_StartAxis: 0
   m_CellSize: {x: 200, y: 200}
@@ -5066,7 +5066,7 @@ MonoBehaviour:
     m_Right: 50
     m_Top: 50
     m_Bottom: 50
-  m_ChildAlignment: 0
+  m_ChildAlignment: 4
   m_StartCorner: 0
   m_StartAxis: 0
   m_CellSize: {x: 200, y: 200}
@@ -5126,7 +5126,7 @@ MonoBehaviour:
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 1440, y: 2960}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 1
+  m_MatchWidthOrHeight: 0.5
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -5884,7 +5884,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Dungeon
+  m_text: DUNGEON
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 27a853479005449e7aa004bc456d4209, type: 2}
   m_sharedMaterial: {fileID: 4131244758947024230, guid: 27a853479005449e7aa004bc456d4209,
@@ -8777,7 +8777,7 @@ MonoBehaviour:
     m_Right: 50
     m_Top: 50
     m_Bottom: 50
-  m_ChildAlignment: 0
+  m_ChildAlignment: 4
   m_StartCorner: 0
   m_StartAxis: 0
   m_CellSize: {x: 200, y: 200}
@@ -9725,7 +9725,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Cursed House
+  m_text: CURSED HOUSE
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 27a853479005449e7aa004bc456d4209, type: 2}
   m_sharedMaterial: {fileID: 4131244758947024230, guid: 27a853479005449e7aa004bc456d4209,
@@ -9983,7 +9983,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1977626363}
-        m_MethodName: GoToDailyMenu
+        m_MethodName: ToggleDailyMenu
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -12784,7 +12784,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 1, g: 1, b: 1, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -12945,7 +12945,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 1, g: 1, b: 1, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -13623,7 +13623,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 1, g: 1, b: 1, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -13745,7 +13745,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Classic
+  m_text: CLASSIC
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 27a853479005449e7aa004bc456d4209, type: 2}
   m_sharedMaterial: {fileID: 4131244758947024230, guid: 27a853479005449e7aa004bc456d4209,
@@ -14149,9 +14149,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f86bc602ed0cfe4c8e3474d7fe4105c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ClassicPanel: {fileID: 1396847561}
-  DungeonPanel: {fileID: 112243653}
-  CursedHousePanel: {fileID: 850214371}
+  classicPanel: {fileID: 1396847561}
+  classicUnlockBtn: {fileID: 4132999341698967309}
+  classicUnlockImage: {fileID: 12022950}
+  dungeonPanel: {fileID: 112243653}
+  dungeonUnlockBtn: {fileID: 4544064810878525136}
+  dungeonUnlockImage: {fileID: 530333060}
+  cursedHousePanel: {fileID: 850214371}
+  cursedHouseUnlockBtn: {fileID: 5496231238960794573}
+  cursedHouseUnlockImage: {fileID: 1742594904}
   ButtonTemplate: {fileID: 5192639569811241512, guid: 0a16d631d9cb55c4e8ab074d5b2d4131,
     type: 3}
 --- !u!114 &7442371728724961541
