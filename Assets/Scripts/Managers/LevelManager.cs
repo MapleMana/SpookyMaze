@@ -45,7 +45,7 @@ public class LevelManager : Singleton<LevelManager>
 
         _mobs = levelData.SpawnMovables();
 
-        LoadPlaneMaterial(GameManager.Instance.CurrentSettings.gameMode, GameManager.Instance.CurrentSettings.dimensions.Width);        
+        LoadPlaneMaterial(GameManager.Instance.CurrentSettings.gameMode, GameManager.Instance.CurrentSettings.dimensions.Width);
     }
 
     private void LoadPlaneMaterial(string mode, int dim)

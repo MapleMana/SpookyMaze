@@ -24,6 +24,9 @@ public class Player : Movable
     private ParticleSystem.EmissionModule torchParticleSystemEmission;
     private const float EMISSION_CONSTANT = 1.25f;
     private const float MAX_EMISSION = 80f;
+    private const float SUBTRACT_TIME_FACTOR = 20f;
+
+    public Animator animator;
 
     protected override void Awake()
     {
@@ -59,7 +62,7 @@ public class Player : Movable
         if (LevelManager.Instance.LevelIs(LevelState.InProgress | LevelState.InReplay | LevelState.InReplayReversed))
         {
             float dt = LevelManager.Instance.LevelIs(LevelState.InReplayReversed) ? -1 : 1;
-            TimeLeft = Mathf.Clamp(TimeLeft - power * Speed / 30 * dt * Time.deltaTime, 0, LevelManager.Instance.LevelData.time);
+            TimeLeft = Mathf.Clamp(TimeLeft - power * Speed / SUBTRACT_TIME_FACTOR * dt * Time.deltaTime, 0, LevelManager.Instance.LevelData.time);
             Light.spotAngle = Mathf.Lerp(minLightAngle, maxLightAngle, TimeLeft / LevelManager.Instance.LevelData.time);
 
             // diminish torch particle system as light diminishes
@@ -71,6 +74,7 @@ public class Player : Movable
     {
         SubtractTime();
         base.Update();
+        animator.SetBool("isWalking", Moving);
     }
 
     public override void PerformMovement()
@@ -136,10 +140,10 @@ public class Player : Movable
     public override bool Move(Vector2Int direction)
     {
         if (!Maze.Instance[MazePosition].WallExists(direction))
-        {
+        {            
             MazePosition += direction;
             return true;
-        }
+        }        
         return false;
     }
 

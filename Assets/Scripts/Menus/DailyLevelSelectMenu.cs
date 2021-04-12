@@ -61,6 +61,7 @@ public class DailyLevelSelectMenu : MonoBehaviour
             GameManager.Instance.CurrentSettings.gameMode = modeName;
             GameManager.Instance.CurrentSettings.id = levelNumber;
             GameManager.Instance.CurrentSettings.isDaily = true;
+            GameManager.Instance.CurrentSettings.dimensions = LevelIO.GetDailyDimension(GameManager.Instance.CurrentSettings)[0];
             ClearPanels();
             UIManager.Instance.StartGame();
         };

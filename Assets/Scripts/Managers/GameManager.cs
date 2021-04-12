@@ -24,7 +24,7 @@ public class GameManager : Singleton<GameManager>
     private void Start()
     {
         Maze.Initialize();
-        UpdateDailyLevels();
+        //UpdateDailyLevels();
         int levelsGenerated = PlayerPrefs.GetInt("Generated", 0);
         if (levelsGenerated == 0)
         {

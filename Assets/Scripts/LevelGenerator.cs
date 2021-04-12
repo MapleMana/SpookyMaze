@@ -115,6 +115,9 @@ public static class LevelGenerator
         {
             return;
         }
+        PlayerPrefs.SetInt("Classic", 0);
+        PlayerPrefs.SetInt("Dungeon", 0);
+        PlayerPrefs.SetInt("Cursed House", 0);
         PlayerPrefs.SetString("currentDate", currentDate);
         PlayerPrefs.Save();
 

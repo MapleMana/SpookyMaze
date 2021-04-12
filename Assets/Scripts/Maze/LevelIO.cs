@@ -159,7 +159,7 @@ public class LevelSettings
 
     public override string ToString()
     {
-        return isDaily ? $"/Daily/{gameMode}/{id}" : $"/{gameMode}/{dimensions}/{packId}/{id}";
+        return isDaily ? $"/Daily/{gameMode}/{id}/{dimensions}" : $"/{gameMode}/{dimensions}/{packId}/{id}";
     }
 }
 
@@ -267,6 +267,14 @@ public static class LevelIO
         List<string> packIds = GetSubdirectoryNames($"{Root}/{levelSettings.gameMode}/{levelSettings.dimensions}");
         return packIds
             .Select(packId => packId)
+            .ToList();
+    }
+
+    public static List<Dimensions> GetDailyDimension(LevelSettings levelSettings)
+    {
+        List<string> dimNames = GetSubdirectoryNames($"{Root}/Daily/{levelSettings.gameMode}/{levelSettings.id}");
+        return dimNames
+            .Select(dimName => new Dimensions(dimName))
             .ToList();
     }
 }
