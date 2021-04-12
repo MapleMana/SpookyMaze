@@ -21,6 +21,7 @@ public class UIManager : Singleton<UIManager>
     public GameObject settingsMenu;
     public GameObject statsMenu;
     public GameObject inGameMenu;
+    public Text levelNumText;
     public GameObject helpMenu;
     public Image nextPlayButtonImage;
     public Sprite nextLevelImage;
@@ -151,7 +152,16 @@ public class UIManager : Singleton<UIManager>
 
     public void ToggleInGameMenu()
     {
-        inGameMenu.SetActive(!inGameMenu.activeInHierarchy);
+        if (inGameMenu.activeInHierarchy)
+        {
+            inGameMenu.SetActive(false);
+        }
+        else
+        {
+            inGameMenu.SetActive(true);
+            int totalLevels = GameManager.Instance.CurrentSettings.isDaily ? 4 : 20;
+            levelNumText.text = $"{GameManager.Instance.CurrentSettings.id} / {totalLevels}";
+        }        
     }
 
     public void ToggleAboutMenu(bool active)
@@ -220,9 +230,7 @@ public class UIManager : Singleton<UIManager>
     public void ToggleStatsMenu()
     {
         statsMenu.SetActive(!statsMenu.activeInHierarchy);
-    }
-
-    
+    }    
 
     public void ToggleOnReplyMenu()
     {

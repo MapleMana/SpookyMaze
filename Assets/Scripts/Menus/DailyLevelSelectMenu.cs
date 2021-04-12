@@ -49,6 +49,8 @@ public class DailyLevelSelectMenu : MonoBehaviour
 
         for (int i = 1; i <= possibleLevels; i++)
         {
+            GameManager.Instance.CurrentSettings.id = i;
+            GameManager.Instance.CurrentSettings.dimensions = LevelIO.GetDailyDimension(GameManager.Instance.CurrentSettings)[0];
             Button newButton = CreateLevelButton(panel, modeName, openedLevels, i);
             list.Add(newButton);
         }
