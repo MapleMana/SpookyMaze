@@ -22,6 +22,11 @@ public class UIManager : Singleton<UIManager>
     public GameObject statsMenu;
     public GameObject inGameMenu;
     public Text levelNumText;
+    public GameObject dungeonKeyPanel;
+    public GameObject dungeonLock;
+    public Sprite lockedImage;
+    public Sprite unlockedImage;
+    public GameObject dungeonKey;
     public GameObject helpMenu;
     public Image nextPlayButtonImage;
     public Sprite nextLevelImage;
@@ -161,7 +166,33 @@ public class UIManager : Singleton<UIManager>
             inGameMenu.SetActive(true);
             int totalLevels = GameManager.Instance.CurrentSettings.isDaily ? 4 : 20;
             levelNumText.text = $"{GameManager.Instance.CurrentSettings.id} / {totalLevels}";
+            if (GameManager.Instance.CurrentSettings.GetReadableGameMode() == "Dungeon")
+            {
+                dungeonKeyPanel.SetActive(true);
+                dungeonKey.SetActive(false);
+                dungeonLock.GetComponent<Image>().sprite = lockedImage;
+                dungeonLock.SetActive(true);
+            }
+            else
+            {
+                dungeonKeyPanel.SetActive(false);
+            }
         }        
+    }
+
+    // called in ExitDoor when key is in player inventory
+    public void PickedUpKey()
+    {
+        StartCoroutine(PickedUpKeyAnimation());
+    }
+
+    IEnumerator PickedUpKeyAnimation()
+    {
+        dungeonKey.SetActive(true);
+        yield return new WaitForSeconds(0.5f);
+        dungeonLock.GetComponent<Image>().sprite = unlockedImage;
+        yield return new WaitForSeconds(1f);
+        dungeonLock.SetActive(false);
     }
 
     public void ToggleAboutMenu(bool active)

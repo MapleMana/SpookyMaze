@@ -15,10 +15,12 @@ public class ExitDoor : MonoBehaviour
     {
         if (lockImage.activeInHierarchy)
         {
+            // checked if key is in player inventory
             if (Player.Instance.Inventory.Contains(ItemType.Key))
             {
                 lockImage.SetActive(false);
                 openDoor = true;
+                UIManager.Instance.PickedUpKey();
             }
             MoveLockImageOverDoor();
         }        
