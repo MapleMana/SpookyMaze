@@ -8,6 +8,7 @@ public class ExitDoor : MonoBehaviour
     public GameObject door;
     public Transform rotatePoint;
     public GameObject lockImage;
+    public Animator animator;
 
     private bool openDoor;
 
@@ -29,16 +30,12 @@ public class ExitDoor : MonoBehaviour
         {
             if (openDoor)
             {
-                door.transform.RotateAround(rotatePoint.transform.position, Vector3.back, 700 * Time.deltaTime);
-                if (door.transform.rotation.eulerAngles.x < 274f)
-                {
-                    openDoor = false;
-                }
+                animator.SetBool("openDoor", true);
             }            
         }
         else
         {
-            CloseDoor();
+            animator.SetBool("openDoor", false);
         }
     }
 
@@ -57,12 +54,6 @@ public class ExitDoor : MonoBehaviour
         }
         MazeCell currentCell = Maze.Instance[maze.EndPos];
         transform.position = currentCell.CellCenter(y: transform.position.y);
-    }
-
-    public void CloseDoor()
-    {
-        door.transform.localPosition = new Vector3(0f, 0.1f, 0f);
-        door.transform.localRotation = new Quaternion(0f, 0f, 0f, 0f);
     }
 
     private void MoveLockImageOverDoor()

@@ -11031,6 +11031,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2024332979}
   - component: {fileID: 2024332980}
+  - component: {fileID: 2024332981}
   m_Layer: 0
   m_Name: Exit
   m_TagString: Untagged
@@ -11071,3 +11072,23 @@ MonoBehaviour:
   door: {fileID: 325505452}
   rotatePoint: {fileID: 73886654}
   lockImage: {fileID: 1300096213}
+  animator: {fileID: 2024332981}
+--- !u!95 &2024332981
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2024332978}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: f8e4cc668b049974281cf57955cb6016, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0

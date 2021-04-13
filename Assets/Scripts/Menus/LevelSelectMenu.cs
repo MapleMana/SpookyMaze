@@ -152,6 +152,7 @@ public class LevelSelectMenu : MonoBehaviour
         return () =>
         {
             GameManager.Instance.CurrentSettings.id = levelNumber;
+            GameManager.Instance.CurrentSettings.isDaily = false;
             UIManager.Instance.StartGame();
             ClearPanel();
         };

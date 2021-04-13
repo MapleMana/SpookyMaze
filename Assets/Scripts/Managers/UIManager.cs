@@ -71,18 +71,7 @@ public class UIManager : Singleton<UIManager>
 
     public void ToggleEndGameMenu()
     {
-        if (!endGameMenu.activeInHierarchy)
-        {
-            endGameMenu.SetActive(true);
-            if (LevelCompleted)
-            {
-                endGameNextLevelButton.interactable = !GameManager.Instance.IsLastLevel();
-            }
-        }
-        else
-        {
-            endGameMenu.SetActive(false);
-        }
+        endGameMenu.SetActive(!endGameMenu.activeInHierarchy);
     }
 
     /// <summary>
@@ -91,6 +80,14 @@ public class UIManager : Singleton<UIManager>
     public void SetNextActionText()
     {
         nextPlayButtonImage.GetComponent<Image>().sprite = _levelCompleted ? nextLevelImage : replayLevelImage;
+        if (_levelCompleted)
+        {
+            endGameNextLevelButton.interactable = !GameManager.Instance.IsLastLevel();
+        }
+        else
+        {
+            endGameNextLevelButton.interactable = true;
+        }
     }
 
     /// <summary>
@@ -131,6 +128,10 @@ public class UIManager : Singleton<UIManager>
     /// </summary>
     public void GoToNextLevel()
     {
+        if (_levelCompleted && !GameManager.Instance.IsLastLevel())
+        {
+            GameManager.Instance.CurrentSettings.id++;
+        }
         ToggleEndGameMenu();
         ToggleOnReplyMenu();
         LevelManager.Instance.LoadCurrentLevel();
