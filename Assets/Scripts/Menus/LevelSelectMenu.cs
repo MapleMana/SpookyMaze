@@ -21,6 +21,11 @@ public class LevelSelectMenu : MonoBehaviour
 
     private const int COST_PER_PACK = 1; //200;
 
+    private void OnEnable()
+    {
+        StartCoroutine(ScrollToIncomplete());
+    }
+
     public void LoadMenu()
     {
         if (this.gameObject.name == "ClassicLevelSelectMenu")
@@ -92,6 +97,22 @@ public class LevelSelectMenu : MonoBehaviour
         }
     }
 
+    IEnumerator ScrollToIncomplete()
+    {
+        yield return new WaitForSeconds(0.05f);
+        Canvas.ForceUpdateCanvases();
+        foreach (Button btn in buttonList)
+        {
+            currentSlider = btn.transform.GetChild(0).GetComponent<Slider>();
+            if (currentSlider.value < 1f)
+            {
+                ScrollPanelToButton(btn, true);
+                break;
+            }
+        }
+        StopCoroutine(ScrollToIncomplete());
+    }
+
     /// <summary>
     /// Invoked when the game starts and loads level buttons to the Level Select screen
     /// </summary>
@@ -143,6 +164,20 @@ public class LevelSelectMenu : MonoBehaviour
     }
 
     /// <summary>
+    /// moves button player clicked on to top of the content panel, 150 is 1/2 the height of the button plus 50 for padding
+    /// </summary>
+    /// <param name="btn">The button to scroll to top</param>
+    /// <returns></returns>
+    private void ScrollPanelToButton(Button btn, bool onEnable)
+    {
+        if (onEnable && (btn.transform.parent.GetComponent<RectTransform>().anchoredPosition.y > (-btn.gameObject.GetComponent<RectTransform>().anchoredPosition.y - 150f)))
+        {
+            return;
+        }
+        btn.transform.parent.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, -btn.gameObject.GetComponent<RectTransform>().anchoredPosition.y - 150f, 0);
+    }
+
+    /// <summary>
     /// Executed when one of the level select buttons is pressed
     /// </summary>
     /// <param name="levelNumber">The level number to load</param>
@@ -182,10 +217,8 @@ public class LevelSelectMenu : MonoBehaviour
                     if (panel.transform.GetChild(0).childCount < 1)
                     {
                         LoadLevels(panel.transform.GetChild(0).gameObject);
-                        // moves button player clicked on to top of the content panel, 150 is 1/2 the height of the button plus 50 for padding
-                        panel.transform.parent.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, -thisBtn.gameObject.GetComponent<RectTransform>().anchoredPosition.y - 150f, 0);
+                        ScrollPanelToButton(thisBtn, false);
                         panel.SetActive(true);
-                        Debug.Log(-thisBtn.gameObject.GetComponent<RectTransform>().anchoredPosition.y);
                     }
                 }
             }
