@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class LevelSelectMenu : MonoBehaviour
@@ -21,11 +20,6 @@ public class LevelSelectMenu : MonoBehaviour
     private Slider currentSlider;
 
     private const int COST_PER_PACK = 1; //200;
-
-    private void Start()
-    {
-        //LoadDimensions();
-    }
 
     public void LoadMenu()
     {
@@ -68,7 +62,7 @@ public class LevelSelectMenu : MonoBehaviour
             {
                 Button newButton = Instantiate(levelSizeButtonTemplate);
                 newButton.GetComponentInChildren<Text>().text = dimensions.ToString() + pack;
-                newButton.onClick.AddListener(OnDimensionsOptionClick(width, height, pack, dimensions.ToString() + pack));
+                newButton.onClick.AddListener(OnDimensionsOptionClick(width, height, pack, dimensions.ToString() + pack, newButton));
                 newButton.transform.SetParent(levelSizePanel.transform, false);                
                 buttonList.Add(newButton);
                 currentSlider = newButton.transform.GetChild(0).GetComponent<Slider>();
@@ -168,7 +162,7 @@ public class LevelSelectMenu : MonoBehaviour
     /// </summary>
     /// <param name="panelName">The name of the panel to open</param>
     /// <returns></returns>
-    public UnityEngine.Events.UnityAction OnDimensionsOptionClick(int dimensionWidth, int dimensionHeight, string packId, string panelName)
+    public UnityEngine.Events.UnityAction OnDimensionsOptionClick(int dimensionWidth, int dimensionHeight, string packId, string panelName, Button thisBtn)
     {
         return () =>
         {
@@ -176,18 +170,22 @@ public class LevelSelectMenu : MonoBehaviour
             GameManager.Instance.CurrentSettings.packId = packId;
             foreach (GameObject panel in panelList)
             {
+                panel.SetActive(false);
+                ClearLevelPanel(panel.transform.GetChild(0).gameObject);
+            }
+            Canvas.ForceUpdateCanvases();
+            foreach (GameObject panel in panelList)
+            {
                 if (panel.name == panelName)
                 {
-                    if(panel.transform.GetChild(0).childCount < 1)
+                    if (panel.transform.GetChild(0).childCount < 1)
                     {
                         LoadLevels(panel.transform.GetChild(0).gameObject);
+                        // moves button player clicked on to top of the content panel, 150 is 1/2 the height of the button plus 50 for padding
+                        panel.transform.parent.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, -thisBtn.gameObject.GetComponent<RectTransform>().anchoredPosition.y - 150f, 0);
                         panel.SetActive(true);
-                    }                    
-                }
-                else
-                {
-                    panel.SetActive(false);
-                    ClearLevelPanel(panel.transform.GetChild(0).gameObject);
+                        Debug.Log(-thisBtn.gameObject.GetComponent<RectTransform>().anchoredPosition.y);
+                    }
                 }
             }
         };
