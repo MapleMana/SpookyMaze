@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using TMPro;
+using UnityEngine.Advertisements;
 
 public class UIManager : Singleton<UIManager>
 {
@@ -257,6 +257,7 @@ public class UIManager : Singleton<UIManager>
     public void TogglePurchaseMenu()
     {
         purchaseMenu.SetActive(!purchaseMenu.activeInHierarchy);
+        UpdateTextOnPurchaseMenuButton();
     }
 
     public void ToggleStatsMenu()
@@ -309,5 +310,11 @@ public class UIManager : Singleton<UIManager>
     public void UpdateTextOnPurchaseMenuButton()
     {
         purchaseBtnCoinsText.text = $"{PlayerPrefs.GetInt("PlayersCoins", 0)}";
+    }
+
+    public void WatchAdToEarnCoins()
+    {
+        Advertisement.Show();
+        DailyAdHandler.dailyUnlockAd = false;
     }
 }

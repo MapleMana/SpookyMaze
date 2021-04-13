@@ -9,6 +9,7 @@ public class DailyAdHandler : MonoBehaviour, IUnityAdsListener
     public static string placementId = "daily_unlock";
     public static bool testMode = true;
     public DailyLevelSelectMenu DailyLevelSelectMenu;
+    public static bool dailyUnlockAd;
 
     void Start()
     {
@@ -37,7 +38,18 @@ public class DailyAdHandler : MonoBehaviour, IUnityAdsListener
             default:
                 break;
             case ShowResult.Finished:
-                DailyLevelSelectMenu.HandleAdWatched();
+                if (dailyUnlockAd)
+                {
+                    DailyLevelSelectMenu.HandleAdWatched();
+                }
+                else
+                {
+                    // earn 10 coins
+                    int previousScore = PlayerPrefs.GetInt("PlayersCoins", 0);
+                    int newScore = previousScore + 10;
+                    PlayerPrefs.SetInt("PlayersCoins", newScore);
+                    PlayerPrefs.Save();
+                }                
                 break;
         }
     }

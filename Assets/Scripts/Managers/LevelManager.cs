@@ -127,9 +127,7 @@ public class LevelManager : Singleton<LevelManager>
     /// </summary>
     public void EndLevel(bool mazeCompleted)
     {
-        PlayerActionDetector.ResetTouches();
-        UIManager.Instance.ToggleInGameMenu();
-        UIManager.Instance.ShowFinishMenu(mazeCompleted);
+        PlayerActionDetector.ResetTouches();        
         _levelState = mazeCompleted ? LevelState.Completed : LevelState.Failed;
         if (mazeCompleted)
         {
@@ -141,16 +139,13 @@ public class LevelManager : Singleton<LevelManager>
             LightManager.Instance.TurnOn();
             CameraManager.Instance.FocusOnMaze(Maze.Instance);
             SaveLevelProgress();
-            /*if (!GameManager.Instance.IsLastLevel())
-            {
-                GameManager.Instance.CurrentSettings.id++;
-            }*/
         }
         else
         {
             //AnalyticsEvent.LevelFail(GameManager.Instance.CurrentSettings.ToString());
-        }        
-        
+        }
+        UIManager.Instance.ToggleInGameMenu();
+        UIManager.Instance.ShowFinishMenu(mazeCompleted);
     }
 
     private void SaveLevelProgress()
@@ -176,6 +171,7 @@ public class LevelManager : Singleton<LevelManager>
         int previousScore = PlayerPrefs.GetInt("PlayersCoins", 0);
         int newScore = previousScore + _levelData.points;
         PlayerPrefs.SetInt("PlayersCoins", newScore);
+        PlayerPrefs.Save();
     }
 
     void Update()

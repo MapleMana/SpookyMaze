@@ -103,6 +103,7 @@ public class DailyLevelSelectMenu : MonoBehaviour
     public void UnlockLevels(string modeName)
     {
         Advertisement.Show();
+        DailyAdHandler.dailyUnlockAd = true;
         modeToUnlock = modeName;
     }
 
