@@ -11,6 +11,7 @@ public class UIManager : Singleton<UIManager>
     public GameObject aboutMenu;
     public GameObject dailyMenu;
     public GameObject endGameMenu;
+    public GameObject earnCoinPanel;
     public Button endGameNextLevelButton;
     public GameObject classicLevelSelectMenu;
     public GameObject dungeonLevelSelectMenu;
@@ -39,9 +40,26 @@ public class UIManager : Singleton<UIManager>
     private bool _levelCompleted;
     public bool LevelCompleted { get => _levelCompleted; set => _levelCompleted = value; }
 
+    private bool _animateEarningCoins;
+
     private void Start()
     {
         UpdateTextOnPurchaseMenuButton();
+        _animateEarningCoins = false;
+    }
+
+    private void Update()
+    {
+        if (_animateEarningCoins)
+        {
+            earnCoinPanel.transform.position = Vector3.Lerp(earnCoinPanel.transform.position, coinText.gameObject.transform.position, Time.deltaTime * 2f);
+            if (Vector3.Distance(earnCoinPanel.transform.position, coinText.gameObject.transform.position) < 100f)
+            {
+                earnCoinPanel.SetActive(false);
+                _animateEarningCoins = false;
+                coinText.text = $"{PlayerPrefs.GetInt("PlayersCoins", 0)}";
+            }
+        }
     }
 
     /// <summary>
@@ -65,8 +83,32 @@ public class UIManager : Singleton<UIManager>
     {
         LevelCompleted = mazeCompleted;
         ToggleEndGameMenu();        
-        SetNextActionText();
-        coinText.text = $"{PlayerPrefs.GetInt("PlayersCoins", 0)}";
+        SetNextActionText();        
+    }
+
+    public void FirstTimeCompletingLevel(bool firstTime)
+    {
+        if (firstTime)
+        {
+            Debug.Log("First Time");
+            earnCoinPanel.SetActive(true);
+            coinText.text = $"{PlayerPrefs.GetInt("PlayersCoins", 0) - 4}";
+            StartCoroutine(Wait());
+        }
+        else
+        {
+            Debug.Log("Not First Time");
+            earnCoinPanel.SetActive(false);
+            coinText.text = $"{PlayerPrefs.GetInt("PlayersCoins", 0)}";
+            _animateEarningCoins = false;
+        }
+    }
+
+    IEnumerator Wait()
+    {
+        yield return new WaitForSeconds(1.5f);
+        _animateEarningCoins = true;
+        StopCoroutine(Wait());
     }
 
     public void ToggleEndGameMenu()

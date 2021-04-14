@@ -142,10 +142,12 @@ public class LevelManager : Singleton<LevelManager>
         }
         else
         {
+            UIManager.Instance.FirstTimeCompletingLevel(false);
             //AnalyticsEvent.LevelFail(GameManager.Instance.CurrentSettings.ToString());
         }
         UIManager.Instance.ToggleInGameMenu();
         UIManager.Instance.ShowFinishMenu(mazeCompleted);
+        
     }
 
     private void SaveLevelProgress()
@@ -162,8 +164,13 @@ public class LevelManager : Singleton<LevelManager>
                 LevelPackData currentlevelPackData = LevelIO.LoadLevelPackData(currentLevelSettings);
                 currentlevelPackData.numLevelsComplete += 1;
                 LevelIO.SaveLevelPackData(currentLevelSettings, currentlevelPackData);
-            }          
-        }       
+            }
+            UIManager.Instance.FirstTimeCompletingLevel(true);
+        }
+        else
+        {
+            UIManager.Instance.FirstTimeCompletingLevel(false);
+        }        
     }
 
     private void IncreasePlayerScore()
