@@ -19,7 +19,7 @@ public class LevelSelectMenu : MonoBehaviour
     private Color orange = new Color(248f/255f, 148f/255f, 6f/255f);
     private Slider currentSlider;
 
-    private const int COST_PER_PACK = 1; //200;
+    private const int COST_PER_PACK = 200; //200;
 
     private void OnEnable()
     {
@@ -237,7 +237,8 @@ public class LevelSelectMenu : MonoBehaviour
             int currentAmount = PlayerPrefs.GetInt("PlayersCoins", 0);
             if (currentAmount >= COST_PER_PACK)
             {
-                PlayerPrefs.SetInt("PlayerCoins", currentAmount - COST_PER_PACK);
+                PlayerPrefs.SetInt("PlayersCoins", (currentAmount - COST_PER_PACK));
+                PlayerPrefs.Save();
                 GameManager.Instance.CurrentSettings.dimensions = new Dimensions(dimensionWidth, dimensionHeight);
                 GameManager.Instance.CurrentSettings.packId = packId;
                 LevelSettings currentLevelSettings = GameManager.Instance.CurrentSettings;
@@ -253,6 +254,7 @@ public class LevelSelectMenu : MonoBehaviour
                 }
                 panel.transform.GetChild(1).gameObject.SetActive(false);
                 levelPackButton.GetComponentsInChildren<Image>()[2].gameObject.SetActive(false);
+                UIManager.Instance.UpdateTextOnPurchaseMenuButton();
             }            
         };
     }

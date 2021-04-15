@@ -41,6 +41,7 @@ public class UIManager : Singleton<UIManager>
     public bool LevelCompleted { get => _levelCompleted; set => _levelCompleted = value; }
 
     private bool _animateEarningCoins;
+    private Vector3 _initialPos;
 
     private void Start()
     {
@@ -56,6 +57,7 @@ public class UIManager : Singleton<UIManager>
             if (Vector3.Distance(earnCoinPanel.transform.position, coinText.gameObject.transform.position) < 100f)
             {
                 earnCoinPanel.SetActive(false);
+                earnCoinPanel.transform.position = _initialPos;
                 _animateEarningCoins = false;
                 coinText.text = $"{PlayerPrefs.GetInt("PlayersCoins", 0)}";
             }
@@ -92,6 +94,7 @@ public class UIManager : Singleton<UIManager>
         {
             Debug.Log("First Time");
             earnCoinPanel.SetActive(true);
+            _initialPos = earnCoinPanel.transform.position;
             coinText.text = $"{PlayerPrefs.GetInt("PlayersCoins", 0) - 4}";
             StartCoroutine(Wait());
         }
@@ -352,6 +355,10 @@ public class UIManager : Singleton<UIManager>
     public void UpdateTextOnPurchaseMenuButton()
     {
         purchaseBtnCoinsText.text = $"{PlayerPrefs.GetInt("PlayersCoins", 0)}";
+        if (coinText != null)
+        {
+            coinText.text = $"{PlayerPrefs.GetInt("PlayersCoins", 0)}";
+        }
     }
 
     public void WatchAdToEarnCoins()
