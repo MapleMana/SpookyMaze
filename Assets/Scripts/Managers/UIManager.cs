@@ -321,6 +321,7 @@ public class UIManager : Singleton<UIManager>
         {
             dailyMenu.SetActive(false);
             dailyMenu.GetComponent<DailyLevelSelectMenu>().ClearPanels();
+            dailyMenu.GetComponent<DailyLevelSelectMenu>().ResetButtons();
         }
         else
         {

@@ -7,7 +7,6 @@ using UnityEngine.Advertisements;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-
 public class DailyLevelSelectMenu : MonoBehaviour
 {
     public GameObject classicPanel;
@@ -113,6 +112,16 @@ public class DailyLevelSelectMenu : MonoBehaviour
         PlayerPrefs.SetInt(modeToUnlock, 1);
         PlayerPrefs.Save();
         LoadDailyMenu();
+    }
+
+    public void ResetButtons()
+    {
+        classicUnlockBtn.interactable = true;
+        classicUnlockImage.SetActive(true);
+        dungeonUnlockBtn.interactable = true;
+        dungeonUnlockImage.SetActive(true);
+        cursedHouseUnlockBtn.interactable = true;
+        cursedHouseUnlockImage.SetActive(true);
     }
 
     public void ClearPanels()

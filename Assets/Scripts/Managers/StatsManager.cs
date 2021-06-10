@@ -25,7 +25,7 @@ public class StatsManager : Singleton<StatsManager>
         pathDungeon = $"{Application.persistentDataPath}/dungeonStats.maze";
         pathCursedHouse = $"{Application.persistentDataPath}/cursedHouseStats.maze";
 
-        if (PlayerPrefs.GetInt("StatsGenerated", 0) == 0)
+        if (PlayerPrefs.GetInt("StatsGenerated", 0) == 0 || PlayerPrefs.GetInt("StatsGenerated") != 1)
         {
             GenerateStats();
             PlayerPrefs.SetInt("StatsGenerated", 1);
@@ -39,7 +39,7 @@ public class StatsManager : Singleton<StatsManager>
 
     private void GenerateStats()
     {
-        // doesn't matter what game more, generating initial stats for all modes
+        // doesn't matter what game mode, generating initial stats for all modes
         GameManager.Instance.CurrentSettings.gameMode = "Classic";
         List<Dimensions> possibleDimensions = LevelIO.GetPossibleDimensions(GameManager.Instance.CurrentSettings);
         possibleDimensions.Sort(delegate (Dimensions d1, Dimensions d2)
