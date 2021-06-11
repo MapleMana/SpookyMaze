@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -19,13 +20,16 @@ public class StatsManager : Singleton<StatsManager>
     private string pathDungeon;
     private string pathCursedHouse;
 
+    private string Root;
+
     private void Start()
     {
-        pathClassic = $"{Application.persistentDataPath}/classicStats.maze";
-        pathDungeon = $"{Application.persistentDataPath}/dungeonStats.maze";
-        pathCursedHouse = $"{Application.persistentDataPath}/cursedHouseStats.maze";
+        Root = Application.persistentDataPath;
+        pathClassic = $"{Root}/classicStats.maze";
+        pathDungeon = $"{Root}/dungeonStats.maze";
+        pathCursedHouse = $"{Root}/cursedHouseStats.maze";
 
-        if (PlayerPrefs.GetInt("StatsGenerated", 0) == 0 || PlayerPrefs.GetInt("StatsGenerated") != 1)
+        if (PlayerPrefs.GetInt("StatsGenerated", 0) == 0)
         {
             GenerateStats();
             PlayerPrefs.SetInt("StatsGenerated", 1);
