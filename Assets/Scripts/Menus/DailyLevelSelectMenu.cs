@@ -50,7 +50,8 @@ public class DailyLevelSelectMenu : MonoBehaviour
         {
             GameManager.Instance.CurrentSettings.id = i;
             GameManager.Instance.CurrentSettings.dimensions = LevelIO.GetDailyDimension(GameManager.Instance.CurrentSettings)[0];
-            Button newButton = CreateLevelButton(panel, modeName, openedLevels, i);
+            string levelDim = LevelIO.GetDailyDimension(GameManager.Instance.CurrentSettings)[0].ToString();
+            Button newButton = CreateLevelButton(panel, modeName, openedLevels, i, levelDim);
             list.Add(newButton);
         }
     }
@@ -68,10 +69,11 @@ public class DailyLevelSelectMenu : MonoBehaviour
         };
     }
 
-    private Button CreateLevelButton(GameObject panel, string modeName, int openedLevels, int level)
+    private Button CreateLevelButton(GameObject panel, string modeName, int openedLevels, int level, string dim)
     {
         Button newButton = Instantiate(ButtonTemplate);
-        newButton.GetComponentInChildren<Text>().text = level.ToString();
+        newButton.GetComponentInChildren<Text>().text = dim;
+        newButton.GetComponentInChildren<Text>().fontSize = 100;
         newButton.onClick.AddListener(OnLevelOptionClick(modeName, level));
         if (openedLevels > 0)
         {

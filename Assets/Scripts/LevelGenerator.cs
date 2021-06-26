@@ -27,8 +27,24 @@ public static class LevelGenerator
 
     private static Dimensions GetMazeDimensions(int id)
     {
-        // TODO: figure out a better formula
-        return new Dimensions(8, 8);
+        int randomEven = 8;
+        switch (id)
+        {
+            case 1:
+                randomEven = UnityEngine.Random.Range(4, 6) * 2;
+                break;
+            case 2:
+                randomEven = UnityEngine.Random.Range(6, 8) * 2;
+                break;
+            case 3:
+                randomEven = UnityEngine.Random.Range(8, 10) * 2;
+                break;
+            case 4:
+            default:
+                randomEven = UnityEngine.Random.Range(10, 13) * 2;
+                break;
+        }        
+        return new Dimensions(randomEven, randomEven);
     }
 
     private static int GetLevelTime(int pathLength)

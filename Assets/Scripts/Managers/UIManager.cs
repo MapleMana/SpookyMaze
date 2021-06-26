@@ -23,6 +23,7 @@ public class UIManager : Singleton<UIManager>
     public GameObject statsMenu;
     public GameObject inGameMenu;
     public Text levelNumText;
+    public Text levelSizeText;
     public GameObject dungeonKeyPanel;
     public GameObject dungeonLock;
     public Sprite lockedImage;
@@ -176,6 +177,10 @@ public class UIManager : Singleton<UIManager>
         if (_levelCompleted && !GameManager.Instance.IsLastLevel())
         {
             GameManager.Instance.CurrentSettings.id++;
+            if (GameManager.Instance.CurrentSettings.isDaily)
+            {
+                GameManager.Instance.CurrentSettings.dimensions = LevelIO.GetDailyDimension(GameManager.Instance.CurrentSettings)[0];
+            }
         }
         ToggleEndGameMenu();
         ToggleOnReplyMenu();
@@ -212,6 +217,7 @@ public class UIManager : Singleton<UIManager>
             inGameMenu.SetActive(true);
             int totalLevels = GameManager.Instance.CurrentSettings.isDaily ? 4 : 20;
             levelNumText.text = $"{GameManager.Instance.CurrentSettings.id} / {totalLevels}";
+            levelSizeText.text = GameManager.Instance.CurrentSettings.dimensions.ToString();
             if (GameManager.Instance.CurrentSettings.GetReadableGameMode() == "Dungeon")
             {
                 dungeonKeyPanel.SetActive(true);

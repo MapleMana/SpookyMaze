@@ -12,37 +12,40 @@ public class StatsMenu : MonoBehaviour
     public Text statsBtnText;
     public Text statsEndGameBtnText;
 
+    private void OnEnable()
+    {
+        UpdateStatsText();
+    }
+
     public void UpdateStatsText()
     {
         int total = 0;
         classicText.text = "\nCLASSIC\n\n";
-        foreach(KeyValuePair<string, int> kvp in StatsManager.Instance.classicStats)
+        foreach(string dim in StatsManager.Instance.statsList)
         {
-            classicText.text += $"{kvp.Key} : {kvp.Value}\n";
-            total += kvp.Value;
+            int value = PlayerPrefs.GetInt($"Classic{dim}", 0);
+            classicText.text += $"{dim} : {value}\n";
+            total += value;
         }
 
         dungeonText.text = "\nDUNGEON\n\n";
-        foreach (KeyValuePair<string, int> kvp in StatsManager.Instance.dungeonStats)
+        foreach (string dim in StatsManager.Instance.statsList)
         {
-            dungeonText.text += $"{kvp.Key} : {kvp.Value}\n";
-            total += kvp.Value;
+            int value = PlayerPrefs.GetInt($"Dungeon{dim}", 0);
+            dungeonText.text += $"{dim} : {value}\n";
+            total += value;
         }
 
         cursedHouseText.text = "CURSED HOUSE\n\n";
-        foreach (KeyValuePair<string, int> kvp in StatsManager.Instance.cursedHouseStats)
+        foreach (string dim in StatsManager.Instance.statsList)
         {
-            cursedHouseText.text += $"{kvp.Key} : {kvp.Value}\n";
-            total += kvp.Value;
+            int value = PlayerPrefs.GetInt($"Cursed House{dim}", 0);
+            cursedHouseText.text += $"{dim} : {value}\n";
+            total += value;
         }
 
         totalText.text = $"TOTAL LEVELS COMPLETED: {total}";
         statsBtnText.text = $"{total}";
         statsEndGameBtnText.text = $"{total}";
-    }
-
-    public void OpenStatsMenu()
-    {
-        UpdateStatsText();
     }
 }
