@@ -277,4 +277,11 @@ public static class LevelIO
             .Select(dimName => new Dimensions(dimName))
             .ToList();
     }
+
+    public static void DeleteDailyMazes()
+    {
+        string path = $"{Root}/Daily/";
+        DirectoryInfo directory = new DirectoryInfo(path);
+        directory.Delete(true);
+    }
 }

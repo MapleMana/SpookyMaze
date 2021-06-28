@@ -1,0 +1,78 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: UI Text_es
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: es
+  m_SharedData: {fileID: 11400000, guid: 9c8b835fcd9856a43958acad8bf31316, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 632566444032
+    m_Localized: DIARIO
+    m_Metadata:
+      m_Items: []
+  - m_Id: 59867787264
+    m_Localized: CLASICO
+    m_Metadata:
+      m_Items: []
+  - m_Id: 402013941760
+    m_Localized: CALABOZO
+    m_Metadata:
+      m_Items: []
+  - m_Id: 549322092544
+    m_Localized: CASA MALDITA
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27013153157120
+    m_Localized: ACERCA DE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27067033186304
+    m_Localized: 'A MAPLE MANA GAME :)
+
+      @MAPLEMANAMAKES
+
+
+      DESARROLLADO
+      POR:
+
+
+      DAN CURRIE
+
+      @_DANCURRIE
+
+      &
+
+      ANDRII DENYSENKO
+
+      &
+
+      ALISA
+      VYNOHRADOVA'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 29233517031424
+    m_Localized: AJUSTES
+    m_Metadata:
+      m_Items: []
+  - m_Id: 33164670398464
+    m_Localized: MUSICA
+    m_Metadata:
+      m_Items: []
+  - m_Id: 33243129049088
+    m_Localized: RESTAURAR LAS COMPRAS
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 1

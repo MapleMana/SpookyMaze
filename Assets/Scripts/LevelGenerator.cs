@@ -131,6 +131,7 @@ public static class LevelGenerator
         {
             return;
         }
+        LevelIO.DeleteDailyMazes();
         PlayerPrefs.SetInt("Classic", 0);
         PlayerPrefs.SetInt("Dungeon", 0);
         PlayerPrefs.SetInt("Cursed House", 0);

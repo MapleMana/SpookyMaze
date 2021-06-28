@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.Advertisements;
+using UnityEngine.Localization.Settings;
 
 public class UIManager : Singleton<UIManager>
 {
@@ -372,5 +373,10 @@ public class UIManager : Singleton<UIManager>
     {
         Advertisement.Show();
         DailyAdHandler.dailyUnlockAd = false;
+    }
+
+    public void ChangeLocal(int index)
+    {
+        LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.Locales[index];
     }
 }
