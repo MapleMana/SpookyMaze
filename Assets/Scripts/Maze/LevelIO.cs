@@ -282,6 +282,9 @@ public static class LevelIO
     {
         string path = $"{Root}/Daily/";
         DirectoryInfo directory = new DirectoryInfo(path);
-        directory.Delete(true);
+        if (Directory.Exists(path))
+        {
+            directory.Delete(true);
+        }
     }
 }
