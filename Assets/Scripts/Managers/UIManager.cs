@@ -377,6 +377,9 @@ public class UIManager : Singleton<UIManager>
 
     public void ChangeLocal(int index)
     {
-        LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.Locales[index];
+        if (LocalizationSettings.InitializationOperation.IsDone)
+        {
+            LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.Locales[index];
+        }        
     }
 }
