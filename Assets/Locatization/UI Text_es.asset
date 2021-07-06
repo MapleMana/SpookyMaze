@@ -74,5 +74,56 @@ MonoBehaviour:
     m_Localized: RESTAURAR LAS COMPRAS
     m_Metadata:
       m_Items: []
+  - m_Id: 2914135925190656
+    m_Localized: NIVELES DIARIOS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2916754949271552
+    m_Localized: COMO JUGAR
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2916799333396480
+    m_Localized: '-SWIPE PARA MOVER
+
+      -EXIT ES SIEMPRE EN LA ESQUINA INFERIOR
+      DERECHA LABERINTO
+
+
+      CLASICO
+
+      -ENCUENTRA LA SALIDA
+
+
+      CALABOZO
+
+      -BUSCAR
+      LA LLAVE PARA DESBLOQUEAR SALIDA
+
+      -ENCUENTRA LA SALIDA
+
+
+      CASA MALDITA
+
+      -ENCUENTRA
+      LA SALIDA
+
+      -EVITA FANTASMAS, DISMINUIRAN TU LUZ
+
+      -COLECTA TAMBORES
+      DE ACEITE, AUMENTARAN TU LUZ'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2929050782134272
+    m_Localized: COMPRAR MONEDAS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2929113013022720
+    m_Localized: VER ANUNCIO
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2930904106659840
+    m_Localized: ESTADISTICAS
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

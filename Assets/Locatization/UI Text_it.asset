@@ -74,5 +74,56 @@ MonoBehaviour:
     m_Localized: RIPRISTINARE GLI ACQUISTI
     m_Metadata:
       m_Items: []
+  - m_Id: 2914135925190656
+    m_Localized: LIVELLI GIORNALIERI
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2916754949271552
+    m_Localized: COME GIOCARE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2916799333396480
+    m_Localized: '-SWIP PER MUOVERSI
+
+      -USCITA E SEMPRE NEL LABIRINTO D''ANGOLO
+      IN BASSO A DESTRA
+
+
+      CLASSICO
+
+      -TROVA L''USCITA
+
+
+      DUNGEON
+
+      -TROVA
+      LA CHIAVE PER SBLOCCARE ESCI
+
+      -TROVA L''USCITA
+
+
+      CASA MALEDATA
+
+      -TROVA
+      L''USCITA
+
+      -EVITA I FANTASMI, DIMINUIRANNO LA TUA LUCE
+
+      -RACCOLTA
+      FUSTI DI OLIO, AUMENTANO LA TUA LUCE'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2929050782134272
+    m_Localized: COMPRARE MONETE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2929113013022720
+    m_Localized: GUARDA L'ANNUNCIO
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2930904106659840
+    m_Localized: STATISTICHE
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

@@ -74,5 +74,56 @@ MonoBehaviour:
     m_Localized: RESTAURATION DES ACHATS
     m_Metadata:
       m_Items: []
+  - m_Id: 2914135925190656
+    m_Localized: NIVEAUX QUOTIDIENS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2916754949271552
+    m_Localized: COMMENT JOUER
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2916799333396480
+    m_Localized: '-GLISSER POUR DEPLACER
+
+      -LA SORTIE EST TOUJOURS DANS LE LABYRINTHE
+      DE COIN INFERIEUR DROIT
+
+
+      CLASSIQUE
+
+      -TROUVEZ LA SORTIE
+
+
+      DONJON
+
+      -TROUVEZ
+      LA CLE POUR DEVERROUILLER LA SORTIE
+
+      -TROUVEZ LA SORTIE
+
+
+      MAISON
+      MAUDITE
+
+      -TROUVEZ LA SORTIE
+
+      -EVITEZ LES FANTMES, ILS DIMINUERONT
+      VOTRE LUMIERE
+
+      -RECUPEREZ DES FTS D''HUILE, ILS AUGMENTERONT VOTRE LUMIERE'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2929050782134272
+    m_Localized: ACHETER DES PIECES
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2929113013022720
+    m_Localized: REGARDER L'ANNONCE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2930904106659840
+    m_Localized: STATISTIQUES
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

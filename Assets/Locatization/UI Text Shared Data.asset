@@ -51,6 +51,30 @@ MonoBehaviour:
     m_Key: SettingsRestoreBtnText
     m_Metadata:
       m_Items: []
+  - m_Id: 2914135925190656
+    m_Key: DailyMenuTitleText
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2916754949271552
+    m_Key: HowToPlayMenuTitleText
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2916799333396480
+    m_Key: HowToPlayMenuBodyText
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2929050782134272
+    m_Key: PurchaseMenuTitleText
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2929113013022720
+    m_Key: PurchaseMenuWatchAdBtnText
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2930904106659840
+    m_Key: StatsMenuTitleText
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

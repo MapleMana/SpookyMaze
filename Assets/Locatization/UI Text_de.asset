@@ -74,5 +74,56 @@ MonoBehaviour:
     m_Localized: EINKAUFE WIEDERHERSTELLEN
     m_Metadata:
       m_Items: []
+  - m_Id: 2914135925190656
+    m_Localized: TAGLICHE STUFEN
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2916754949271552
+    m_Localized: SPIELANLEITUNG
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2916799333396480
+    m_Localized: '-ZUM BEWEGEN WISCHEN
+
+      -AUSGANG IST IMMER IM UNTEREN RECHTEN
+      ECKEN-LABYRINTH
+
+
+      KLASSISCH
+
+      -FINDEN SIE DEN AUSGANG
+
+
+      VERLIES
+
+      -FINDEN
+      SIE DEN SCHLUSSEL, UM EXIT ZU ENTSPERREN
+
+      -FINDEN SIE DEN AUSGANG
+
+
+      VERFLUCHTES
+      HAUS
+
+      -FINDEN SIE DEN AUSGANG
+
+      -VERMEIDEN SIE GEISTER, SIE VERRINGERN
+      IHR LICHT
+
+      -SAMMELN SIE OLFASSER, SIE ERHOHEN IHR LICHT'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2929050782134272
+    m_Localized: KAUFE MUNZEN
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2929113013022720
+    m_Localized: ANZEIGE ANZEIGEN
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2930904106659840
+    m_Localized: STATISTIKEN
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

@@ -74,5 +74,56 @@ MonoBehaviour:
     m_Localized: RESTORE PURCHASES
     m_Metadata:
       m_Items: []
+  - m_Id: 2914135925190656
+    m_Localized: DAILY LEVELS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2916754949271552
+    m_Localized: HOW TO PLAY
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2916799333396480
+    m_Localized: '-SWIPE TO MOVE
+
+      -EXIT IS ALWAYS IN THE BOTTOM RIGHT CORNER
+      MAZE
+
+
+      CLASSIC
+
+      -FIND THE EXIT
+
+
+      DUNGEON
+
+      -FIND THE
+      KEY TO UNLOCK EXIT
+
+      -FIND THE EXIT
+
+
+      CURSED HOUSE
+
+      -FIND
+      THE EXIT
+
+      -AVOID GHOSTS, THEY WILL DECREASE YOUR LIGHT
+
+      -COLLECT
+      OIL DRUMS, THEY WILL INCREASE YOUR LIGHT'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2929050782134272
+    m_Localized: BUY COINS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2929113013022720
+    m_Localized: WATCH AD
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2930904106659840
+    m_Localized: STATISTICS
+    m_Metadata:
+      m_Items: []
   references:
     version: 1
