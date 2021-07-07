@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+// https://stackoverflow.com/questions/63219332/unity-define-ui-buttons-in-input-manager
 
 /// <summary>
 /// Detects input for different platforms. Methods to be called on Update.
@@ -51,12 +51,18 @@ static class PlayerActionDetector
                         return (touchEnd.y > touchStart.y) ? MovableMovementCommand.MoveUp : MovableMovementCommand.MoveDown;
                     }
                 }
-                else if (touchStart == touchEnd)
+                /*else if (touchStart == touchEnd)
                 {
                     return MovableMovementCommand.Stop;
-                }
+                }*/
             }
         }        
+        return null;
+    }
+
+    public static MovableMovementCommand DetectMobileButtons()
+    {
+
         return null;
     }
 
@@ -88,10 +94,10 @@ static class PlayerActionDetector
         {
             return MovableMovementCommand.MoveRight;
         }
-        if (Input.GetKeyUp(KeyCode.Space))
+        /*if (Input.GetKeyUp(KeyCode.Space))
         {
             return MovableMovementCommand.Stop;
-        }
+        }*/
         return null;
     }
 }
