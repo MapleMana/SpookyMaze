@@ -94,7 +94,7 @@ public class UIManager : Singleton<UIManager>
     {
         if (firstTime)
         {
-            Debug.Log("First Time");
+            //Debug.Log("First Time");
             earnCoinPanel.SetActive(true);
             _initialPos = earnCoinPanel.transform.position;
             coinText.text = $"{PlayerPrefs.GetInt("PlayersCoins", 0) - 4}";
@@ -102,7 +102,7 @@ public class UIManager : Singleton<UIManager>
         }
         else
         {
-            Debug.Log("Not First Time");
+            //Debug.Log("Not First Time");
             earnCoinPanel.SetActive(false);
             coinText.text = $"{PlayerPrefs.GetInt("PlayersCoins", 0)}";
             _animateEarningCoins = false;

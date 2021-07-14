@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityStandardAssets.CrossPlatformInput;
 // https://stackoverflow.com/questions/63219332/unity-define-ui-buttons-in-input-manager
 
 /// <summary>
@@ -17,16 +18,16 @@ static class PlayerActionDetector
         if (Application.platform == RuntimePlatform.Android || 
             Application.platform == RuntimePlatform.IPhonePlayer)
         {
-            return DetectMobile();
+            return DetectTouch();
         }
-        return DetectDesktop();
+        return DetectButtons();
     }
 
     /// <summary>
     /// Detects swipes on mobile platforms
     /// </summary>
     /// <returns>Direction of movement</returns>
-    public static MovableMovementCommand DetectMobile()
+    public static MovableMovementCommand DetectTouch()
     {
         if (Input.touchCount == 1)
         {
@@ -76,21 +77,21 @@ static class PlayerActionDetector
     /// Detects arrow key presses on desktop
     /// </summary>
     /// <returns>Direction of movement</returns>
-    public static MovableMovementCommand DetectDesktop()
+    public static MovableMovementCommand DetectButtons()
     {
-        if (Input.GetKeyUp(KeyCode.UpArrow))
+        if (CrossPlatformInputManager.GetButtonDown("up"))
         {
             return MovableMovementCommand.MoveUp;
         }
-        if (Input.GetKeyUp(KeyCode.DownArrow))
+        if (CrossPlatformInputManager.GetButtonDown("down"))
         {
             return MovableMovementCommand.MoveDown;
         }
-        if (Input.GetKeyUp(KeyCode.LeftArrow))
+        if (CrossPlatformInputManager.GetButtonDown("left"))
         {
             return MovableMovementCommand.MoveLeft;
         }
-        if (Input.GetKeyUp(KeyCode.RightArrow))
+        if (CrossPlatformInputManager.GetButtonDown("right"))
         {
             return MovableMovementCommand.MoveRight;
         }
