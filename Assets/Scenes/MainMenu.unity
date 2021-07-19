@@ -2497,7 +2497,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -5681,7 +5681,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4fb842b6ac9cb3546a37888769a63f98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SoundFX: []
+  SoundFX:
+  - Effect: 0
+    Clip: {fileID: 8300000, guid: c97c98f33ea58452e9ad1bc0214a9779, type: 3}
+  - Effect: 1
+    Clip: {fileID: 0}
+  - Effect: 2
+    Clip: {fileID: 0}
+  - Effect: 3
+    Clip: {fileID: 0}
+  - Effect: 4
+    Clip: {fileID: 0}
+  - Effect: 5
+    Clip: {fileID: 8300000, guid: 03ccfdfce9b3c42fea720a5991612c48, type: 3}
   SoundFXSource: {fileID: 692099943}
 --- !u!4 &692099942
 Transform:
