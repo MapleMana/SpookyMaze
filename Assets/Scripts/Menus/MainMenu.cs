@@ -22,11 +22,6 @@ public class MainMenu : Menu<MainMenu>
         DimensionsMenu.Open();
     }
 
-    public void OnSettingsPressed()
-    {
-        SettingsMenu.Open();
-    }
-
     public void OnDailyPressed()
     {
         GameManager.Instance.CurrentSettings.isDaily = true;

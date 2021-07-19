@@ -35,6 +35,17 @@ public class UIManager : Singleton<UIManager>
     public Sprite nextLevelImage;
     public Sprite replayLevelImage;
 
+    [Header ("Control Buttons")]
+    public Button touchControl;
+    public Button btnControl;
+
+    [Header("Language Buttons")]
+    public Button ENBtn; // 0
+    public Button FRBtn; // 1
+    public Button DEBtn; // 2
+    public Button ITBtn; // 3
+    public Button ESBtn; // 4
+
     public Text purchaseBtnCoinsText;
 
     public Text coinText;
@@ -45,10 +56,14 @@ public class UIManager : Singleton<UIManager>
     private bool _animateEarningCoins;
     private Vector3 _initialPos;
 
+    private Color spookyOrange = new Color(248f / 255f, 148f / 255f, 6f / 255f);
+
     private void Start()
     {
         UpdateTextOnPurchaseMenuButton();
         _animateEarningCoins = false;
+        ChangeControls(PlayerPrefs.GetInt("isTouch", 1)); // 1 is true, 0 is false
+        
     }
 
     private void Update()
@@ -250,7 +265,7 @@ public class UIManager : Singleton<UIManager>
 
     public void ToggleAboutMenu(bool active)
     {
-        aboutMenu.SetActive(active);
+        aboutMenu.SetActive(active);       
     }
 
     public void ToggleSettingsMenu()
@@ -375,11 +390,79 @@ public class UIManager : Singleton<UIManager>
         DailyAdHandler.dailyUnlockAd = false;
     }
 
+    // settings panel config
     public void ChangeLocal(int index)
     {
+        ColorBlock normalBtnColor = ENBtn.colors;
+        normalBtnColor.normalColor = Color.white;
+
+        ColorBlock selectedBtnColor = ENBtn.colors;
+        selectedBtnColor.normalColor = spookyOrange;
+
         if (LocalizationSettings.InitializationOperation.IsDone)
         {
+            ENBtn.colors = normalBtnColor;
+            FRBtn.colors = normalBtnColor;
+            DEBtn.colors = normalBtnColor;
+            ITBtn.colors = normalBtnColor;
+            ESBtn.colors = normalBtnColor;
+
             LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.Locales[index];
+
+            if (index == 1)
+            {
+                FRBtn.colors = selectedBtnColor;
+                FRBtn.Select();
+                PlayerPrefs.SetString("selected-locale", "fr");
+            }
+            else if (index == 2)
+            {
+                DEBtn.colors = selectedBtnColor;
+                DEBtn.Select();
+                PlayerPrefs.SetString("selected-locale", "de");
+            }
+            else if (index == 3)
+            {
+                ITBtn.colors = selectedBtnColor;
+                ITBtn.Select();
+                PlayerPrefs.SetString("selected-locale", "it");
+            }
+            else if (index == 4)
+            {
+                ESBtn.colors = selectedBtnColor;
+                ESBtn.Select();
+                PlayerPrefs.SetString("selected-locale", "es");
+            }
+            else
+            {
+                ENBtn.colors = selectedBtnColor;
+                ENBtn.Select();
+                PlayerPrefs.SetString("selected-locale", "en");
+            }
+            PlayerPrefs.Save();
         }        
+    }
+
+    public void ChangeControls(int isTouch)
+    {
+        ColorBlock normalBtnColor = touchControl.colors;
+        normalBtnColor.normalColor = Color.white;
+
+        ColorBlock selectedBtnColor = touchControl.colors;
+        selectedBtnColor.normalColor = spookyOrange;       
+
+        if (isTouch == 1) // 1 is true, 0 is false
+        {
+            touchControl.colors = selectedBtnColor;
+            btnControl.colors = normalBtnColor;
+            PlayerPrefs.SetInt("isTouch", 1);
+        }
+        else
+        {
+            touchControl.colors = normalBtnColor;
+            btnControl.colors = selectedBtnColor;
+            PlayerPrefs.SetInt("isTouch", 0);
+        }
+        PlayerPrefs.Save();
     }
 }

@@ -16,7 +16,7 @@ public class LevelSelectMenu : MonoBehaviour
     private List<GameObject> panelList;
     private List<Button> levelButtonList;
 
-    private Color orange = new Color(248f/255f, 148f/255f, 6f/255f);
+    private Color spookyOrange = new Color(248f/255f, 148f/255f, 6f/255f);
     private Slider currentSlider;
 
     private const int COST_PER_PACK = 200; //200;
@@ -135,7 +135,7 @@ public class LevelSelectMenu : MonoBehaviour
         newButton.GetComponentInChildren<Text>().text = level.ToString();
         if (GetLevelCompete(level))
         {
-            newButton.GetComponent<Image>().color = orange;
+            newButton.GetComponent<Image>().color = spookyOrange;
         }
         newButton.onClick.AddListener(OnLevelOptionClick(level));
         newButton.transform.SetParent(panel.transform, false);
