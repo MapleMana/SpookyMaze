@@ -45,6 +45,11 @@ public class LevelManager : Singleton<LevelManager>
 
         _mobs = levelData.SpawnMovables();
 
+        if (PlayerPrefs.GetInt("isTouch") == 0)
+        {
+            UIManager.Instance.ToggleInGameControls(true);
+        }
+
         LoadPlaneMaterial(GameManager.Instance.CurrentSettings.gameMode, GameManager.Instance.CurrentSettings.dimensions.Width);
     }
 
@@ -146,6 +151,7 @@ public class LevelManager : Singleton<LevelManager>
             //AnalyticsEvent.LevelFail(GameManager.Instance.CurrentSettings.ToString());
         }
         UIManager.Instance.ToggleInGameMenu();
+        UIManager.Instance.ToggleInGameControls(false);
         UIManager.Instance.ShowFinishMenu(mazeCompleted);
         
     }
@@ -218,11 +224,5 @@ public class LevelManager : Singleton<LevelManager>
         {
             UIManager.Instance.onReplayMenu.SetActive(false);
         }        
-    }
-
-    protected override void OnDestroy()
-    {
-        Clear();
-        base.OnDestroy();
     }
 }

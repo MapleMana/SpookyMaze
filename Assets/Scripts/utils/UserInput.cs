@@ -18,6 +18,10 @@ static class PlayerActionDetector
         if (Application.platform == RuntimePlatform.Android || 
             Application.platform == RuntimePlatform.IPhonePlayer)
         {
+            if (PlayerPrefs.GetInt("isTouch") == 0) // 0 means button controls
+            {
+                return DetectButtons();
+            }
             return DetectTouch();
         }
         return DetectButtons();

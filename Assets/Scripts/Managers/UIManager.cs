@@ -23,6 +23,7 @@ public class UIManager : Singleton<UIManager>
     public GameObject settingsMenu;
     public GameObject statsMenu;
     public GameObject inGameMenu;
+    public GameObject inGameControls;
     public Text levelNumText;
     public Text levelSizeText;
     public GameObject dungeonKeyPanel;
@@ -63,7 +64,6 @@ public class UIManager : Singleton<UIManager>
         UpdateTextOnPurchaseMenuButton();
         _animateEarningCoins = false;
         ChangeControls(PlayerPrefs.GetInt("isTouch", 1)); // 1 is true, 0 is false
-        
     }
 
     private void Update()
@@ -358,6 +358,11 @@ public class UIManager : Singleton<UIManager>
         helpMenu.SetActive(!helpMenu.activeInHierarchy);
     }
 
+    public void ToggleInGameControls(bool isActive)
+    {
+        inGameControls.SetActive(isActive);
+    }
+
     public void HideAllMenus()
     {
         mainMenu.SetActive(false);
@@ -373,6 +378,7 @@ public class UIManager : Singleton<UIManager>
         dailyMenu.SetActive(false);
         inGameMenu.SetActive(false);
         helpMenu.SetActive(false);
+        inGameControls.SetActive(false);
     }
 
     public void UpdateTextOnPurchaseMenuButton()

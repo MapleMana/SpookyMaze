@@ -16,19 +16,19 @@ public class SettingsMenu : MonoBehaviour
         {
             case "en":
             default:
-                ENBtn.Select();
+                UIManager.Instance.ChangeLocal(0);
                 break;
             case "fr":
-                FRBtn.Select();
+                UIManager.Instance.ChangeLocal(1);
                 break;
             case "de":
-                DEBtn.Select();
+                UIManager.Instance.ChangeLocal(2);
                 break;
             case "it":
-                ITBtn.Select();
+                UIManager.Instance.ChangeLocal(3);
                 break;
             case "es":
-                ENBtn.Select();
+                UIManager.Instance.ChangeLocal(4);
                 break;
         }
     }
