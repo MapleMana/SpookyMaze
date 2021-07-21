@@ -153,7 +153,7 @@ public class LevelManager : Singleton<LevelManager>
         {
             Analytics.CustomEvent("MazeCompete", new Dictionary<string, object>
             {
-                {"Time", $"GameManager.Instance.CurrentSettings.ToString():{timeAllowed - Player.Instance.TimeLeft}/{timeAllowed}"}
+                {"Time", $"{GameManager.Instance.CurrentSettings.ToString()}:{timeAllowed - Player.Instance.TimeLeft}/{timeAllowed}"}
             });
             StatsManager.Instance.AddCompletedLevel(GameManager.Instance.CurrentSettings.gameMode, GameManager.Instance.CurrentSettings.dimensions.ToString());
             LightManager.Instance.TurnOn();
@@ -163,7 +163,7 @@ public class LevelManager : Singleton<LevelManager>
         else
         {
             UIManager.Instance.FirstTimeCompletingLevel(false);
-            Analytics.CustomEvent("MazeNotCompleted - GameManager.Instance.CurrentSettings.ToString()");
+            Analytics.CustomEvent("MazeNotCompleted - " + GameManager.Instance.CurrentSettings.ToString());
         }
         UIManager.Instance.ToggleInGameMenu();
         UIManager.Instance.ToggleInGameControls(false);
