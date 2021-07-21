@@ -162,6 +162,7 @@ public class UIManager : Singleton<UIManager>
         HideAllMenus();
         ToggleMainMenu();
         UpdateTextOnPurchaseMenuButton();
+        MusicManager.Instance.PlayMusic(Music.MenuMusic);
     }
 
     /// <summary>

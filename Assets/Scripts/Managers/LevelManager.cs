@@ -51,6 +51,21 @@ public class LevelManager : Singleton<LevelManager>
         }
 
         LoadPlaneMaterial(GameManager.Instance.CurrentSettings.gameMode, GameManager.Instance.CurrentSettings.dimensions.Width);
+
+        // select Music
+        switch (GameManager.Instance.CurrentSettings.gameMode)
+        {
+            case "Classic":
+            default:
+                MusicManager.Instance.PlayMusic(Music.ClassicMusic);
+                break;
+            case "Dungeon":
+                MusicManager.Instance.PlayMusic(Music.DungeonMusic);
+                break;
+            case "Cursed House":
+                MusicManager.Instance.PlayMusic(Music.CursedHouseMusic);
+                break;
+        }
     }
 
     private void LoadPlaneMaterial(string mode, int dim)
@@ -136,10 +151,10 @@ public class LevelManager : Singleton<LevelManager>
         _levelState = mazeCompleted ? LevelState.Completed : LevelState.Failed;
         if (mazeCompleted)
         {
-            /*AnalyticsEvent.LevelComplete(GameManager.Instance.CurrentSettings.ToString(), new Dictionary<string, object>
+            Analytics.CustomEvent("MazeCompete", new Dictionary<string, object>
             {
                 {"Time", $"GameManager.Instance.CurrentSettings.ToString():{timeAllowed - Player.Instance.TimeLeft}/{timeAllowed}"}
-            });*/
+            });
             StatsManager.Instance.AddCompletedLevel(GameManager.Instance.CurrentSettings.gameMode, GameManager.Instance.CurrentSettings.dimensions.ToString());
             LightManager.Instance.TurnOn();
             CameraManager.Instance.FocusOnMaze(Maze.Instance);
@@ -148,7 +163,7 @@ public class LevelManager : Singleton<LevelManager>
         else
         {
             UIManager.Instance.FirstTimeCompletingLevel(false);
-            //AnalyticsEvent.LevelFail(GameManager.Instance.CurrentSettings.ToString());
+            Analytics.CustomEvent("MazeNotCompleted - GameManager.Instance.CurrentSettings.ToString()");
         }
         UIManager.Instance.ToggleInGameMenu();
         UIManager.Instance.ToggleInGameControls(false);

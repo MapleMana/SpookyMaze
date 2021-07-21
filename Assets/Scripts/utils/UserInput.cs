@@ -65,12 +65,6 @@ static class PlayerActionDetector
         return null;
     }
 
-    public static MovableMovementCommand DetectMobileButtons()
-    {
-
-        return null;
-    }
-
     public static void ResetTouches()
     {
         touchStart = Vector3.zero;
@@ -83,19 +77,19 @@ static class PlayerActionDetector
     /// <returns>Direction of movement</returns>
     public static MovableMovementCommand DetectButtons()
     {
-        if (CrossPlatformInputManager.GetButtonDown("up"))
+        if (CrossPlatformInputManager.GetButtonDown("up") || Input.GetKeyDown(KeyCode.UpArrow))
         {
             return MovableMovementCommand.MoveUp;
         }
-        if (CrossPlatformInputManager.GetButtonDown("down"))
+        if (CrossPlatformInputManager.GetButtonDown("down") || Input.GetKeyDown(KeyCode.DownArrow))
         {
             return MovableMovementCommand.MoveDown;
         }
-        if (CrossPlatformInputManager.GetButtonDown("left"))
+        if (CrossPlatformInputManager.GetButtonDown("left") || Input.GetKeyDown(KeyCode.LeftArrow))
         {
             return MovableMovementCommand.MoveLeft;
         }
-        if (CrossPlatformInputManager.GetButtonDown("right"))
+        if (CrossPlatformInputManager.GetButtonDown("right") || Input.GetKeyDown(KeyCode.RightArrow))
         {
             return MovableMovementCommand.MoveRight;
         }
