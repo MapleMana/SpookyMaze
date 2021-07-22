@@ -66,12 +66,14 @@ public class LevelSelectMenu : MonoBehaviour
             foreach (string pack in possiblePacks)
             {
                 Button newButton = Instantiate(levelSizeButtonTemplate);
-                newButton.GetComponentInChildren<Text>().text = dimensions.ToString() + " - " + pack;
+                
                 newButton.onClick.AddListener(OnDimensionsOptionClick(width, height, pack, dimensions.ToString() + pack, newButton));
                 newButton.transform.SetParent(levelSizePanel.transform, false);                
                 buttonList.Add(newButton);
                 currentSlider = newButton.transform.GetChild(0).GetComponent<Slider>();
-                currentSlider.value = GetLevelPackComplete(pack) / 20f;
+                int levelsComplete = GetLevelPackComplete(pack);
+                currentSlider.value = levelsComplete / 20f;
+                newButton.GetComponentInChildren<Text>().text = dimensions.ToString() + " - " + pack + "      " + levelsComplete + "/20";
 
                 GameObject newPanel = Instantiate(levelSelectButtonsPanel);
                 newPanel.transform.SetParent(levelSizePanel.transform, false);
