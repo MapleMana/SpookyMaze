@@ -9,7 +9,9 @@ public class GameCenterManager : Singleton<GameCenterManager>
     public bool loginSuccessful;
     public GameObject gameCenterBtn;
 
-    string leaderboardID = "WRITE YOUR LEADERBOARD ID HERE";
+    string classicLeaderboardID = "com.MapleMana.SpookyMaze.ClassicLeaderboard";
+    string dungeonLeaderboardID = "com.MapleMana.SpookyMaze.DungeonLeaderboard";
+    string cursedHouseLeaderboardID = "com.MapleMana.SpookyMaze.CursedHouseLeaderboard";
 
     void Start()
     {
@@ -46,7 +48,7 @@ public class GameCenterManager : Singleton<GameCenterManager>
         {
             if (loginSuccessful)
             {
-                Social.ReportScore(myScore, leaderboardID, (bool success) => {
+                Social.ReportScore(myScore, classicLeaderboardID, (bool success) => {
                     if (success)
                     {
                         Debug.Log("Successfully uploaded");
@@ -60,7 +62,7 @@ public class GameCenterManager : Singleton<GameCenterManager>
                     if (success)
                     {
                         loginSuccessful = true;
-                        Social.ReportScore(myScore, leaderboardID, (bool successful) => {
+                        Social.ReportScore(myScore, classicLeaderboardID, (bool successful) => {
                             // handle success or failure
 
                         });
