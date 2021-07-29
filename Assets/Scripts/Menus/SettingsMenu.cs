@@ -10,6 +10,10 @@ public class SettingsMenu : MonoBehaviour
     public Button ITBtn;
     public Button ESBtn;
 
+    [Header("Music & SFX")]
+    public Slider musicVol;
+    public Slider sfxVol;
+
     private void OnEnable()
     {
         switch (PlayerPrefs.GetString("selected-locale", "en"))
@@ -31,5 +35,19 @@ public class SettingsMenu : MonoBehaviour
                 UIManager.Instance.ChangeLocal(4);
                 break;
         }
+        musicVol.value = PlayerPrefs.GetFloat("musicVol", 0.5f);
+        sfxVol.value = PlayerPrefs.GetFloat("sfxVol", 0.5f);
+    }
+
+    public void SetMusicVol()
+    {
+        PlayerPrefs.SetFloat("musicVol", musicVol.value);
+        PlayerPrefs.Save();
+    }
+
+    public void SetSFXVol()
+    {
+        PlayerPrefs.SetFloat("sfxVol", sfxVol.value);
+        PlayerPrefs.Save();
     }
 }

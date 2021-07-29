@@ -20,5 +20,6 @@ public class MusicManager : Singleton<MusicManager>
     private void Start()
     {
         PlayMusic(Music.MenuMusic);
+        MusicSource.volume = PlayerPrefs.GetFloat("musicVol", 0.5f);
     }
 }

@@ -156,6 +156,8 @@ public class LevelManager : Singleton<LevelManager>
                 {"Time", $"{GameManager.Instance.CurrentSettings.ToString()}:{timeAllowed - Player.Instance.TimeLeft}/{timeAllowed}"}
             });
             StatsManager.Instance.AddCompletedLevel(GameManager.Instance.CurrentSettings.gameMode, GameManager.Instance.CurrentSettings.dimensions.ToString());
+            GameCenterManager.Instance.PostScoreOnLeaderBoard(StatsManager.Instance.GetTotalGameModeCompletedLevels(GameManager.Instance.CurrentSettings.gameMode),
+                GameManager.Instance.CurrentSettings.gameMode);
             LightManager.Instance.TurnOn();
             CameraManager.Instance.FocusOnMaze(Maze.Instance);
             SaveLevelProgress();

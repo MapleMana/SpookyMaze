@@ -9,9 +9,9 @@ public class GameCenterManager : Singleton<GameCenterManager>
     public bool loginSuccessful;
     public GameObject gameCenterBtn;
 
-    string classicLeaderboardID = "com.MapleMana.SpookyMaze.ClassicLeaderboard";
-    string dungeonLeaderboardID = "com.MapleMana.SpookyMaze.DungeonLeaderboard";
-    string cursedHouseLeaderboardID = "com.MapleMana.SpookyMaze.CursedHouseLeaderboard";
+    private const string _classicLeaderboardID = "com.MapleMana.SpookyMaze.ClassicLeaderboard";
+    private const string _dungeonLeaderboardID = "com.MapleMana.SpookyMaze.DungeonLeaderboard";
+    private const string _cursedHouseLeaderboardID  = "com.MapleMana.SpookyMaze.CursedHouseLeaderboard";
 
     void Start()
     {
@@ -42,13 +42,29 @@ public class GameCenterManager : Singleton<GameCenterManager>
         });
     }
 
-    public void PostScoreOnLeaderBoard(int myScore)
+    public void PostScoreOnLeaderBoard(int myScore, string gameMode)
     {
+        string leaderboardID = "";
+        switch (gameMode)
+        {
+            case "Classic":
+                leaderboardID = _classicLeaderboardID;
+                break;
+            case "Dungeon":
+                leaderboardID = _dungeonLeaderboardID;
+                break;
+            case "Cursed House":
+                leaderboardID = _cursedHouseLeaderboardID;
+                break;
+            default:
+                return;
+        }
+
         if (Application.platform == RuntimePlatform.IPhonePlayer)
         {
             if (loginSuccessful)
             {
-                Social.ReportScore(myScore, classicLeaderboardID, (bool success) => {
+                Social.ReportScore(myScore, leaderboardID, (bool success) => {
                     if (success)
                     {
                         Debug.Log("Successfully uploaded");
@@ -62,7 +78,7 @@ public class GameCenterManager : Singleton<GameCenterManager>
                     if (success)
                     {
                         loginSuccessful = true;
-                        Social.ReportScore(myScore, classicLeaderboardID, (bool successful) => {
+                        Social.ReportScore(myScore, leaderboardID, (bool successful) => {
                             // handle success or failure
 
                         });

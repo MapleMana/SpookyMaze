@@ -12,4 +12,9 @@ public class SoundManager : Singleton<SoundManager>
         AudioClip effect = SoundFX.Find(sfx => sfx.Effect == soundEffect).Clip;
         SoundFXSource.PlayOneShot(effect);
     }
+
+    private void Start()
+    {
+        SoundFXSource.volume = PlayerPrefs.GetFloat("sfxVol", 0.5f);
+    }
 }

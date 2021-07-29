@@ -30,4 +30,14 @@ public class StatsManager : Singleton<StatsManager>
         PlayerPrefs.Save();
         statsMenu.UpdateStatsText();
     }
+
+    public int GetTotalGameModeCompletedLevels(string gameMode)
+    {
+        int total = 0;
+        foreach (string dim in StatsManager.Instance.statsList)
+        {
+            total += PlayerPrefs.GetInt($"{gameMode}{dim}", 0);
+        }
+        return total;
+    }
 }
