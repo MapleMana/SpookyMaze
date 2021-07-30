@@ -12,7 +12,8 @@ public enum SoundEffect
 {
     GhostHit,
     KeyPickUp,
-    DoorOpen,
+    GameWin,
+    GameLose,
     OilDrumPickUp,
     ButtonClick,
     CoinsEarned

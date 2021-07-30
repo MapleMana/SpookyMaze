@@ -190,6 +190,7 @@ public class LevelSelectMenu : MonoBehaviour
         {
             GameManager.Instance.CurrentSettings.id = levelNumber;
             GameManager.Instance.CurrentSettings.isDaily = false;
+            SoundManager.Instance.ButtonClick();
             UIManager.Instance.StartGame();
             ClearPanel();
         };
@@ -206,6 +207,7 @@ public class LevelSelectMenu : MonoBehaviour
         {
             GameManager.Instance.CurrentSettings.dimensions = new Dimensions(dimensionWidth, dimensionHeight);
             GameManager.Instance.CurrentSettings.packId = packId;
+            SoundManager.Instance.ButtonClick();
             foreach (GameObject panel in panelList)
             {
                 panel.SetActive(false);
@@ -243,6 +245,7 @@ public class LevelSelectMenu : MonoBehaviour
                 PlayerPrefs.Save();
                 GameManager.Instance.CurrentSettings.dimensions = new Dimensions(dimensionWidth, dimensionHeight);
                 GameManager.Instance.CurrentSettings.packId = packId;
+                SoundManager.Instance.ButtonClick();
                 LevelSettings currentLevelSettings = GameManager.Instance.CurrentSettings;
 
                 List<int> possibleLevels = LevelIO.GetPossibleIds(GameManager.Instance.CurrentSettings);

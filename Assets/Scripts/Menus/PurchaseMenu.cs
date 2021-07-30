@@ -6,6 +6,7 @@ public class PurchaseMenu : MonoBehaviour
     {
         int previousScore = PlayerPrefs.GetInt("PlayersCoins", 0);
         int newScore = previousScore + num;
+        SoundManager.Instance.PlaySoundEffect(SoundEffect.CoinsEarned);
         PlayerPrefs.SetInt("PlayersCoins", newScore);
         PlayerPrefs.Save();
     }

@@ -17,6 +17,11 @@ public class MusicManager : Singleton<MusicManager>
         }        
     }
 
+    public void StopMusic()
+    {
+        MusicSource.Stop();
+    }
+
     private void Start()
     {
         PlayMusic(Music.MenuMusic);

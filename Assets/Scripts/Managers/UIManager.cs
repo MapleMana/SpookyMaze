@@ -76,6 +76,7 @@ public class UIManager : Singleton<UIManager>
                 earnCoinPanel.SetActive(false);
                 earnCoinPanel.transform.position = _initialPos;
                 _animateEarningCoins = false;
+                SoundManager.Instance.PlaySoundEffect(SoundEffect.CoinsEarned);
                 coinText.text = $"{PlayerPrefs.GetInt("PlayersCoins", 0)}";
             }
         }

@@ -149,6 +149,7 @@ public class LevelManager : Singleton<LevelManager>
     {
         PlayerActionDetector.ResetTouches();        
         _levelState = mazeCompleted ? LevelState.Completed : LevelState.Failed;
+        MusicManager.Instance.StopMusic();
         if (mazeCompleted)
         {
             Analytics.CustomEvent("MazeCompete", new Dictionary<string, object>
@@ -160,12 +161,14 @@ public class LevelManager : Singleton<LevelManager>
                 GameManager.Instance.CurrentSettings.gameMode);
             LightManager.Instance.TurnOn();
             CameraManager.Instance.FocusOnMaze(Maze.Instance);
+            SoundManager.Instance.PlaySoundEffect(SoundEffect.GameWin);
             SaveLevelProgress();
         }
         else
         {
             UIManager.Instance.FirstTimeCompletingLevel(false);
             Analytics.CustomEvent("MazeNotCompleted - " + GameManager.Instance.CurrentSettings.ToString());
+            SoundManager.Instance.PlaySoundEffect(SoundEffect.GameLose);
         }
         UIManager.Instance.ToggleInGameMenu();
         UIManager.Instance.ToggleInGameControls(false);
