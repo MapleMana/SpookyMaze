@@ -10,7 +10,7 @@ public class MusicManager : Singleton<MusicManager>
     public void PlayMusic(Music song)
     {
         AudioClip selectedSong = Songs.Find(s => s.music == song).Clip;
-        if (MusicSource.clip != selectedSong)
+        if (!MusicSource.isPlaying || MusicSource.clip != selectedSong)
         {
             MusicSource.clip = selectedSong;
             MusicSource.Play();

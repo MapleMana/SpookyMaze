@@ -89,10 +89,10 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2916799333396480
-    m_Localized: '-SWIP PER MUOVERSI
+    m_Localized: '-SCORRERE O PULSANTI PER MUOVERSI
 
-      -USCITA E SEMPRE NEL LABIRINTO D''ANGOLO
-      IN BASSO A DESTRA
+      -USCITA E SEMPRE NEL LABIRINTO
+      D''ANGOLO IN BASSO A DESTRA
 
 
       CLASSICO

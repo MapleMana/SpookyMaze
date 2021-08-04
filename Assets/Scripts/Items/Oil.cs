@@ -10,6 +10,7 @@ public class Oil : Item
     public override void Activate()
     {
         Player.Instance.SubtractTime(power: -EFFECTIVENESS);
+        SoundManager.Instance.PlaySoundEffect(SoundEffect.OilDrumPickUp);
     }
 
     public override void Deactivate()

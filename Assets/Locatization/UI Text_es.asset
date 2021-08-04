@@ -89,10 +89,10 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2916799333396480
-    m_Localized: '-SWIPE PARA MOVER
+    m_Localized: '-DESLIZA O BOTONES PARA MOVER
 
-      -EXIT ES SIEMPRE EN LA ESQUINA INFERIOR
-      DERECHA LABERINTO
+      -EXIT ES SIEMPRE EN LA ESQUINA
+      INFERIOR DERECHA LABERINTO
 
 
       CLASICO
