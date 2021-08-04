@@ -80,6 +80,16 @@ public class UIManager : Singleton<UIManager>
                 coinText.text = $"{PlayerPrefs.GetInt("PlayersCoins", 0)}";
             }
         }
+
+        // Make sure user is on Android platform
+        if (Application.platform == RuntimePlatform.Android || Application.isEditor)
+        {
+            // Check if Back was pressed this frame
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                HandleAndroidBackBtn();
+            }
+        }
     }
 
     /// <summary>
@@ -472,5 +482,17 @@ public class UIManager : Singleton<UIManager>
             PlayerPrefs.SetInt("isTouch", 0);
         }
         PlayerPrefs.Save();
+    }
+
+    private void HandleAndroidBackBtn()
+    {
+        if (SceneManager.sceneCount > 1)
+        {
+            GoToMainMenu();
+        }
+        else
+        {
+
+        }
     }
 }
