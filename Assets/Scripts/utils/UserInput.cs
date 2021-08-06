@@ -61,7 +61,16 @@ static class PlayerActionDetector
                     return MovableMovementCommand.Stop;
                 }*/
             }
-        }        
+        }
+        else if (Input.touchCount == 2)
+        {
+            UIManager.Instance.HideAllMenus();
+            CameraManager.Instance.ZoomOutOnPlayer();
+        }
+        else if (Input.touchCount == 3)
+        {
+            UIManager.Instance.GoToMainMenu();
+        }
         return null;
     }
 

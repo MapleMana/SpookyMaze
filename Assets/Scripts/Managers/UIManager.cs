@@ -492,7 +492,46 @@ public class UIManager : Singleton<UIManager>
         }
         else
         {
-
+            if (aboutMenu.activeInHierarchy)
+            {
+                ToggleAboutMenu(false);
+            }
+            else if (classicLevelSelectMenu.activeInHierarchy)
+            {
+                ToggleClassicLevelSelectMenu("");
+            }
+            else if (dungeonLevelSelectMenu.activeInHierarchy)
+            {
+                ToggleDungeonLevelSelectMenu("");
+            }
+            else if (cursedHouseLevelSelectMenu.activeInHierarchy)
+            {
+                ToggleCursedHouseLevelSelectMenu("");
+            }
+            else if (dailyMenu.activeInHierarchy)
+            {
+                ToggleDailyMenu();
+            }
+            else if (purchaseMenu.activeInHierarchy)
+            {
+                TogglePurchaseMenu();
+            }
+            else if (statsMenu.activeInHierarchy)
+            {
+                ToggleStatsMenu();
+            }
+            else if (settingsMenu.activeInHierarchy)
+            {
+                ToggleSettingsMenu();
+            }
+            else if (helpMenu.activeInHierarchy)
+            {
+                ToggleHelpMenu();
+            }
+            else
+            {
+                Application.Quit();
+            }
         }
     }
 }

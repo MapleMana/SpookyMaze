@@ -72,4 +72,9 @@ public class CameraManager : Singleton<CameraManager>
     {
         transform.position = Vector3.Lerp(transform.position, Player.Instance.transform.position + playerOffset, speed * Time.deltaTime);
     }
+
+    public void ZoomOutOnPlayer()
+    {
+        transform.position = Vector3.Lerp(transform.position, Player.Instance.transform.position + playerOffset * 2f, speed * Time.deltaTime);
+    }
 }

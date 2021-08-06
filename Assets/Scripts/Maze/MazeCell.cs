@@ -9,6 +9,9 @@ public class MazeCell : System.IDisposable
     public const float WALL_WIDTH = 2.78f;
     public const float WALL_HEIGHT = 2.78f;
 
+    // makes corners a bit larger than walls to ensure there are no gaps
+    private const float _CORNER_MARGIN = 0.02f;
+
     private Dictionary<Vector2Int, WallState> _wallState = new Dictionary<Vector2Int, WallState>();
     private Vector2Int _position;
     private List<GameObject> _walls;
@@ -152,7 +155,7 @@ public class MazeCell : System.IDisposable
             {
                 GameObject corner = Object.Instantiate(_cornerTemplate);
                 corner.transform.position = new Vector3(x * CELL_WIDTH, 0, y * CELL_WIDTH);
-                corner.transform.localScale = new Vector3(WALL_WIDTH, WALL_HEIGHT, WALL_WIDTH);
+                corner.transform.localScale = new Vector3(WALL_WIDTH + _CORNER_MARGIN, WALL_HEIGHT + _CORNER_MARGIN, WALL_WIDTH + _CORNER_MARGIN);
                 SceneManager.MoveGameObjectToScene(corner, SceneManager.GetSceneByName("Maze"));
                 _corners.Add(corner);
             }
