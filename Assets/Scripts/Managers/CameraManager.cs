@@ -18,9 +18,12 @@ public class CameraManager : Singleton<CameraManager>
     private float speedPop = 120f;
     private bool zoomOutCamera = false;
 
+    private Vector3 _x2PlayerOffset;
+
     private void Start()
     {
         _camera = GetComponent<Camera>();
+        _x2PlayerOffset = playerOffset * 2f;
     }
 
     private void Update()
@@ -75,6 +78,6 @@ public class CameraManager : Singleton<CameraManager>
 
     public void ZoomOutOnPlayer()
     {
-        transform.position = Vector3.Lerp(transform.position, Player.Instance.transform.position + playerOffset * 2f, speed * Time.deltaTime);
+        playerOffset = _x2PlayerOffset;
     }
 }

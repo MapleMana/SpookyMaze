@@ -62,6 +62,7 @@ static class PlayerActionDetector
                 }*/
             }
         }
+        // remove before sale
         else if (Input.touchCount == 2)
         {
             UIManager.Instance.HideAllMenus();
