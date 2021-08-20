@@ -63,7 +63,7 @@ static class PlayerActionDetector
             }
         }
         // remove before sale
-        else if (Input.touchCount == 2)
+        /*else if (Input.touchCount == 2)
         {
             UIManager.Instance.HideAllMenus();
             CameraManager.Instance.ZoomOutOnPlayer();
@@ -71,7 +71,7 @@ static class PlayerActionDetector
         else if (Input.touchCount == 3)
         {
             UIManager.Instance.GoToMainMenu();
-        }
+        }*/
         return null;
     }
 

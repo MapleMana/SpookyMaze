@@ -28,6 +28,8 @@ public class Player : Movable
 
     public Animator animator;
 
+    public LightFlickerEffect lightFlickerEffect;
+
     protected override void Awake()
     {
         base.Awake();
@@ -67,7 +69,19 @@ public class Player : Movable
 
             // diminish torch particle system as light diminishes
             torchParticleSystemEmission.rateOverTime = Mathf.Clamp(TimeLeft * EMISSION_CONSTANT, 0, MAX_EMISSION);
+            if (power != 1)
+            {
+                StartCoroutine(ChangeIntensity(power));
+            }
         }
+    }
+
+    IEnumerator ChangeIntensity(float power)
+    {
+        float defaultMaxInstensity = lightFlickerEffect.maxIntensity;
+        lightFlickerEffect.maxIntensity -= power / 10f;
+        yield return new WaitForSeconds(0.2f);
+        lightFlickerEffect.maxIntensity = defaultMaxInstensity;
     }
 
     protected override void Update()
