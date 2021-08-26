@@ -20,7 +20,7 @@ public class StatsMenu : MonoBehaviour
     public void UpdateStatsText()
     {
         int total = 0;
-        classicText.text = "\nCLASSIC\n\n";
+        classicText.text = "";
         foreach(string dim in StatsManager.Instance.statsList)
         {
             int value = PlayerPrefs.GetInt($"Classic{dim}", 0);
@@ -28,7 +28,7 @@ public class StatsMenu : MonoBehaviour
             total += value;
         }
 
-        dungeonText.text = "\nDUNGEON\n\n";
+        dungeonText.text = "";
         foreach (string dim in StatsManager.Instance.statsList)
         {
             int value = PlayerPrefs.GetInt($"Dungeon{dim}", 0);
@@ -36,7 +36,7 @@ public class StatsMenu : MonoBehaviour
             total += value;
         }
 
-        cursedHouseText.text = "CURSED HOUSE\n\n";
+        cursedHouseText.text = "";
         foreach (string dim in StatsManager.Instance.statsList)
         {
             int value = PlayerPrefs.GetInt($"Cursed House{dim}", 0);
@@ -44,7 +44,7 @@ public class StatsMenu : MonoBehaviour
             total += value;
         }
 
-        totalText.text = $"TOTAL LEVELS COMPLETED: {total}";
+        totalText.text = $"TOTAL MAZES ESCAPED: {total}";
         statsBtnText.text = $"{total}";
         statsEndGameBtnText.text = $"{total}";
     }

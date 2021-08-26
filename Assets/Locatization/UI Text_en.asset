@@ -89,10 +89,10 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 2916799333396480
-    m_Localized: '-SWIPE TO MOVE
+    m_Localized: '-SWIPE OR BUTTONS TO MOVE
 
-      -EXIT IS ALWAYS IN THE BOTTOM RIGHT CORNER
-      MAZE
+      -EXIT IS ALWAYS IN THE BOTTOM
+      RIGHT CORNER MAZE
 
 
       CLASSIC
@@ -102,8 +102,8 @@ MonoBehaviour:
 
       DUNGEON
 
-      -FIND THE
-      KEY TO UNLOCK EXIT
+      -FIND
+      THE KEY TO UNLOCK EXIT
 
       -FIND THE EXIT
 

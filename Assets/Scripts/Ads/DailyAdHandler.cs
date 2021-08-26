@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Advertisements;
@@ -10,6 +11,8 @@ public class DailyAdHandler : MonoBehaviour, IUnityAdsListener
     public static bool testMode = true;
     public DailyLevelSelectMenu DailyLevelSelectMenu;
     public static bool dailyUnlockAd;
+
+    public List<GameObject> purchaseBtns = new List<GameObject>();
 
     void Start()
     {
@@ -48,7 +51,12 @@ public class DailyAdHandler : MonoBehaviour, IUnityAdsListener
                     int previousScore = PlayerPrefs.GetInt("PlayersCoins", 0);
                     int newScore = previousScore + 10;
                     PlayerPrefs.SetInt("PlayersCoins", newScore);
+                    PlayerPrefs.SetInt("TimeAdPlayed", (int)DateTimeOffset.Now.ToUnixTimeSeconds());
                     PlayerPrefs.Save();
+                    foreach(GameObject btn in purchaseBtns)
+                    {
+                        btn.GetComponent<BlinkBtn>().CheckAdBtn();
+                    }
                 }                
                 break;
         }
