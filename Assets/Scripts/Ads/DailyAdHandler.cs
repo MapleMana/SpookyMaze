@@ -8,7 +8,7 @@ public class DailyAdHandler : MonoBehaviour, IUnityAdsListener
 {
     private static string gameId = "0";
     public static string placementId = "daily_unlock";
-    public static bool testMode = true;
+    public static bool testMode = false;
     public DailyLevelSelectMenu DailyLevelSelectMenu;
     public static bool dailyUnlockAd;
 
