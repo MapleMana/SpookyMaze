@@ -133,6 +133,7 @@ GameObject:
   - component: {fileID: 10891671}
   - component: {fileID: 10891673}
   - component: {fileID: 10891674}
+  - component: {fileID: 10891672}
   m_Layer: 5
   m_Name: MainMenu
   m_TagString: Untagged
@@ -170,6 +171,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &10891672
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 10891670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5df029ef041b4e39b8a4215d2ff1362, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!222 &10891673
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -826,7 +839,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 701.5114, y: -104.25076}
+  m_AnchoredPosition: {x: 701.5117, y: -104.25}
   m_SizeDelta: {x: 1250, y: 300}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &94640643
@@ -5544,7 +5557,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 701.5114, y: -672.7523}
+  m_AnchoredPosition: {x: 701.5117, y: -672.7539}
   m_SizeDelta: {x: 700, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &621835760
@@ -11384,7 +11397,7 @@ GameObject:
   - component: {fileID: 1231941941}
   - component: {fileID: 1231941940}
   m_Layer: 0
-  m_Name: Context Screen Sample
+  m_Name: Context Screen
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11531,7 +11544,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 701.5114, y: -1409.7554}
+  m_AnchoredPosition: {x: 701.5117, y: -1409.7539}
   m_SizeDelta: {x: 700, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1252374536
