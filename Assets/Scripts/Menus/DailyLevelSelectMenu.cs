@@ -12,12 +12,15 @@ public class DailyLevelSelectMenu : MonoBehaviour
     public GameObject classicPanel;
     public Button classicUnlockBtn;
     public GameObject classicUnlockImage;
+    public Text classicStreakText;
     public GameObject dungeonPanel;
     public Button dungeonUnlockBtn;
     public GameObject dungeonUnlockImage;
+    public Text dungeonStreakText;
     public GameObject cursedHousePanel;
     public Button cursedHouseUnlockBtn;
     public GameObject cursedHouseUnlockImage;
+    public Text cursedHouseStreakText;
     public Button ButtonTemplate;
 
     private List<Button> classicButtonList = new List<Button>();
@@ -32,6 +35,52 @@ public class DailyLevelSelectMenu : MonoBehaviour
         LoadLevels(classicPanel, classicUnlockBtn, classicUnlockImage, classicButtonList, "Classic");
         LoadLevels(dungeonPanel, dungeonUnlockBtn, dungeonUnlockImage, dungeonButtonList, "Dungeon");
         LoadLevels(cursedHousePanel, cursedHouseUnlockBtn, cursedHouseUnlockImage, cursedHouseButtonList, "Cursed House");
+        LoadStreaks();
+    }
+
+    public void LoadStreaks()
+    {
+        // Classic
+        if (PlayerPrefs.GetInt("ClassicStreakToday") == 0)
+        {
+            classicStreakText.text = "STREAK: UNPLAYED";
+        }
+        if (PlayerPrefs.GetInt("ClassicStreakToday") > 0 && PlayerPrefs.GetInt("ClassicStreakToday") < 4)
+        {
+            classicStreakText.text = "STREAK: IN PROGRESS";
+        }
+        if (PlayerPrefs.GetInt("ClassicStreakToday") > 3)
+        {
+            classicStreakText.text = "STREAK: " + PlayerPrefs.GetInt("ClassicStreak", 0);
+        }
+
+        // Dungeon
+        if (PlayerPrefs.GetInt("DungeonStreakToday") == 0)
+        {
+            dungeonStreakText.text = "STREAK: UNPLAYED";
+        }
+        if (PlayerPrefs.GetInt("DungeonStreakToday") > 0 && PlayerPrefs.GetInt("DungeonStreakToday") < 4)
+        {
+            dungeonStreakText.text = "STREAK: IN PROGRESS";
+        }
+        if (PlayerPrefs.GetInt("DungeonStreakToday") > 3)
+        {
+            dungeonStreakText.text = "STREAK: " + PlayerPrefs.GetInt("DungeonStreak", 0);
+        }
+
+        // Cursed House
+        if (PlayerPrefs.GetInt("CursedHouseStreakToday") == 0)
+        {
+            cursedHouseStreakText.text = "STREAK: UNPLAYED";
+        }
+        if (PlayerPrefs.GetInt("CursedHouseStreakToday") > 0 && PlayerPrefs.GetInt("CursedHouseStreakToday") < 4)
+        {
+            cursedHouseStreakText.text = "STREAK: IN PROGRESS";
+        }
+        if (PlayerPrefs.GetInt("CursedHouseStreakToday") > 3)
+        {
+            cursedHouseStreakText.text = "STREAK: " + PlayerPrefs.GetInt("CursedHouseStreak", 0);
+        }        
     }
 
     private void LoadLevels(GameObject panel, Button btn, GameObject img, List<Button> list, string modeName)

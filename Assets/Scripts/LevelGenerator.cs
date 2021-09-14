@@ -133,8 +133,11 @@ public static class LevelGenerator
         }
         LevelIO.DeleteDailyMazes();
         PlayerPrefs.SetInt("Classic", 0);
+        PlayerPrefs.SetInt("ClassicStreakToday", 0);
         PlayerPrefs.SetInt("Dungeon", 0);
+        PlayerPrefs.SetInt("DungeonStreakToday", 0);
         PlayerPrefs.SetInt("Cursed House", 0);
+        PlayerPrefs.SetInt("CursedHouseStreakToday", 0);
         PlayerPrefs.SetString("currentDate", currentDate);
         PlayerPrefs.Save();
 

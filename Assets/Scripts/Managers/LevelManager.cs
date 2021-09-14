@@ -158,7 +158,7 @@ public class LevelManager : Singleton<LevelManager>
             });
             StatsManager.Instance.AddCompletedLevel(GameManager.Instance.CurrentSettings.gameMode, GameManager.Instance.CurrentSettings.dimensions.ToString());
             GameCenterManager.Instance.PostScoreOnLeaderBoard(StatsManager.Instance.GetTotalGameModeCompletedLevels(GameManager.Instance.CurrentSettings.gameMode),
-                GameManager.Instance.CurrentSettings.gameMode);
+                GameManager.Instance.CurrentSettings.gameMode, false);
             LightManager.Instance.TurnOn();
             CameraManager.Instance.FocusOnMaze(Maze.Instance);
             SoundManager.Instance.PlaySoundEffect(SoundEffect.GameWin);
@@ -190,6 +190,43 @@ public class LevelManager : Singleton<LevelManager>
                 LevelPackData currentlevelPackData = LevelIO.LoadLevelPackData(currentLevelSettings);
                 currentlevelPackData.numLevelsComplete += 1;
                 LevelIO.SaveLevelPackData(currentLevelSettings, currentlevelPackData);
+            }
+            else // is daily, for streaks
+            {
+                if (currentLevelSettings.gameMode == "Classic")
+                {
+                    int value = PlayerPrefs.GetInt("ClassicStreakToday", 0) + 1;
+                    PlayerPrefs.SetInt("ClassicStreakToday", value);
+                    if (value > 3)
+                    {
+                        int streakValue = PlayerPrefs.GetInt("ClassicStreak", 0) + 1;
+                        PlayerPrefs.SetInt("ClassicStreak", streakValue);
+                        GameCenterManager.Instance.PostScoreOnLeaderBoard(streakValue, currentLevelSettings.gameMode, true);
+                    }
+                }
+                else if (currentLevelSettings.gameMode == "Dungeon")
+                {
+                    int value = PlayerPrefs.GetInt("DungeonStreakToday", 0) + 1;
+                    PlayerPrefs.SetInt("DungeonStreakToday", value);
+                    if (value > 3)
+                    {
+                        int streakValue = PlayerPrefs.GetInt("DungeonStreak", 0) + 1;
+                        PlayerPrefs.SetInt("DungeonStreak", streakValue);
+                        GameCenterManager.Instance.PostScoreOnLeaderBoard(streakValue, currentLevelSettings.gameMode, true);
+                    }
+                }
+                else if (currentLevelSettings.gameMode == "Cursed House")
+                {
+                    int value = PlayerPrefs.GetInt("CursedHouseStreakToday", 0) + 1;
+                    PlayerPrefs.SetInt("CursedHouseStreakToday", value);
+                    if (value > 3)
+                    {
+                        int streakValue = PlayerPrefs.GetInt("CursedHouseStreak", 0) + 1;
+                        PlayerPrefs.SetInt("CursedHouseStreak", streakValue);
+                        GameCenterManager.Instance.PostScoreOnLeaderBoard(streakValue, currentLevelSettings.gameMode, true);
+                    }
+                }
+                PlayerPrefs.Save();
             }
             UIManager.Instance.FirstTimeCompletingLevel(true);
         }

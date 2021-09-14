@@ -13,6 +13,10 @@ public class GameCenterManager : Singleton<GameCenterManager>
     private const string _dungeonLeaderboardID = "com.MapleMana.SpookyMaze.DungeonLeaderboard";
     private const string _cursedHouseLeaderboardID  = "com.MapleMana.SpookyMaze.CursedHouseLeaderboard";
 
+    private const string _classicStreakLeaderboardID = "com.MapleMana.SpookyMaze.ClassicStreakLeaderboard";
+    private const string _dungeonStreakLeaderboardID = "com.MapleMana.SpookyMaze.DungeonStreakLeaderboard";
+    private const string _cursedHouseStreakLeaderboardID = "com.MapleMana.SpookyMaze.CursedHouseStreakLeaderboard";
+
     void Start()
     {
         if (Application.platform == RuntimePlatform.IPhonePlayer)
@@ -42,19 +46,40 @@ public class GameCenterManager : Singleton<GameCenterManager>
         });
     }
 
-    public void PostScoreOnLeaderBoard(int myScore, string gameMode)
+    public void PostScoreOnLeaderBoard(int myScore, string gameMode, bool isStreak)
     {
         string leaderboardID = "";
         switch (gameMode)
         {
             case "Classic":
-                leaderboardID = _classicLeaderboardID;
+                if (!isStreak)
+                {
+                    leaderboardID = _classicLeaderboardID;
+                }
+                else
+                {
+                    leaderboardID = _classicStreakLeaderboardID;
+                }
                 break;
             case "Dungeon":
-                leaderboardID = _dungeonLeaderboardID;
+                if (!isStreak)
+                {
+                    leaderboardID = _dungeonLeaderboardID;
+                }
+                else
+                {
+                    leaderboardID = _dungeonStreakLeaderboardID;
+                }
                 break;
             case "Cursed House":
-                leaderboardID = _cursedHouseLeaderboardID;
+                if (!isStreak)
+                {
+                    leaderboardID = _cursedHouseLeaderboardID;
+                }
+                else
+                {
+                    leaderboardID = _cursedHouseStreakLeaderboardID;
+                }
                 break;
             default:
                 return;
