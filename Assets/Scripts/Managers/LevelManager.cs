@@ -202,6 +202,8 @@ public class LevelManager : Singleton<LevelManager>
                         int streakValue = PlayerPrefs.GetInt("ClassicStreak", 0) + 1;
                         PlayerPrefs.SetInt("ClassicStreak", streakValue);
                         GameCenterManager.Instance.PostScoreOnLeaderBoard(streakValue, currentLevelSettings.gameMode, true);
+                        int todayAsInt = int.Parse(DateTime.Now.Month.ToString() + DateTime.Now.Day.ToString());
+                        PlayerPrefs.SetInt("ClassicStreakSet", todayAsInt);
                     }
                 }
                 else if (currentLevelSettings.gameMode == "Dungeon")
@@ -213,6 +215,8 @@ public class LevelManager : Singleton<LevelManager>
                         int streakValue = PlayerPrefs.GetInt("DungeonStreak", 0) + 1;
                         PlayerPrefs.SetInt("DungeonStreak", streakValue);
                         GameCenterManager.Instance.PostScoreOnLeaderBoard(streakValue, currentLevelSettings.gameMode, true);
+                        int todayAsInt = int.Parse(DateTime.Now.Month.ToString() + DateTime.Now.Day.ToString());
+                        PlayerPrefs.SetInt("DungeonStreakSet", todayAsInt);
                     }
                 }
                 else if (currentLevelSettings.gameMode == "Cursed House")
@@ -224,6 +228,8 @@ public class LevelManager : Singleton<LevelManager>
                         int streakValue = PlayerPrefs.GetInt("CursedHouseStreak", 0) + 1;
                         PlayerPrefs.SetInt("CursedHouseStreak", streakValue);
                         GameCenterManager.Instance.PostScoreOnLeaderBoard(streakValue, currentLevelSettings.gameMode, true);
+                        int todayAsInt = int.Parse(DateTime.Now.Month.ToString() + DateTime.Now.Day.ToString());
+                        PlayerPrefs.SetInt("CursedHouseStreakSet", todayAsInt);
                     }
                 }
                 PlayerPrefs.Save();

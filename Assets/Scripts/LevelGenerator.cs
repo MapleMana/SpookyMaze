@@ -132,13 +132,28 @@ public static class LevelGenerator
             return;
         }
         LevelIO.DeleteDailyMazes();
-        PlayerPrefs.SetInt("Classic", 0);
-        PlayerPrefs.SetInt("ClassicStreakToday", 0);
+        PlayerPrefs.SetInt("Classic", 0); // if 1, daily maze pack is unlocked
+        PlayerPrefs.SetInt("ClassicStreakToday", 0); // counts num of daily mazes of this mode completed
         PlayerPrefs.SetInt("Dungeon", 0);
         PlayerPrefs.SetInt("DungeonStreakToday", 0);
         PlayerPrefs.SetInt("Cursed House", 0);
         PlayerPrefs.SetInt("CursedHouseStreakToday", 0);
         PlayerPrefs.SetString("currentDate", currentDate);
+
+        // Resets streaks, if day is missed
+        int todayAsInt = int.Parse(DateTime.Now.Month.ToString() + DateTime.Now.Day.ToString());
+        if (PlayerPrefs.GetInt("ClassicStreakSet") + 1 != todayAsInt)
+        {
+            PlayerPrefs.SetInt("ClassicStreak", 0);
+        }
+        if (PlayerPrefs.GetInt("DungeonStreakSet") + 1 != todayAsInt)
+        {
+            PlayerPrefs.SetInt("DungeonStreak", 0);
+        }
+        if (PlayerPrefs.GetInt("CursedHouseStreakSet") + 1 != todayAsInt)
+        {
+            PlayerPrefs.SetInt("CursedHouseStreak", 0);
+        }
         PlayerPrefs.Save();
 
         int dailySeed = (int)(DateTimeOffset.Now.ToUnixTimeSeconds() / (3600 * 24));
