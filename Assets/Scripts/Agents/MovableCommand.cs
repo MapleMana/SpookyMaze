@@ -58,6 +58,7 @@ public class MovableMovementCommand : MovableCommand
     public static readonly MovableMovementCommand MoveDown = new MovableMovementCommand(Vector2Int.down);
     public static readonly MovableMovementCommand MoveLeft = new MovableMovementCommand(Vector2Int.left);
     public static readonly MovableMovementCommand MoveRight = new MovableMovementCommand(Vector2Int.right);
+    public static readonly MovableMovementCommand Stop = new MovableMovementCommand(Vector2Int.zero);
 
     public MovableMovementCommand(Vector2Int direction) 
         : base(
@@ -79,6 +80,7 @@ public class MovableMovementCommand : MovableCommand
         if (direction == Vector2Int.down) return MoveDown;
         if (direction == Vector2Int.right) return MoveRight;
         if (direction == Vector2Int.left) return MoveLeft;
+        if (direction == Vector2Int.zero) return Stop;
         return null;
     }
 }

@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DimensionsMenu : Menu<DimensionsMenu>
+public class DimensionsMenu : MonoBehaviour
 {
     public GameObject ButtonsPanel;
     public Button ButtonTemplate;

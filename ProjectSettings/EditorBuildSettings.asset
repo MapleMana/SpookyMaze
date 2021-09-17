@@ -11,4 +11,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Maze.unity
     guid: bf1ea21ed6a1a7749aaff69865835cda
-  m_configObjects: {}
+  m_configObjects:
+    com.unity.addressableassets: {fileID: 11400000, guid: 9a3b0f30cf0b7db49b8a0352e31b3752,
+      type: 2}
+    com.unity.input.settings: {fileID: 11400000, guid: 45a23ca6756c040d5ba0d9e45e4628d8,
+      type: 2}
+    com.unity.localization.settings: {fileID: 11400000, guid: df0755a3d83b62c4aa4da6c6040692f9,
+      type: 2}

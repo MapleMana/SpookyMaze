@@ -7,37 +7,100 @@ using UnityEngine.Advertisements;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-
 public class DailyLevelSelectMenu : MonoBehaviour
 {
-    public GameObject ClassicPanel;
-    public GameObject DungeonPanel;
-    public GameObject CursedHousePanel;
+    public GameObject classicPanel;
+    public Button classicUnlockBtn;
+    public GameObject classicUnlockImage;
+    public Text classicStreakText;
+    public GameObject dungeonPanel;
+    public Button dungeonUnlockBtn;
+    public GameObject dungeonUnlockImage;
+    public Text dungeonStreakText;
+    public GameObject cursedHousePanel;
+    public Button cursedHouseUnlockBtn;
+    public GameObject cursedHouseUnlockImage;
+    public Text cursedHouseStreakText;
     public Button ButtonTemplate;
 
     private List<Button> classicButtonList = new List<Button>();
     private List<Button> dungeonButtonList = new List<Button>();
     private List<Button> cursedHouseButtonList = new List<Button>();
+    private Color orange = new Color(248f / 255f, 148f / 255f, 6f / 255f);
 
     private string modeToUnlock;
 
-    private void Start()
+    public void LoadDailyMenu()
     {
-        LoadLevels(ClassicPanel, classicButtonList, "Classic");
-        LoadLevels(DungeonPanel, dungeonButtonList, "Dungeon");
-        LoadLevels(CursedHousePanel, cursedHouseButtonList, "Cursed House");
+        LoadLevels(classicPanel, classicUnlockBtn, classicUnlockImage, classicButtonList, "Classic");
+        LoadLevels(dungeonPanel, dungeonUnlockBtn, dungeonUnlockImage, dungeonButtonList, "Dungeon");
+        LoadLevels(cursedHousePanel, cursedHouseUnlockBtn, cursedHouseUnlockImage, cursedHouseButtonList, "Cursed House");
+        LoadStreaks();
     }
 
-    public void LoadLevels(GameObject panel, List<Button> list, string modeName)
+    public void LoadStreaks()
+    {
+        // Classic
+        if (PlayerPrefs.GetInt("ClassicStreakToday") == 0)
+        {
+            classicStreakText.text = "STREAK: UNPLAYED";
+        }
+        if (PlayerPrefs.GetInt("ClassicStreakToday") > 0 && PlayerPrefs.GetInt("ClassicStreakToday") < 4)
+        {
+            classicStreakText.text = "STREAK: IN PROGRESS";
+        }
+        if (PlayerPrefs.GetInt("ClassicStreakToday") > 3)
+        {
+            classicStreakText.text = "STREAK: " + PlayerPrefs.GetInt("ClassicStreak", 0);
+        }
+
+        // Dungeon
+        if (PlayerPrefs.GetInt("DungeonStreakToday") == 0)
+        {
+            dungeonStreakText.text = "STREAK: UNPLAYED";
+        }
+        if (PlayerPrefs.GetInt("DungeonStreakToday") > 0 && PlayerPrefs.GetInt("DungeonStreakToday") < 4)
+        {
+            dungeonStreakText.text = "STREAK: IN PROGRESS";
+        }
+        if (PlayerPrefs.GetInt("DungeonStreakToday") > 3)
+        {
+            dungeonStreakText.text = "STREAK: " + PlayerPrefs.GetInt("DungeonStreak", 0);
+        }
+
+        // Cursed House
+        if (PlayerPrefs.GetInt("CursedHouseStreakToday") == 0)
+        {
+            cursedHouseStreakText.text = "STREAK: UNPLAYED";
+        }
+        if (PlayerPrefs.GetInt("CursedHouseStreakToday") > 0 && PlayerPrefs.GetInt("CursedHouseStreakToday") < 4)
+        {
+            cursedHouseStreakText.text = "STREAK: IN PROGRESS";
+        }
+        if (PlayerPrefs.GetInt("CursedHouseStreakToday") > 3)
+        {
+            cursedHouseStreakText.text = "STREAK: " + PlayerPrefs.GetInt("CursedHouseStreak", 0);
+        }        
+    }
+
+    private void LoadLevels(GameObject panel, Button btn, GameObject img, List<Button> list, string modeName)
     {
         GameManager.Instance.CurrentSettings.gameMode = modeName;
-        int openedLevels = PlayerPrefs.GetInt($"OpenedDailyLevels{GameManager.Instance.CurrentSettings.gameMode}");
-
+        int openedLevels = PlayerPrefs.GetInt(modeName, 0);
         int possibleLevels = LevelGenerator.NUM_OF_DAILY_LEVELS;
+
+        if (openedLevels > 0)
+        {
+            btn.interactable = false;
+            img.SetActive(false);
+        }
 
         for (int i = 1; i <= possibleLevels; i++)
         {
-            Button newButton = CreateLevelButton(panel, modeName, openedLevels, i);
+            GameManager.Instance.CurrentSettings.id = i;
+            GameManager.Instance.CurrentSettings.dimensions = LevelIO.GetDailyDimension(GameManager.Instance.CurrentSettings)[0];
+            string levelDim = LevelIO.GetDailyDimension(GameManager.Instance.CurrentSettings)[0].ToString();
+            Button newButton = CreateLevelButton(panel, modeName, openedLevels, i, levelDim);
             list.Add(newButton);
         }
     }
@@ -49,55 +112,74 @@ public class DailyLevelSelectMenu : MonoBehaviour
             GameManager.Instance.CurrentSettings.gameMode = modeName;
             GameManager.Instance.CurrentSettings.id = levelNumber;
             GameManager.Instance.CurrentSettings.isDaily = true;
+            GameManager.Instance.CurrentSettings.dimensions = LevelIO.GetDailyDimension(GameManager.Instance.CurrentSettings)[0];
+            ClearPanels();
             UIManager.Instance.StartGame();
         };
     }
 
-    private Button CreateLevelButton(GameObject panel, string modeName, int openedLevels, int level)
+    private Button CreateLevelButton(GameObject panel, string modeName, int openedLevels, int level, string dim)
     {
         Button newButton = Instantiate(ButtonTemplate);
-        newButton.GetComponentInChildren<Text>().text = level.ToString();
+        newButton.GetComponentInChildren<Text>().text = dim;
+        newButton.GetComponentInChildren<Text>().fontSize = 100;
         newButton.onClick.AddListener(OnLevelOptionClick(modeName, level));
-        newButton.interactable = false;
-        newButton.transform.SetParent(panel.transform, false);
+        if (openedLevels > 0)
+        {
+            newButton.interactable = true;
+            newButton.transform.SetParent(panel.transform, false);
+        }
+        else
+        {
+            newButton.interactable = false;
+            newButton.transform.SetParent(panel.transform, false);
+        }
+        
+        if (GetLevelCompete(level))
+        {
+            newButton.GetComponent<Image>().color = orange;
+        }
         return newButton;
+    }
+
+    private static bool GetLevelCompete(int level)
+    {
+        GameManager.Instance.CurrentSettings.id = level;
+        GameManager.Instance.CurrentSettings.isDaily = true;
+        LevelSettings currentLevelSettings = GameManager.Instance.CurrentSettings;
+        return LevelIO.LoadLevel(currentLevelSettings).complete;
     }
 
     public void UnlockLevels(string modeName)
     {
         Advertisement.Show();
+        DailyAdHandler.dailyUnlockAd = true;
         modeToUnlock = modeName;
     }
 
     public void HandleAdWatched()
     {
-        int openedDailyLevels = PlayerPrefs.GetInt($"OpenedDailyLevels{GameManager.Instance.CurrentSettings.gameMode}");
-        openedDailyLevels += 4;
-        PlayerPrefs.SetInt($"OpenedDailyLevels{GameManager.Instance.CurrentSettings.gameMode}", openedDailyLevels);
-        switch (modeToUnlock)
-        {
-            case "Classic":
-                foreach (Button button in classicButtonList)
-                {
-                    button.interactable = true;
-                }
-                break;
-            case "Dungeon":
-                foreach (Button button in dungeonButtonList)
-                {
-                    button.interactable = true;
-                }
-                break;
-            case "Cursed House":
-                foreach (Button button in cursedHouseButtonList)
-                {
-                    button.interactable = true;
-                }
-                break;
-            default:
-                Debug.Log("buttons didn't unlock :(");
-                break;
-        }
+        ClearPanels();
+        PlayerPrefs.SetInt(modeToUnlock, 1);
+        PlayerPrefs.Save();
+        LoadDailyMenu();
+    }
+
+    public void ResetButtons()
+    {
+        classicUnlockBtn.interactable = true;
+        classicUnlockImage.SetActive(true);
+        dungeonUnlockBtn.interactable = true;
+        dungeonUnlockImage.SetActive(true);
+        cursedHouseUnlockBtn.interactable = true;
+        cursedHouseUnlockImage.SetActive(true);
+    }
+
+    public void ClearPanels()
+    {
+        ClearButtonsPanel(classicPanel);
+        ClearButtonsPanel(dungeonPanel);
+        ClearButtonsPanel(cursedHousePanel);
     }
 
     private void ClearButtonsPanel(GameObject panel)

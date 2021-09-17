@@ -1,7 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityStandardAssets.CrossPlatformInput;
+// https://stackoverflow.com/questions/63219332/unity-define-ui-buttons-in-input-manager
 
 /// <summary>
 /// Detects input for different platforms. Methods to be called on Update.
@@ -17,16 +18,20 @@ static class PlayerActionDetector
         if (Application.platform == RuntimePlatform.Android || 
             Application.platform == RuntimePlatform.IPhonePlayer)
         {
-            return DetectMobile();
+            if (PlayerPrefs.GetInt("isTouch") == 0) // 0 means button controls
+            {
+                return DetectButtons();
+            }
+            return DetectTouch();
         }
-        return DetectDesktop();
+        return DetectButtons();
     }
 
     /// <summary>
     /// Detects swipes on mobile platforms
     /// </summary>
     /// <returns>Direction of movement</returns>
-    public static MovableMovementCommand DetectMobile()
+    public static MovableMovementCommand DetectTouch()
     {
         if (Input.touchCount == 1)
         {
@@ -51,8 +56,22 @@ static class PlayerActionDetector
                         return (touchEnd.y > touchStart.y) ? MovableMovementCommand.MoveUp : MovableMovementCommand.MoveDown;
                     }
                 }
+                /*else if (touchStart == touchEnd)
+                {
+                    return MovableMovementCommand.Stop;
+                }*/
             }
-        }        
+        }
+        // remove before sale
+        /*else if (Input.touchCount == 2)
+        {
+            UIManager.Instance.HideAllMenus();
+            CameraManager.Instance.ZoomOutOnPlayer();
+        }
+        else if (Input.touchCount == 3)
+        {
+            UIManager.Instance.GoToMainMenu();
+        }*/
         return null;
     }
 
@@ -66,24 +85,28 @@ static class PlayerActionDetector
     /// Detects arrow key presses on desktop
     /// </summary>
     /// <returns>Direction of movement</returns>
-    public static MovableMovementCommand DetectDesktop()
+    public static MovableMovementCommand DetectButtons()
     {
-        if (Input.GetKeyUp(KeyCode.UpArrow))
+        if (CrossPlatformInputManager.GetButtonDown("up") || Input.GetKeyDown(KeyCode.UpArrow))
         {
             return MovableMovementCommand.MoveUp;
         }
-        if (Input.GetKeyUp(KeyCode.DownArrow))
+        if (CrossPlatformInputManager.GetButtonDown("down") || Input.GetKeyDown(KeyCode.DownArrow))
         {
             return MovableMovementCommand.MoveDown;
         }
-        if (Input.GetKeyUp(KeyCode.LeftArrow))
+        if (CrossPlatformInputManager.GetButtonDown("left") || Input.GetKeyDown(KeyCode.LeftArrow))
         {
             return MovableMovementCommand.MoveLeft;
         }
-        if (Input.GetKeyUp(KeyCode.RightArrow))
+        if (CrossPlatformInputManager.GetButtonDown("right") || Input.GetKeyDown(KeyCode.RightArrow))
         {
             return MovableMovementCommand.MoveRight;
         }
+        /*if (Input.GetKeyUp(KeyCode.Space))
+        {
+            return MovableMovementCommand.Stop;
+        }*/
         return null;
     }
 }

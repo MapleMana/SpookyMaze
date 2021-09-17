@@ -39,6 +39,7 @@ public class Ghost : Movable
         if (other.gameObject.name == "Player" && 
             LevelManager.Instance.LevelIs(LevelState.InProgress))
         {
+            SoundManager.Instance.PlaySoundEffect(SoundEffect.GhostHit);
             MovableCommand playerEncounter = MovableCommand.EncounterPlayer;
             if (playerEncounter.Execute(this).Succeeded)
             {

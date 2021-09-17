@@ -8,6 +8,8 @@ using UnityEngine.Analytics;
 
 public class LevelManager : Singleton<LevelManager>
 {
+    public GameObject plane;
+
     private LevelState _levelState;
     private LevelData _levelData;
     private List<Movable> _mobs;
@@ -20,6 +22,9 @@ public class LevelManager : Singleton<LevelManager>
     public GameObject exitDoor;
 
     public bool LevelIs(LevelState state) => (_levelState & state) != 0;
+
+    private float frationOfTimeLeft = 0.15f;
+    private float endOfLevelSpeed = 1.25f;
 
     public void Initialize(LevelData levelData)
     {
@@ -38,7 +43,36 @@ public class LevelManager : Singleton<LevelManager>
         Player.Instance.Inventory.Clear();
         exitDoor.GetComponent<ExitDoor>().MoveToExit(Maze.Instance);
 
-        _mobs = levelData.SpawnMovables();                
+        _mobs = levelData.SpawnMovables();
+
+        if (PlayerPrefs.GetInt("isTouch") == 0)
+        {
+            UIManager.Instance.ToggleInGameControls(true);
+        }
+
+        LoadPlaneMaterial(GameManager.Instance.CurrentSettings.gameMode, GameManager.Instance.CurrentSettings.dimensions.Width);
+
+        // select Music
+        switch (GameManager.Instance.CurrentSettings.gameMode)
+        {
+            case "Classic":
+            default:
+                MusicManager.Instance.PlayMusic(Music.ClassicMusic);
+                break;
+            case "Dungeon":
+                MusicManager.Instance.PlayMusic(Music.DungeonMusic);
+                break;
+            case "Cursed House":
+                MusicManager.Instance.PlayMusic(Music.CursedHouseMusic);
+                break;
+        }
+    }
+
+    private void LoadPlaneMaterial(string mode, int dim)
+    {
+        plane.GetComponent<FloorPlane>().ChangeFloorMaterial(mode, dim);
+        plane.transform.localScale = new Vector3(Maze.Instance.Dimensions.Width, 1f, Maze.Instance.Dimensions.Height);
+        plane.transform.position = new Vector3(Maze.Instance.Dimensions.Width * 5f, 0f, Maze.Instance.Dimensions.Height * 5f);
     }
 
     void ResetState()
@@ -61,6 +95,11 @@ public class LevelManager : Singleton<LevelManager>
         else if (LevelIs(LevelState.InReplayReversed))
         {
             return 1 / GameManager.Instance.reversedReplayMultiplier;
+        }
+        else if (LevelIs(LevelState.InProgress))
+        {
+            // increase player speed near end of allowed time
+            return Player.Instance.TimeLeft < (timeAllowed * frationOfTimeLeft) ? endOfLevelSpeed : 1f;
         }
         return 1;
     }
@@ -108,42 +147,99 @@ public class LevelManager : Singleton<LevelManager>
     /// </summary>
     public void EndLevel(bool mazeCompleted)
     {
-        PlayerActionDetector.ResetTouches();
-        UIManager.Instance.ToggleInGameMenu();
+        PlayerActionDetector.ResetTouches();        
         _levelState = mazeCompleted ? LevelState.Completed : LevelState.Failed;
-        //Debug.Log($"{GameManager.Instance.CurrentSettings.ToString()} - Time Taken: {timeAllowed - Player.Instance.TimeLeft} / Time Allowed: {timeAllowed}");
+        MusicManager.Instance.StopMusic();
         if (mazeCompleted)
         {
-            AnalyticsEvent.LevelComplete(GameManager.Instance.CurrentSettings.ToString(), new Dictionary<string, object>
+            Analytics.CustomEvent("MazeCompete", new Dictionary<string, object>
             {
-                {"Time taken", timeAllowed - Player.Instance.TimeLeft},
-                {"TIme allowed", timeAllowed}
+                {"Time", $"{GameManager.Instance.CurrentSettings.ToString()}:{timeAllowed - Player.Instance.TimeLeft}/{timeAllowed}"}
             });
+            StatsManager.Instance.AddCompletedLevel(GameManager.Instance.CurrentSettings.gameMode, GameManager.Instance.CurrentSettings.dimensions.ToString());
+            GameCenterManager.Instance.PostScoreOnLeaderBoard(StatsManager.Instance.GetTotalGameModeCompletedLevels(GameManager.Instance.CurrentSettings.gameMode),
+                GameManager.Instance.CurrentSettings.gameMode, false);
             LightManager.Instance.TurnOn();
             CameraManager.Instance.FocusOnMaze(Maze.Instance);
+            SoundManager.Instance.PlaySoundEffect(SoundEffect.GameWin);
             SaveLevelProgress();
-            if (!GameManager.Instance.IsLastLevel())
-            {
-                GameManager.Instance.CurrentSettings.id++;
-            }
         }
         else
         {
-            AnalyticsEvent.LevelFail(GameManager.Instance.CurrentSettings.ToString());
-        }        
+            UIManager.Instance.FirstTimeCompletingLevel(false);
+            Analytics.CustomEvent("MazeNotCompleted - " + GameManager.Instance.CurrentSettings.ToString());
+            SoundManager.Instance.PlaySoundEffect(SoundEffect.GameLose);
+        }
+        UIManager.Instance.ToggleInGameMenu();
+        UIManager.Instance.ToggleInGameControls(false);
         UIManager.Instance.ShowFinishMenu(mazeCompleted);
+        
     }
 
     private void SaveLevelProgress()
     {
         LevelSettings currentLevelSettings = GameManager.Instance.CurrentSettings;
-        LevelData currentLevelData = LevelIO.LoadLevel(currentLevelSettings);
+        LevelData currentLevelData = LevelIO.LoadLevel(currentLevelSettings);        
         if (!currentLevelData.complete)
         {
             IncreasePlayerScore();
-            currentLevelData.complete = true;            
-            LevelIO.SaveLevel(currentLevelSettings, currentLevelData);            
-        }       
+            currentLevelData.complete = true;
+            LevelIO.SaveLevel(currentLevelSettings, currentLevelData);
+            if (!GameManager.Instance.CurrentSettings.isDaily)
+            {
+                LevelPackData currentlevelPackData = LevelIO.LoadLevelPackData(currentLevelSettings);
+                currentlevelPackData.numLevelsComplete += 1;
+                LevelIO.SaveLevelPackData(currentLevelSettings, currentlevelPackData);
+            }
+            else // is daily, for streaks
+            {
+                if (currentLevelSettings.gameMode == "Classic")
+                {
+                    int value = PlayerPrefs.GetInt("ClassicStreakToday", 0) + 1;
+                    PlayerPrefs.SetInt("ClassicStreakToday", value);
+                    if (value > 3)
+                    {
+                        int streakValue = PlayerPrefs.GetInt("ClassicStreak", 0) + 1;
+                        PlayerPrefs.SetInt("ClassicStreak", streakValue);
+                        GameCenterManager.Instance.PostScoreOnLeaderBoard(streakValue, currentLevelSettings.gameMode, true);
+                        int todayAsInt = int.Parse(DateTime.Now.Month.ToString() + DateTime.Now.Day.ToString());
+                        PlayerPrefs.SetInt("ClassicStreakSet", todayAsInt);
+                    }
+                }
+                else if (currentLevelSettings.gameMode == "Dungeon")
+                {
+                    int value = PlayerPrefs.GetInt("DungeonStreakToday", 0) + 1;
+                    PlayerPrefs.SetInt("DungeonStreakToday", value);
+                    if (value > 3)
+                    {
+                        int streakValue = PlayerPrefs.GetInt("DungeonStreak", 0) + 1;
+                        PlayerPrefs.SetInt("DungeonStreak", streakValue);
+                        GameCenterManager.Instance.PostScoreOnLeaderBoard(streakValue, currentLevelSettings.gameMode, true);
+                        int todayAsInt = int.Parse(DateTime.Now.Month.ToString() + DateTime.Now.Day.ToString());
+                        PlayerPrefs.SetInt("DungeonStreakSet", todayAsInt);
+                    }
+                }
+                else if (currentLevelSettings.gameMode == "Cursed House")
+                {
+                    int value = PlayerPrefs.GetInt("CursedHouseStreakToday", 0) + 1;
+                    PlayerPrefs.SetInt("CursedHouseStreakToday", value);
+                    if (value > 3)
+                    {
+                        int streakValue = PlayerPrefs.GetInt("CursedHouseStreak", 0) + 1;
+                        PlayerPrefs.SetInt("CursedHouseStreak", streakValue);
+                        GameCenterManager.Instance.PostScoreOnLeaderBoard(streakValue, currentLevelSettings.gameMode, true);
+                        int todayAsInt = int.Parse(DateTime.Now.Month.ToString() + DateTime.Now.Day.ToString());
+                        PlayerPrefs.SetInt("CursedHouseStreakSet", todayAsInt);
+                    }
+                }
+                PlayerPrefs.Save();
+            }
+            UIManager.Instance.FirstTimeCompletingLevel(true);
+        }
+        else
+        {
+            UIManager.Instance.FirstTimeCompletingLevel(false);
+        }        
     }
 
     private void IncreasePlayerScore()
@@ -151,6 +247,7 @@ public class LevelManager : Singleton<LevelManager>
         int previousScore = PlayerPrefs.GetInt("PlayersCoins", 0);
         int newScore = previousScore + _levelData.points;
         PlayerPrefs.SetInt("PlayersCoins", newScore);
+        PlayerPrefs.Save();
     }
 
     void Update()
@@ -180,15 +277,15 @@ public class LevelManager : Singleton<LevelManager>
         Maze.Instance.Clear();
         foreach (Movable mob in _mobs)
         {
-            Destroy(mob.gameObject);
+            if (mob != null)
+            {
+                Destroy(mob.gameObject);
+            }            
         }
         _mobs.Clear();
-        UIManager.Instance.onReplayMenu.SetActive(false);
-    }
-
-    protected override void OnDestroy()
-    {
-        Clear();
-        base.OnDestroy();
+        if (UIManager.Instance.onReplayMenu != null)
+        {
+            UIManager.Instance.onReplayMenu.SetActive(false);
+        }        
     }
 }

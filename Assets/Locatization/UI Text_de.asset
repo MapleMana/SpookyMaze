@@ -1,0 +1,135 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: UI Text_de
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: de
+  m_SharedData: {fileID: 11400000, guid: 9c8b835fcd9856a43958acad8bf31316, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 632566444032
+    m_Localized: 'TAGLICH '
+    m_Metadata:
+      m_Items: []
+  - m_Id: 59867787264
+    m_Localized: KLASSISCH
+    m_Metadata:
+      m_Items: []
+  - m_Id: 402013941760
+    m_Localized: VERLIES
+    m_Metadata:
+      m_Items: []
+  - m_Id: 549322092544
+    m_Localized: VERFLUCHTES HAUS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27013153157120
+    m_Localized: UBER
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27067033186304
+    m_Localized: 'A MAPLE MANA GAME :)
+
+      @MAPLEMANAMAKES
+
+
+      ENTWICKELT
+      VON:
+
+
+      DAN CURRIE
+
+      @_DANCURRIE
+
+      &
+
+      ANDRII DENYSENKO
+
+      &
+
+      ALISA
+      VYNOHRADOVA
+
+
+      BACKGROUND MUSIC FROM PLAYONLOOP.COM
+
+      LICENSED UNDER
+      CREATIVE COMMONs BY ATTRIBUTION 4.0'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 29233517031424
+    m_Localized: DIE EINSTELLUNGEN
+    m_Metadata:
+      m_Items: []
+  - m_Id: 33164670398464
+    m_Localized: MUSIK
+    m_Metadata:
+      m_Items: []
+  - m_Id: 33243129049088
+    m_Localized: EINKAUFE WIEDERHERSTELLEN
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2914135925190656
+    m_Localized: TAGLICHE STUFEN
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2916754949271552
+    m_Localized: SPIELANLEITUNG
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2916799333396480
+    m_Localized: '-WISCHEN ODER TASTEN ZUM BEWEGEN
+
+      -AUSGANG IST IMMER IM UNTEREN
+      RECHTEN ECKEN-LABYRINTH
+
+
+      KLASSISCH
+
+      -FINDEN SIE DEN AUSGANG
+
+
+      VERLIES
+
+      -FINDEN
+      SIE DEN SCHLUSSEL, UM EXIT ZU ENTSPERREN
+
+      -FINDEN SIE DEN AUSGANG
+
+
+      VERFLUCHTES
+      HAUS
+
+      -FINDEN SIE DEN AUSGANG
+
+      -VERMEIDEN SIE GEISTER, SIE VERRINGERN
+      IHR LICHT
+
+      -SAMMELN SIE OLFASSER, SIE ERHOHEN IHR LICHT'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2929050782134272
+    m_Localized: KAUFE MUNZEN
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2929113013022720
+    m_Localized: ANZEIGE ANZEIGEN
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2930904106659840
+    m_Localized: STATISTIKEN
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 1

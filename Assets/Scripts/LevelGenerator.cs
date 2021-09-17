@@ -27,8 +27,24 @@ public static class LevelGenerator
 
     private static Dimensions GetMazeDimensions(int id)
     {
-        // TODO: figure out a better formula
-        return new Dimensions(8, 8);
+        int randomEven = 8;
+        switch (id)
+        {
+            case 1:
+                randomEven = UnityEngine.Random.Range(4, 6) * 2;
+                break;
+            case 2:
+                randomEven = UnityEngine.Random.Range(6, 8) * 2;
+                break;
+            case 3:
+                randomEven = UnityEngine.Random.Range(8, 10) * 2;
+                break;
+            case 4:
+            default:
+                randomEven = UnityEngine.Random.Range(10, 13) * 2;
+                break;
+        }        
+        return new Dimensions(randomEven, randomEven);
     }
 
     private static int GetLevelTime(int pathLength)
@@ -88,13 +104,17 @@ public static class LevelGenerator
                         LevelIO.SaveLevel(
                             new LevelSettings(gameModeName, mazeDimentions, id, packId),
                             new LevelData(maze: Maze.Instance,
-                                          levelTime: GetLevelTime(Maze.Instance.GetPathLength()),
+                                          levelTime: GetLevelTime(gameModeName == "Dungeon" ? Maze.Instance.GetPathLengthWithKey() : Maze.Instance.GetPathLength()),
                                           modeNames: combinedGM.GameModes.Select(gm => gm.GetType().Name).ToArray(),
                                           mobs: combinedGM.GetMovables(GetMobQuantity(mazeDimentions)),
                                           levelPoints: LEVEL_REWARD,
                                           levelUnlocked: unlocked,
                                           levelComplete: false)
-                        );                        
+                        );
+                        LevelIO.SaveLevelPackData(
+                            new LevelSettings(gameModeName, mazeDimentions, id, packId),
+                            new LevelPackData(complete: 0)
+                        );
                         Maze.Instance.Clear();
                     }
                 }              
@@ -105,7 +125,37 @@ public static class LevelGenerator
 
     }
     internal static void GenerateDailyLevels()
-    {
+    {        
+        string currentDate = (DateTime.Now.Day.ToString() + DateTime.Now.Month.ToString());
+        if (currentDate == PlayerPrefs.GetString("currentDate",""))
+        {
+            return;
+        }
+        LevelIO.DeleteDailyMazes();
+        PlayerPrefs.SetInt("Classic", 0); // if 1, daily maze pack is unlocked
+        PlayerPrefs.SetInt("ClassicStreakToday", 0); // counts num of daily mazes of this mode completed
+        PlayerPrefs.SetInt("Dungeon", 0);
+        PlayerPrefs.SetInt("DungeonStreakToday", 0);
+        PlayerPrefs.SetInt("Cursed House", 0);
+        PlayerPrefs.SetInt("CursedHouseStreakToday", 0);
+        PlayerPrefs.SetString("currentDate", currentDate);
+
+        // Resets streaks, if day is missed
+        int todayAsInt = int.Parse(DateTime.Now.Month.ToString() + DateTime.Now.Day.ToString());
+        if (PlayerPrefs.GetInt("ClassicStreakSet") + 1 != todayAsInt)
+        {
+            PlayerPrefs.SetInt("ClassicStreak", 0);
+        }
+        if (PlayerPrefs.GetInt("DungeonStreakSet") + 1 != todayAsInt)
+        {
+            PlayerPrefs.SetInt("DungeonStreak", 0);
+        }
+        if (PlayerPrefs.GetInt("CursedHouseStreakSet") + 1 != todayAsInt)
+        {
+            PlayerPrefs.SetInt("CursedHouseStreak", 0);
+        }
+        PlayerPrefs.Save();
+
         int dailySeed = (int)(DateTimeOffset.Now.ToUnixTimeSeconds() / (3600 * 24));
         UnityEngine.Random.InitState(dailySeed);
 
@@ -123,7 +173,7 @@ public static class LevelGenerator
                 LevelIO.SaveLevel(
                     new LevelSettings(combinedGM.Name, mazeDimentions, id, isDaily: true),
                     new LevelData(maze: Maze.Instance,
-                                    levelTime: GetLevelTime(Maze.Instance.GetPathLength()),
+                                    levelTime: GetLevelTime(combinedGM.Name == "Dungeon" ? Maze.Instance.GetPathLengthWithKey() : Maze.Instance.GetPathLength()),
                                     modeNames: combinedGM.GameModes.Select(gm => gm.GetType().Name).ToArray(),
                                     mobs: combinedGM.GetMovables(GetMobQuantity(mazeDimentions)),
                                     levelPoints: LEVEL_REWARD,
