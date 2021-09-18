@@ -5,6 +5,7 @@ public class ReviewRequestiOS : MonoBehaviour
 {
     private void OnEnable()
     {
+    #if UNITY_IOS
         if (StatsManager.Instance != null && Application.platform == RuntimePlatform.IPhonePlayer)
         {
             int total = StatsManager.Instance.GetTotalGameModeCompletedLevels("Classic") +
@@ -14,6 +15,7 @@ public class ReviewRequestiOS : MonoBehaviour
             {
                 UnityEngine.iOS.Device.RequestStoreReview();
             }
-        }        
+        }
+    #endif
     }
 }
