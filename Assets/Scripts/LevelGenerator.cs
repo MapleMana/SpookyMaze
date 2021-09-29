@@ -18,11 +18,11 @@ public static class LevelGenerator
     const int SEED = 145;
     const int LEVEL_REWARD = 4;
     
-    private static readonly List<CombinedGM> gameModes = new List<CombinedGM>()
+    public static readonly List<CombinedGM> gameModes = new List<CombinedGM>()
     {
         new CombinedGM("Classic", new ClassicGM()),
         new CombinedGM("Dungeon", new DoorKeyGM()),
-        new CombinedGM("Cursed House", new OilGM(), new GhostGM()),
+        new CombinedGM("Cursed House", new OilGM(), new GhostGM())
     };
 
     private static Dimensions GetMazeDimensions(int id)
@@ -41,7 +41,7 @@ public static class LevelGenerator
                 break;
             case 4:
             default:
-                randomEven = UnityEngine.Random.Range(10, 13) * 2;
+                randomEven = UnityEngine.Random.Range(10, 14) * 2;
                 break;
         }        
         return new Dimensions(randomEven, randomEven);
@@ -57,14 +57,18 @@ public static class LevelGenerator
         return (mazeDimensions.Width + mazeDimensions.Height) / 16; 
     }
 
-    public static void GenerateLevels()
+    public static void GenerateLevels(CombinedGM combinedGM)
     {
         UnityEngine.Random.InitState(SEED);
-        LevelIO.ClearAll();
+        if(combinedGM.Name == "Classic")
+        {
+            LevelIO.ClearAll();
+        }
+        
         string packId;
         bool unlocked;
-        foreach (CombinedGM combinedGM in gameModes)
-        {
+        //foreach (CombinedGM combinedGM in gameModes)
+        //{
             Dimensions mazeDimentions = new Dimensions(INITIAL_MAZE_WIDTH, INITIAL_MAZE_HEIGHT);
             string gameModeName = combinedGM.Name;
 
@@ -121,7 +125,7 @@ public static class LevelGenerator
                 mazeDimentions.Width += MAZE_WIDTH_INCREMENT;
                 mazeDimentions.Height += MAZE_HEIGHT_INCREMENT;
             }
-        }
+        //}
 
     }
     internal static void GenerateDailyLevels()

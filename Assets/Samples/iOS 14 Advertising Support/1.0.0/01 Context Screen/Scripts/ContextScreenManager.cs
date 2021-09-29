@@ -15,7 +15,7 @@ namespace Unity.Advertisement.IosSupport.Samples
         /// </summary>
         public ContextScreenView contextScreenPrefab;
 
-        void Start()
+        public void CheckStatus()//void Start()
         {
 #if UNITY_IOS
             // check with iOS to see if the user has accepted or declined tracking

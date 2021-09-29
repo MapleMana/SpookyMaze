@@ -3,13 +3,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Unity.Advertisement.IosSupport.Samples;
+using UnityEngine.UI;
 
 public class GameManager : Singleton<GameManager>
 {
     public float replayMultiplier;
     public float reversedReplayMultiplier;
     public LevelSettings CurrentSettings { get; set; } = new LevelSettings();
-    
+
+    public GameObject loadingPanel;
+    public Text loadingPanelText;
+    public Slider loadingPanelSlider;
+    public GameObject contextScreenManager;
+
     private void OnEnable()
     {
         SceneManager.sceneLoaded += OnFullLoad;
@@ -26,9 +33,29 @@ public class GameManager : Singleton<GameManager>
         int levelsGenerated = PlayerPrefs.GetInt("Generated", 0);
         if (levelsGenerated == 0)
         {
-            LevelGenerator.GenerateLevels();
+            StartCoroutine(GenerateLevelsOverTime());
+            //LevelGenerator.GenerateLevels();
             PlayerPrefs.SetInt("Generated", 1);
         }
+    }
+
+    IEnumerator GenerateLevelsOverTime()
+    {
+        loadingPanel.SetActive(true);
+        yield return new WaitForSeconds(0.4f);
+        foreach(CombinedGM combined in LevelGenerator.gameModes)
+        {
+            LevelGenerator.GenerateLevels(combined);
+            yield return new WaitForSeconds(0.1f);
+            loadingPanelText.text += ".";
+            loadingPanelSlider.value += 0.33f;
+            yield return new WaitForSeconds(0.1f);
+        }
+
+        loadingPanel.SetActive(false);
+        yield return new WaitForSeconds(0.1f);
+        contextScreenManager.GetComponent<ContextScreenManager>().CheckStatus();
+        StopAllCoroutines();
     }
 
     private void OnFullLoad(Scene scene, LoadSceneMode mode)
