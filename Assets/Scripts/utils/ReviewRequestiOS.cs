@@ -11,9 +11,12 @@ public class ReviewRequestiOS : MonoBehaviour
             int total = StatsManager.Instance.GetTotalGameModeCompletedLevels("Classic") +
             StatsManager.Instance.GetTotalGameModeCompletedLevels("Dungeon") +
             StatsManager.Instance.GetTotalGameModeCompletedLevels("Cursed House");
-            if (total > 5)
+            int reviewRate = PlayerPrefs.GetInt("ReviewRate", 5);
+            if (total > reviewRate)
             {
                 UnityEngine.iOS.Device.RequestStoreReview();
+                PlayerPrefs.SetInt("ReviewRate", reviewRate + 70);
+                PlayerPrefs.Save();
             }
         }
     #endif
