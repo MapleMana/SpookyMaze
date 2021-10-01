@@ -34,8 +34,6 @@ public class GameManager : Singleton<GameManager>
         if (levelsGenerated == 0)
         {
             StartCoroutine(GenerateLevelsOverTime());
-            //LevelGenerator.GenerateLevels();
-            PlayerPrefs.SetInt("Generated", 1);
         }
     }
 
@@ -53,6 +51,7 @@ public class GameManager : Singleton<GameManager>
         }
 
         loadingPanel.SetActive(false);
+        PlayerPrefs.SetInt("Generated", 1);
         yield return new WaitForSeconds(0.1f);
         contextScreenManager.GetComponent<ContextScreenManager>().CheckStatus();
         StopAllCoroutines();
