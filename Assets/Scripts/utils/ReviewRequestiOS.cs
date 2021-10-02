@@ -15,7 +15,7 @@ public class ReviewRequestiOS : MonoBehaviour
             if (total > reviewRate)
             {
                 UnityEngine.iOS.Device.RequestStoreReview();
-                PlayerPrefs.SetInt("ReviewRate", reviewRate + 70);
+                PlayerPrefs.SetInt("ReviewRate", reviewRate + 50);
                 PlayerPrefs.Save();
             }
         }

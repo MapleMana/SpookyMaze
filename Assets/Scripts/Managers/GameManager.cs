@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -30,8 +31,8 @@ public class GameManager : Singleton<GameManager>
     private void Start()
     {
         Maze.Initialize();
-        int levelsGenerated = PlayerPrefs.GetInt("Generated", 0);
-        if (levelsGenerated == 0)
+        int levelsGenerated = PlayerPrefs.GetInt("Generated", 0); // 0 no levels, 1 all levels generated
+        if (levelsGenerated == 0 || !Directory.Exists(Path.GetDirectoryName($"{Application.persistentDataPath}/Cursed House/8x8/E/1.maze")))
         {
             StartCoroutine(GenerateLevelsOverTime());
         }
