@@ -26,15 +26,18 @@ public class LevelManager : Singleton<LevelManager>
     private float frationOfTimeLeft = 0.15f;
     private float endOfLevelSpeed = 1.25f;
 
+    // added in 5 places to levelData.time, 3 here and 2 in Player script
+    public float extraTime = 10;
+
     public void Initialize(LevelData levelData)
     {
         UIManager.Instance.ToggleInGameMenu();
         Movable.ClearHistory();
         PlayerActionDetector.ResetTouches();
         _levelData = levelData;
-        _levelState = LevelState.InProgress;
-        Player.Instance.TimeLeft = levelData.time;
-        timeAllowed = levelData.time;
+        _levelState = LevelState.InProgress;        
+        Player.Instance.TimeLeft = levelData.time + extraTime;
+        timeAllowed = levelData.time + extraTime;
         GameMode = levelData.GetGameMode();
 
         Maze.Instance.Load(levelData.mazeState);
@@ -111,7 +114,7 @@ public class LevelManager : Singleton<LevelManager>
     public void WatchReplay(Action onComplete)
     {   
         _levelState |= LevelState.InReplay;
-        Player.Instance.TimeLeft = LevelData.time;
+        Player.Instance.TimeLeft = LevelData.time + extraTime;
         ResetState();
         StartCoroutine(Movable.ReplayCommands(
             timeMultiplier: GameManager.Instance.replayMultiplier,
@@ -154,7 +157,7 @@ public class LevelManager : Singleton<LevelManager>
         {
             Analytics.CustomEvent("MazeCompete", new Dictionary<string, object>
             {
-                {"Time", $"{GameManager.Instance.CurrentSettings.ToString()}:{timeAllowed - Player.Instance.TimeLeft}/{timeAllowed}"}
+                {"Level: ", GameManager.Instance.CurrentSettings.ToString()}
             });
             StatsManager.Instance.AddCompletedLevel(GameManager.Instance.CurrentSettings.gameMode, GameManager.Instance.CurrentSettings.dimensions.ToString());
             GameCenterManager.Instance.PostScoreOnLeaderBoard(StatsManager.Instance.GetTotalGameModeCompletedLevels(GameManager.Instance.CurrentSettings.gameMode),
@@ -167,7 +170,10 @@ public class LevelManager : Singleton<LevelManager>
         else
         {
             UIManager.Instance.FirstTimeCompletingLevel(false);
-            Analytics.CustomEvent("MazeNotCompleted - " + GameManager.Instance.CurrentSettings.ToString());
+            Analytics.CustomEvent("MazeNotCompleted", new Dictionary<string, object>
+            {
+                {"Level: ", GameManager.Instance.CurrentSettings.ToString()}
+            });
             SoundManager.Instance.PlaySoundEffect(SoundEffect.GameLose);
         }
         UIManager.Instance.ToggleInGameMenu();

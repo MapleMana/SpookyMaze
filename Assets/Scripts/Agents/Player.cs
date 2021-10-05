@@ -64,8 +64,8 @@ public class Player : Movable
         if (LevelManager.Instance.LevelIs(LevelState.InProgress | LevelState.InReplay | LevelState.InReplayReversed))
         {
             float dt = LevelManager.Instance.LevelIs(LevelState.InReplayReversed) ? -1 : 1;
-            TimeLeft = Mathf.Clamp(TimeLeft - power * Speed / SUBTRACT_TIME_FACTOR * dt * Time.deltaTime, 0, LevelManager.Instance.LevelData.time);
-            Light.spotAngle = Mathf.Lerp(minLightAngle, maxLightAngle, TimeLeft / LevelManager.Instance.LevelData.time);
+            TimeLeft = Mathf.Clamp(TimeLeft - power * Speed / SUBTRACT_TIME_FACTOR * dt * Time.deltaTime, 0, (LevelManager.Instance.LevelData.time + LevelManager.Instance.extraTime));
+            Light.spotAngle = Mathf.Lerp(minLightAngle, maxLightAngle, TimeLeft / (LevelManager.Instance.LevelData.time + LevelManager.Instance.extraTime));
 
             // diminish torch particle system as light diminishes
             torchParticleSystemEmission.rateOverTime = Mathf.Clamp(TimeLeft * EMISSION_CONSTANT, 0, MAX_EMISSION);
@@ -79,8 +79,8 @@ public class Player : Movable
     IEnumerator ChangeIntensity(float power)
     {
         float defaultMaxInstensity = lightFlickerEffect.maxIntensity;
-        lightFlickerEffect.maxIntensity -= power / 10f;
-        yield return new WaitForSeconds(0.2f);
+        lightFlickerEffect.maxIntensity -= power / 25f;
+        yield return new WaitForSeconds(0.15f);
         lightFlickerEffect.maxIntensity = defaultMaxInstensity;
     }
 
