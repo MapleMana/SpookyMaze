@@ -79,9 +79,9 @@ public class Player : Movable
     IEnumerator ChangeIntensity(float power)
     {
         float defaultMaxInstensity = lightFlickerEffect.maxIntensity;
-        lightFlickerEffect.maxIntensity -= power / 25f;
-        yield return new WaitForSeconds(0.15f);
-        lightFlickerEffect.maxIntensity = defaultMaxInstensity;
+        lightFlickerEffect.maxIntensity -= power / 15f;
+        yield return new WaitForSeconds(0.2f);
+        lightFlickerEffect.maxIntensity = 3; // update when necessary
     }
 
     protected override void Update()
