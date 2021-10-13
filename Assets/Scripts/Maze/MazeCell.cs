@@ -9,12 +9,15 @@ public class MazeCell : System.IDisposable
     public const float WALL_WIDTH = 2.78f;
     public const float WALL_HEIGHT = 2.78f;
 
+    // makes corners a bit larger than walls to ensure there are no gaps
+    private const float _CORNER_MARGIN = 0.02f;
+
     private Dictionary<Vector2Int, WallState> _wallState = new Dictionary<Vector2Int, WallState>();
     private Vector2Int _position;
     private List<GameObject> _walls;
     private static List<GameObject> _corners = new List<GameObject>();
-    private static GameObject _wallTemplate = Resources.Load<GameObject>("Wall");
-    private static GameObject _cornerTemplate = Resources.Load<GameObject>("WallCorner");
+    private static GameObject _wallTemplate;// = Resources.Load<GameObject>("Wall");
+    private static GameObject _cornerTemplate;// = Resources.Load<GameObject>("WallCorner");
 
     public static List<Vector2Int> neighbours = new List<Vector2Int> { Vector2Int.up,
                                                                        Vector2Int.left,
@@ -27,6 +30,26 @@ public class MazeCell : System.IDisposable
     public Vector2Int Position => _position;
 
     public Vector3 CellCenter(float y) => new Vector3(CELL_WIDTH * (_position.x + 0.5f), y, CELL_WIDTH * (_position.y + 0.5f));
+
+    public static void LoadWallObjects()
+    {
+        switch (GameManager.Instance.CurrentSettings.gameMode)
+        {
+            case "Classic":
+            default:
+                _wallTemplate = Resources.Load<GameObject>("WheatWall");
+                _cornerTemplate = Resources.Load<GameObject>("WheatWallCorner");
+                break;
+            case "Dungeon":
+                _wallTemplate = Resources.Load<GameObject>("BrickWall");
+                _cornerTemplate = Resources.Load<GameObject>("BrickWallCorner");
+                break;
+            case "Cursed House":
+                _wallTemplate = Resources.Load<GameObject>("HouseWall");
+                _cornerTemplate = Resources.Load<GameObject>("HouseWallCorner");
+                break;
+        }
+    }
 
     public MazeCell(Vector2Int pos, WallState up, WallState left, WallState down, WallState right)
     {
@@ -55,7 +78,11 @@ public class MazeCell : System.IDisposable
     /// <returns></returns>
     public bool WallExists(Vector2Int direction)
     {
-        return _wallState[direction] == WallState.Exists;
+        if (direction != Vector2Int.zero)
+        {
+            return _wallState[direction] == WallState.Exists;
+        }
+        return false;
     }
 
     /// <summary>
@@ -128,7 +155,7 @@ public class MazeCell : System.IDisposable
             {
                 GameObject corner = Object.Instantiate(_cornerTemplate);
                 corner.transform.position = new Vector3(x * CELL_WIDTH, 0, y * CELL_WIDTH);
-                corner.transform.localScale = new Vector3(WALL_WIDTH, WALL_HEIGHT, WALL_WIDTH);
+                corner.transform.localScale = new Vector3(WALL_WIDTH + _CORNER_MARGIN, WALL_HEIGHT + _CORNER_MARGIN, WALL_WIDTH + _CORNER_MARGIN);
                 SceneManager.MoveGameObjectToScene(corner, SceneManager.GetSceneByName("Maze"));
                 _corners.Add(corner);
             }

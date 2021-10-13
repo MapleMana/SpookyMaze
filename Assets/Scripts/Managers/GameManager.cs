@@ -1,16 +1,23 @@
 ﻿using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Advertisements;
 using UnityEngine.SceneManagement;
+using Unity.Advertisement.IosSupport.Samples;
+using UnityEngine.UI;
 
 public class GameManager : Singleton<GameManager>
 {
     public float replayMultiplier;
     public float reversedReplayMultiplier;
     public LevelSettings CurrentSettings { get; set; } = new LevelSettings();
-    
+
+    public GameObject loadingPanel;
+    public Text loadingPanelText;
+    public Slider loadingPanelSlider;
+    public GameObject contextScreenManager;
+
     private void OnEnable()
     {
         SceneManager.sceneLoaded += OnFullLoad;
@@ -24,27 +31,31 @@ public class GameManager : Singleton<GameManager>
     private void Start()
     {
         Maze.Initialize();
-        UpdateDailyLevels();
-        int levelsGenerated = PlayerPrefs.GetInt("Generated", 0);
-        if (levelsGenerated == 0)
+        int levelsGenerated = PlayerPrefs.GetInt("Generated", 0); // 0 no levels, 1 all levels generated
+        if (levelsGenerated == 0 || !Directory.Exists(Path.GetDirectoryName($"{Application.persistentDataPath}/Cursed House/8x8/E/1.maze")))
         {
-            LevelGenerator.GenerateLevels();
-            PlayerPrefs.SetInt("Generated", 1);
+            StartCoroutine(GenerateLevelsOverTime());
         }
     }
 
-    private void UpdateDailyLevels()
+    IEnumerator GenerateLevelsOverTime()
     {
-        int currentDayNumber = (int)(DateTimeOffset.Now.ToUnixTimeSeconds() / (3600 * 24));
-        int lastVisited = PlayerPrefs.GetInt("LastVisited");
-
-        if (currentDayNumber != lastVisited)
+        loadingPanel.SetActive(true);
+        yield return new WaitForSeconds(0.4f);
+        foreach(CombinedGM combined in LevelGenerator.gameModes)
         {
-            PlayerPrefs.SetInt("LastVisited", currentDayNumber);
-            PlayerPrefs.SetInt("OpenedDailyLevelsClassic", 0);
-            PlayerPrefs.SetInt("OpenedDailyLevelsDungeon", 0);
-            PlayerPrefs.SetInt("OpenedDailyLevelsCursed House", 0);
+            LevelGenerator.GenerateLevels(combined);
+            yield return new WaitForSeconds(0.1f);
+            loadingPanelText.text += ".";
+            loadingPanelSlider.value += 0.33f;
+            yield return new WaitForSeconds(0.1f);
         }
+
+        loadingPanel.SetActive(false);
+        PlayerPrefs.SetInt("Generated", 1);
+        yield return new WaitForSeconds(0.1f);
+        contextScreenManager.GetComponent<ContextScreenManager>().CheckStatus();
+        StopAllCoroutines();
     }
 
     private void OnFullLoad(Scene scene, LoadSceneMode mode)

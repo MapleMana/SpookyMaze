@@ -24,6 +24,11 @@ public class Player : Movable
     private ParticleSystem.EmissionModule torchParticleSystemEmission;
     private const float EMISSION_CONSTANT = 1.25f;
     private const float MAX_EMISSION = 80f;
+    private const float SUBTRACT_TIME_FACTOR = 20f;
+
+    public Animator animator;
+
+    public LightFlickerEffect lightFlickerEffect;
 
     protected override void Awake()
     {
@@ -59,24 +64,37 @@ public class Player : Movable
         if (LevelManager.Instance.LevelIs(LevelState.InProgress | LevelState.InReplay | LevelState.InReplayReversed))
         {
             float dt = LevelManager.Instance.LevelIs(LevelState.InReplayReversed) ? -1 : 1;
-            TimeLeft = Mathf.Clamp(TimeLeft - power * Speed / 30 * dt * Time.deltaTime, 0, LevelManager.Instance.LevelData.time);
+            TimeLeft = Mathf.Clamp(TimeLeft - power * Speed / SUBTRACT_TIME_FACTOR * dt * Time.deltaTime, 0, LevelManager.Instance.LevelData.time);
             Light.spotAngle = Mathf.Lerp(minLightAngle, maxLightAngle, TimeLeft / LevelManager.Instance.LevelData.time);
 
             // diminish torch particle system as light diminishes
             torchParticleSystemEmission.rateOverTime = Mathf.Clamp(TimeLeft * EMISSION_CONSTANT, 0, MAX_EMISSION);
+            if (power != 1)
+            {
+                StartCoroutine(ChangeIntensity(power));
+            }
         }
+    }
+
+    IEnumerator ChangeIntensity(float power)
+    {
+        float defaultMaxInstensity = lightFlickerEffect.maxIntensity;
+        lightFlickerEffect.maxIntensity -= power / 15f;
+        yield return new WaitForSeconds(0.2f);
+        lightFlickerEffect.maxIntensity = 3; // update when necessary
     }
 
     protected override void Update()
     {
         SubtractTime();
         base.Update();
+        animator.SetBool("isWalking", Moving);
     }
 
     public override void PerformMovement()
     {
-        MovableMovementCommand command = PlayerActionDetector.Detect();
-        if (command != null && command.Execute(this).Succeeded)
+        MovableMovementCommand command = PlayerActionDetector.Detect();        
+        if ((command != null) && command.Execute(this).Succeeded)
         {
             AddToHistory(this, command);
             MoveToDecisionPoint(incomingDirection: command.Direction);
@@ -109,10 +127,10 @@ public class Player : Movable
     public override bool Move(Vector2Int direction)
     {
         if (!Maze.Instance[MazePosition].WallExists(direction))
-        {
+        {            
             MazePosition += direction;
             return true;
-        }
+        }        
         return false;
     }
 

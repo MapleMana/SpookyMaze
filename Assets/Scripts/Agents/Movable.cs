@@ -108,7 +108,7 @@ public abstract class Movable : MonoBehaviour
     /// <param name="reversed">Whether the execution should be reversed (both order and individual commands)</param>
     /// <param name="initialPosition">The starting position of the player. If null, current position is taken.</param>
     /// <param name="timeMultiplier">The number of times the replay should be sped up</param>
-    /// <param name="onComplete">Action to perform after the replay is comlete</param>
+    /// <param name="onComplete">Action to perform after the replay is complete</param>
     /// <returns>A coroutine to execute</returns>
     public static IEnumerator ReplayCommands(
         bool reversed = false,
@@ -141,7 +141,6 @@ public abstract class Movable : MonoBehaviour
         bool waitBefore=false)
     {
         //pauseBetweenCommands -= Time.deltaTime;
-
         Moving = true;
 
         if (waitBefore)
@@ -160,5 +159,41 @@ public abstract class Movable : MonoBehaviour
             }
         }
         Moving = false;
+    }
+
+    protected IEnumerator PlayCommandInRealTime(
+        MovableMovementCommand playerCommand,
+        bool waitBefore = false)
+    {
+        Moving = true;
+        MovableMovementCommand newMovement = playerCommand;
+        if (waitBefore)
+        {
+            yield return new WaitForSeconds(MazeCell.CELL_WIDTH / Speed);
+        }
+        while (Moving)
+        {
+            newMovement.Execute(this);
+            AddToHistory(this, newMovement);
+
+            yield return new WaitForSeconds(MazeCell.CELL_WIDTH / Speed);
+
+            if (newMovement == MovableMovementCommand.Stop)
+            {
+                Moving = false;
+            }
+            if (Moving)
+            {                
+                Vector2Int incomingDirection = Maze.Instance.GetNextPoint(
+                                position: MazePosition,
+                                incomingDirection: playerCommand.Direction);
+                newMovement = MovableMovementCommand.FromVector(incomingDirection);
+                Debug.Log("next 3: " + MazePosition + ", incomingDirection " + incomingDirection);
+                
+            }            
+        } 
+
+        //Moving = false;
+        Debug.Log("end: " + MazePosition);
     }
 }

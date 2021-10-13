@@ -118,6 +118,17 @@ public class LevelData
     }
 }
 
+[System.Serializable()]
+public class LevelPackData
+{
+    public int numLevelsComplete;
+
+    public LevelPackData(int complete)
+    {
+        numLevelsComplete = complete;
+    }
+}
+
 public class LevelSettings
 {
     public string gameMode;
@@ -148,7 +159,7 @@ public class LevelSettings
 
     public override string ToString()
     {
-        return isDaily ? $"/Daily/{gameMode}/{id}" : $"/{gameMode}/{dimensions}/{packId}/{id}";
+        return isDaily ? $"/Daily/{gameMode}/{id}/{dimensions}" : $"/{gameMode}/{dimensions}/{packId}/{id}";
     }
 }
 
@@ -159,6 +170,12 @@ public static class LevelIO
     private static string GetFilePath(LevelSettings levelSettings)
     {
         return $"{Root}/{levelSettings}.maze";
+    }
+
+    private static string GetFilePathForPack(LevelSettings levelSettings)
+    {
+        //return $"{Root}/{levelSettings}.mazePack";
+        return $"{Root}/Pack/{levelSettings.gameMode}/{levelSettings.dimensions}/{levelSettings.packId}.mazePack";
     }
 
     public static void ClearAll()
@@ -194,6 +211,33 @@ public static class LevelIO
         }
     }
 
+    // Save level data pack 
+    public static void SaveLevelPackData(LevelSettings levelSettings, LevelPackData levelPackData)
+    {
+        BinaryFormatter formatter = new BinaryFormatter();
+        string path = GetFilePathForPack(levelSettings);
+        string dir = Path.GetDirectoryName(path);
+        if (!Directory.Exists(dir))
+        {
+            Directory.CreateDirectory(dir);
+        }
+        using (FileStream stream = new FileStream(path, FileMode.OpenOrCreate))
+        {
+            formatter.Serialize(stream, levelPackData);
+        }
+    }
+
+    // Load level data pack
+    public static LevelPackData LoadLevelPackData(LevelSettings levelSettings)
+    {
+        BinaryFormatter formatter = new BinaryFormatter();
+        string path = GetFilePathForPack(levelSettings);
+        using (FileStream stream = new FileStream(path, FileMode.Open))
+        {
+            return formatter.Deserialize(stream) as LevelPackData;
+        }
+    }
+
     private static List<string> GetSubdirectoryNames(string dir)
     {
         return Directory.GetFileSystemEntries(dir)
@@ -224,5 +268,23 @@ public static class LevelIO
         return packIds
             .Select(packId => packId)
             .ToList();
+    }
+
+    public static List<Dimensions> GetDailyDimension(LevelSettings levelSettings)
+    {
+        List<string> dimNames = GetSubdirectoryNames($"{Root}/Daily/{levelSettings.gameMode}/{levelSettings.id}");
+        return dimNames
+            .Select(dimName => new Dimensions(dimName))
+            .ToList();
+    }
+
+    public static void DeleteDailyMazes()
+    {
+        string path = $"{Root}/Daily/";
+        DirectoryInfo directory = new DirectoryInfo(path);
+        if (Directory.Exists(path))
+        {
+            directory.Delete(true);
+        }
     }
 }

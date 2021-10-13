@@ -10,6 +10,7 @@ using UnityEngine.SceneManagement;
 public class Maze
 {
     private Dimensions _dimensions;
+    private Vector2Int _keyPos;
 
     public static Maze Instance { get; private set; }
     public Vector2Int StartPos { get; private set; }
@@ -21,6 +22,7 @@ public class Maze
             _dimensions = value;
             StartPos = new Vector2Int(0, value.Height - 1);
             EndPos = new Vector2Int(value.Width - 1, 0);
+            _keyPos = new Vector2Int(Mathf.RoundToInt((value.Width - 1) / 2), Mathf.RoundToInt((value.Height - 1) / 2));
         } 
     }
     public Dictionary<Vector2Int, MazeCell> Grid { get; private set; } = new Dictionary<Vector2Int, MazeCell>();
@@ -51,6 +53,7 @@ public class Maze
     public void Load(MazeState state)
     {
         Clear();
+        MazeCell.LoadWallObjects();
         Dimensions = state.dimensions;
         foreach (SerCell cell in state.cells)
         {
@@ -95,6 +98,11 @@ public class Maze
         return sequence;
     }
 
+    public Vector2Int GetNextPoint(Vector2Int position, Vector2Int incomingDirection)
+    {
+        return Grid[position += incomingDirection].GetCorridorOpening(incomingDirection * -1);
+    }
+
     public List<Vector2Int> GetRandomPositions(int quantity)
     {
         List<MazeCell> emptyCells = Grid.Values.Where(cell => cell.IsEmpty && cell.Position != StartPos).ToList();
@@ -131,12 +139,47 @@ public class Maze
         return distance[EndPos];
     }
 
+    /// <summary>
+    /// Calculates the path length from key to start and end using BFS;
+    /// </summary>
+    /// <returns>The length of the path from key to start plus key to end</returns>
+    public int GetPathLengthWithKey()
+    {
+        Dictionary<Vector2Int, int> distance = new Dictionary<Vector2Int, int>();
+        distance[_keyPos] = 0;
+
+        Queue<Vector2Int> cellsBeingAnalyzed = new Queue<Vector2Int>();
+        cellsBeingAnalyzed.Enqueue(_keyPos);
+
+        while (cellsBeingAnalyzed.Count > 0)
+        {
+            Vector2Int curPos = cellsBeingAnalyzed.Dequeue();
+            foreach (Vector2Int neighbour in MazeCell.neighbours)
+            {
+                Vector2Int newPos = curPos + neighbour;
+                if (InBounds(newPos) && !distance.ContainsKey(newPos) && !Grid[curPos].WallExists(neighbour))
+                {
+                    cellsBeingAnalyzed.Enqueue(newPos);
+                    distance[newPos] = distance[curPos] + 1;
+                }
+            }
+        }
+        return distance[EndPos] + distance[StartPos];
+    }
+
     public void PlaceOnMaze(List<ItemType> itemTypes)
     {
         List<Vector2Int> itemPositions = GetRandomPositions(itemTypes.Count);
         for (int i = 0; i < Mathf.Min(itemPositions.Count, itemTypes.Count); i++)
-        {
-            Grid[itemPositions[i]].ItemType = itemTypes[i];
+        {            
+            if (itemTypes[i] == ItemType.Key)
+            {
+                Grid[_keyPos].ItemType = itemTypes[i];
+            }
+            else
+            {
+                Grid[itemPositions[i]].ItemType = itemTypes[i];
+            }
         }
     }
 

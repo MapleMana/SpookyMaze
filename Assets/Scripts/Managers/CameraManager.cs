@@ -11,9 +11,39 @@ public class CameraManager : Singleton<CameraManager>
     public Vector3 playerOffset;
     public float mazeMargin;
 
+    private Vector3 startPos;
+    private Vector3 endPos;
+    private float journeyLength;
+    private float startTime;
+    private float speedPop = 120f;
+    private bool zoomOutCamera = false;
+
+    private Vector3 _x2PlayerOffset;
+
     private void Start()
     {
         _camera = GetComponent<Camera>();
+        _x2PlayerOffset = playerOffset * 2f;
+    }
+
+    private void Update()
+    {
+        if (zoomOutCamera)
+        {
+            // Distance moved equals elapsed time times speed..
+            float distCovered = (Time.time - startTime) * speedPop;
+
+            // Fraction of journey completed equals current distance divided by total distance.
+            float fractionOfJourney = distCovered / journeyLength;
+
+            // Set our position as a fraction of the distance between the markers.
+            transform.position = Vector3.Lerp(startPos, endPos, fractionOfJourney);
+
+            if (distCovered >= journeyLength)
+            {
+                zoomOutCamera = false;
+            }
+        }
     }
 
     public void FocusOnMaze(Maze maze)
@@ -29,11 +59,25 @@ public class CameraManager : Singleton<CameraManager>
         float FOV = (mazeWidth > mazeHeight * screenRatio) ? widthFOV : heightFOV;
 
         float cameraHeight = (significantSide + 2 * mazeMargin) / FOV;
-        transform.position = new Vector3(mazeWidth / 2, Mathf.Abs(cameraHeight), mazeHeight / 2);
+
+        // Keep a note of the time the movement started.
+        startTime = Time.time;
+
+        startPos = transform.position;
+        endPos = new Vector3(mazeWidth / 2, Mathf.Abs(cameraHeight), mazeHeight / 2);
+
+        // Calculate the journey length.
+        journeyLength = Vector3.Distance(startPos, endPos);
+        zoomOutCamera = true;
     }
 
     public void FocusOnPlayer()
     {
         transform.position = Vector3.Lerp(transform.position, Player.Instance.transform.position + playerOffset, speed * Time.deltaTime);
+    }
+
+    public void ZoomOutOnPlayer()
+    {
+        playerOffset = _x2PlayerOffset;
     }
 }

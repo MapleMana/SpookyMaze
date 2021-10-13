@@ -1,0 +1,88 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: UI Text Shared Data
+  m_EditorClassIdentifier: 
+  m_TableCollectionName: UI Text
+  m_TableCollectionNameGuidString: 9c8b835fcd9856a43958acad8bf31316
+  m_Entries:
+  - m_Id: 59867787264
+    m_Key: ClassicMainMenuBtnText
+    m_Metadata:
+      m_Items: []
+  - m_Id: 402013941760
+    m_Key: DungeonMainMenuBtnText
+    m_Metadata:
+      m_Items: []
+  - m_Id: 549322092544
+    m_Key: CursedHouseMainMenuBtnText
+    m_Metadata:
+      m_Items: []
+  - m_Id: 632566444032
+    m_Key: DailyMainMenuBtnText
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27013153157120
+    m_Key: AboutTitleText
+    m_Metadata:
+      m_Items: []
+  - m_Id: 27067033186304
+    m_Key: AboutMenuText
+    m_Metadata:
+      m_Items: []
+  - m_Id: 29233517031424
+    m_Key: SettingsTitleText
+    m_Metadata:
+      m_Items: []
+  - m_Id: 33164670398464
+    m_Key: SettingsMusicText
+    m_Metadata:
+      m_Items: []
+  - m_Id: 33243129049088
+    m_Key: SettingsRestoreBtnText
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2914135925190656
+    m_Key: DailyMenuTitleText
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2916754949271552
+    m_Key: HowToPlayMenuTitleText
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2916799333396480
+    m_Key: HowToPlayMenuBodyText
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2929050782134272
+    m_Key: PurchaseMenuTitleText
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2929113013022720
+    m_Key: PurchaseMenuWatchAdBtnText
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2930904106659840
+    m_Key: StatsMenuTitleText
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    id: 0
+  references:
+    version: 1
+    00000000:
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables,
+        asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1624904889271
