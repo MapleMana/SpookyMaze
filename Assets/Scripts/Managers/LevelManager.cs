@@ -26,9 +26,6 @@ public class LevelManager : Singleton<LevelManager>
     private float frationOfTimeLeft = 0.15f;
     private float endOfLevelSpeed = 1.25f;
 
-    // added in 5 places to levelData.time, 3 here and 2 in Player script
-    public float extraTime = 10;
-
     public void Initialize(LevelData levelData)
     {
         UIManager.Instance.ToggleInGameMenu();
@@ -36,8 +33,8 @@ public class LevelManager : Singleton<LevelManager>
         PlayerActionDetector.ResetTouches();
         _levelData = levelData;
         _levelState = LevelState.InProgress;        
-        Player.Instance.TimeLeft = levelData.time + extraTime;
-        timeAllowed = levelData.time + extraTime;
+        Player.Instance.TimeLeft = levelData.time;
+        timeAllowed = levelData.time;
         GameMode = levelData.GetGameMode();
 
         Maze.Instance.Load(levelData.mazeState);
@@ -114,7 +111,7 @@ public class LevelManager : Singleton<LevelManager>
     public void WatchReplay(Action onComplete)
     {   
         _levelState |= LevelState.InReplay;
-        Player.Instance.TimeLeft = LevelData.time + extraTime;
+        Player.Instance.TimeLeft = LevelData.time;
         ResetState();
         StartCoroutine(Movable.ReplayCommands(
             timeMultiplier: GameManager.Instance.replayMultiplier,

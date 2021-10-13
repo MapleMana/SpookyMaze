@@ -64,8 +64,8 @@ public class Player : Movable
         if (LevelManager.Instance.LevelIs(LevelState.InProgress | LevelState.InReplay | LevelState.InReplayReversed))
         {
             float dt = LevelManager.Instance.LevelIs(LevelState.InReplayReversed) ? -1 : 1;
-            TimeLeft = Mathf.Clamp(TimeLeft - power * Speed / SUBTRACT_TIME_FACTOR * dt * Time.deltaTime, 0, (LevelManager.Instance.LevelData.time + LevelManager.Instance.extraTime));
-            Light.spotAngle = Mathf.Lerp(minLightAngle, maxLightAngle, TimeLeft / (LevelManager.Instance.LevelData.time + LevelManager.Instance.extraTime));
+            TimeLeft = Mathf.Clamp(TimeLeft - power * Speed / SUBTRACT_TIME_FACTOR * dt * Time.deltaTime, 0, LevelManager.Instance.LevelData.time);
+            Light.spotAngle = Mathf.Lerp(minLightAngle, maxLightAngle, TimeLeft / LevelManager.Instance.LevelData.time);
 
             // diminish torch particle system as light diminishes
             torchParticleSystemEmission.rateOverTime = Mathf.Clamp(TimeLeft * EMISSION_CONSTANT, 0, MAX_EMISSION);
@@ -100,17 +100,6 @@ public class Player : Movable
             MoveToDecisionPoint(incomingDirection: command.Direction);
         }
     }
-    /*public override void PerformMovement()
-    {
-        MovableMovementCommand command = PlayerActionDetector.Detect();
-        //Debug.Log("start: " + MazePosition);
-        if ((command == MovableMovementCommand.Stop) || ((command != null) && command.Execute(this).Succeeded))
-        {
-            Debug.Log("next: " + MazePosition + ", incomingDirection " + command.Direction);
-            AddToHistory(this, command);
-            MoveToNextSquare(incomingDirection: command.Direction);
-        }
-    }*/
 
     /// <summary>
     /// Moves the player to the next decision point in the maze (intersection or dead end)
@@ -133,22 +122,6 @@ public class Player : Movable
             playerCommands: commandSequence,
             waitBefore: true
         ));
-    }
-
-    private void MoveToNextSquare(Vector2Int incomingDirection)
-    {
-        if (incomingDirection != Vector2Int.zero)
-        {
-            incomingDirection = Maze.Instance.GetNextPoint(
-                position: MazePosition,
-                incomingDirection: incomingDirection);
-        }
-        Debug.Log("next 2: " + MazePosition + ", incomingDirection " + incomingDirection);
-        MovableMovementCommand newMovement = MovableMovementCommand.FromVector(incomingDirection);
-        StartCoroutine(PlayCommandInRealTime(
-            playerCommand: newMovement,
-            waitBefore: true
-        ));       
     }
 
     public override bool Move(Vector2Int direction)

@@ -9,13 +9,13 @@ public class GameCenterManager : Singleton<GameCenterManager>
     public bool loginSuccessful;
     public GameObject gameCenterBtn;
 
-    private const string _classicLeaderboardID = "com.MapleMana.SpookyMaze.ClassicLeaderboard";
-    private const string _dungeonLeaderboardID = "com.MapleMana.SpookyMaze.DungeonLeaderboard";
-    private const string _cursedHouseLeaderboardID  = "com.MapleMana.SpookyMaze.CursedHouseLeaderboard";
+    private const string _classicLeaderboardID = "";
+    private const string _dungeonLeaderboardID = "";
+    private const string _cursedHouseLeaderboardID  = "";
 
-    private const string _classicStreakLeaderboardID = "com.MapleMana.SpookyMaze.ClassicStreakLeaderboard";
-    private const string _dungeonStreakLeaderboardID = "com.MapleMana.SpookyMaze.DungeonStreakLeaderboard";
-    private const string _cursedHouseStreakLeaderboardID = "com.MapleMana.SpookyMaze.CursedHouseStreakLeaderboard";
+    private const string _classicStreakLeaderboardID = "";
+    private const string _dungeonStreakLeaderboardID = "";
+    private const string _cursedHouseStreakLeaderboardID = "";
 
     void Start()
     {

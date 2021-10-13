@@ -8,7 +8,7 @@ public class DailyAdHandler : MonoBehaviour, IUnityAdsListener
 {
     private static string gameId = "0";
     public static string placementId = "daily_unlock";
-    public static bool testMode = false;
+    public static bool testMode = true;
     public DailyLevelSelectMenu DailyLevelSelectMenu;
     public static bool dailyUnlockAd;
 
@@ -17,11 +17,11 @@ public class DailyAdHandler : MonoBehaviour, IUnityAdsListener
     void Start()
     {
 #if UNITY_EDITOR
-        gameId = "3809985";
+        gameId = "";
 #elif UNITY_ANDROID
-        gameId = "3809985";
+        gameId = "";
 #elif UNITY_IOS
-        gameId = "3809984";
+        gameId = "";
 #endif
         Advertisement.AddListener(this);
         Advertisement.Initialize(gameId, testMode);
